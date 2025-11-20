@@ -1,0 +1,78 @@
+export type NoteContent = string; // HTML string from Tiptap
+
+export type SectionType = 'title' | 'fact' | 'abstraction' | 'diversion';
+
+export interface CanvasObject {
+    id: string;
+    type: 'text';
+    section: SectionType;
+    content: string;
+    x: number; // Percentage 0-100 relative to the section or page? Let's say relative to the page for simplicity, or section. 
+    // The plan said "relative coordinates (%) or absolute (px)". 
+    // Let's use absolute px relative to the page container for now, or relative to section.
+    // To keep it simple and robust against resize, let's use absolute for now, but maybe relative is better for responsive.
+    // Let's stick to the plan: "x: number, y: number".
+    y: number;
+    width: number;
+    height: number;
+    style?: {
+        color?: string;
+        fontSize?: number;
+        bold?: boolean;
+        italic?: boolean;
+    };
+}
+
+export interface Stroke {
+    id: string;
+    points: { x: number; y: number; pressure?: number }[];
+    color: string;
+    width: number;
+    isHighlighter: boolean;
+}
+
+export interface Connection {
+    id: string;
+    fromObjectId: string;
+    toObjectId: string;
+    type: 'arrow' | 'line';
+    style: 'solid' | 'dashed' | 'hand-drawn';
+}
+
+export interface NotePage {
+    id: string;
+    notebookId: string;
+    title: string; // Keep title as metadata, but also have it as an object? 
+    // The plan says "Title area". Let's keep a main title field for the sidebar list, 
+    // but the visual title on the page might be an object or a specific field.
+    // Let's keep `title` for the list.
+    tags: string[];
+    createdAt: number;
+    updatedAt: number;
+    isFavorite?: boolean; // New
+
+    // New Canvas Data
+    objects: CanvasObject[];
+    strokes: Stroke[];
+    connections: Connection[];
+
+    // Legacy fields (optional, for migration)
+    summary?: string;
+    fact?: string;
+    abstraction?: string;
+    diversion?: string;
+}
+
+export interface Notebook {
+    id: string;
+    name: string;
+    pages: NotePage[];
+    createdAt: number;
+    updatedAt: number;
+}
+
+export interface AppState {
+    notebooks: Notebook[];
+    activeNotebookId: string;
+    activePageId: string | null;
+}

@@ -1,114 +1,218 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Sparkles, BookOpen } from "lucide-react";
-import { MemoForm } from "@/components/memo-form";
-import { MemoCard } from "@/components/memo-card";
-import { Memo } from "@/types/memo";
+import { useState, useEffect, useCallback } from "react";
+import { useTheme } from "next-themes";
+import { v4 as uuidv4 } from "uuid";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { NotebookCanvas } from "@/components/notebook/notebook-canvas";
+// import { NotebookSpread } from "@/components/notebook/notebook-spread";
+import { NotePage } from "@/types/note";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { AnimatePresence, motion } from "framer-motion";
 
-// Dummy data for initial state
-const INITIAL_MEMOS: Memo[] = [
-  {
-    id: "1",
-    fact: "前田裕二さんの『メモの魔力』を読んだ。\nメモは「記録」ではなく「知的生産」のツールである。",
-    abstraction: "多くの人は「忘れないため」にメモをとるが、成功者は「新しいアイデアを生むため」にメモをとる。\n事象（ファクト）から本質（抽象化）を抜き出すプロセスが重要。",
-    diversion: "日々の会議でも、議事録だけでなく「そこから何が言えるか？」という気づきの欄を設ける。\n自分のアプリ開発にも「抽象化」のステップを強制的に入れるUIを採用する。",
-    createdAt: Date.now(),
-  },
-];
+const INITIAL_PAGE: NotePage = {
+  id: "1",
+  notebookId: "default",
+  title: "メモの魔力 - 実践ノート",
+  summary: "このアプリの使い方とコンセプト",
+  tags: ["Guide"],
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
+  fact: "<p>これは『メモの魔力』を実践するためのデジタルノートです。</p><ul><li>左ページに事実を書く</li><li>右ページで抽象化と転用を行う</li></ul>",
+  abstraction: "<p>物理ノートの制約（ページの終わり）がなく、かつデジタルの利便性（検索、編集）を兼ね備えている。</p>",
+  diversion: "<p>毎日の気づきをここに記録し、週末に見返す習慣をつける。</p>",
+  objects: [],
+  strokes: [],
+  connections: [],
+};
 
 export default function Home() {
-  const [memos, setMemos] = useState<Memo[]>([]);
+  const [pages, setPages] = useState<NotePage[]>([]);
+  const [activePageId, setActivePageId] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const { setTheme, resolvedTheme } = useTheme();
 
+  // Load data
   useEffect(() => {
-    // Load from local storage or use initial data
-    const saved = localStorage.getItem("magic-memos");
-    if (saved) {
-      try {
-        setMemos(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse memos", e);
-        setMemos(INITIAL_MEMOS);
-      }
-    } else {
-      setMemos(INITIAL_MEMOS);
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
-    if (memos.length > 0) {
-      localStorage.setItem("magic-memos", JSON.stringify(memos));
-    }
-  }, [memos]);
+    if (!isClient) return;
 
-  const handleAddMemo = (newMemoData: Omit<Memo, "id" | "createdAt">) => {
-    const newMemo: Memo = {
-      ...newMemoData,
-      id: crypto.randomUUID(),
-      createdAt: Date.now(),
+    const loadData = async () => {
+      if (window.electronAPI) {
+        try {
+          const saved = await window.electronAPI.loadPages();
+          if (saved) {
+            setPages(saved);
+            if (saved.length > 0) {
+              setActivePageId(saved[0].id);
+            }
+          } else {
+            setPages([INITIAL_PAGE]);
+            setActivePageId(INITIAL_PAGE.id);
+          }
+        } catch (e) {
+          console.error("Failed to load pages from Electron", e);
+          setPages([INITIAL_PAGE]);
+          setActivePageId(INITIAL_PAGE.id);
+        }
+      } else {
+        const saved = localStorage.getItem("magic-notebook-pages");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            setPages(parsed);
+            if (parsed.length > 0) {
+              setActivePageId(parsed[0].id);
+            }
+          } catch (e) {
+            console.error("Failed to load pages", e);
+            setPages([INITIAL_PAGE]);
+            setActivePageId(INITIAL_PAGE.id);
+          }
+        } else {
+          setPages([INITIAL_PAGE]);
+          setActivePageId(INITIAL_PAGE.id);
+        }
+      }
     };
-    setMemos((prev) => [newMemo, ...prev]);
+
+    loadData();
+  }, [isClient]);
+
+  // Auto-save
+  // Auto-save
+  useEffect(() => {
+    if (isClient && pages.length > 0) {
+      if (window.electronAPI) {
+        window.electronAPI.savePages(pages);
+      } else {
+        localStorage.setItem("magic-notebook-pages", JSON.stringify(pages));
+      }
+    }
+  }, [pages, isClient]);
+
+  const handleAddPage = useCallback(() => {
+    const newPage: NotePage = {
+      id: uuidv4(),
+      notebookId: "default",
+      title: "",
+      summary: "",
+      tags: [],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      fact: "",
+      abstraction: "",
+      diversion: "",
+      objects: [],
+      strokes: [],
+      connections: [],
+    };
+    setPages((prev) => [newPage, ...prev]);
+    setActivePageId(newPage.id);
+  }, []);
+
+  // Electron listeners
+  useEffect(() => {
+    if (!window.electronAPI) return;
+
+    const cleanupNewPage = window.electronAPI.onNewPage(() => {
+      handleAddPage();
+    });
+
+    const cleanupToggleDark = window.electronAPI.onToggleDark(() => {
+      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    });
+
+    return () => {
+      cleanupNewPage();
+      cleanupToggleDark();
+    };
+  }, [handleAddPage, resolvedTheme, setTheme]);
+
+  const handleUpdatePage = (id: string, updates: Partial<NotePage>) => {
+    setPages((prev) =>
+      prev.map((page) =>
+        page.id === id ? { ...page, ...updates, updatedAt: Date.now() } : page
+      )
+    );
   };
 
+  const activePage = pages.find((p) => p.id === activePageId) || pages[0];
+
+  if (!isClient) return null; // Prevent hydration mismatch
+
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/10 p-2 rounded-lg">
-              <BookOpen className="h-6 w-6 text-primary" />
-            </div>
-            <h1 className="text-xl font-bold tracking-tight">
-              Memo of <span className="text-primary">Magic</span>
-            </h1>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            知的生産のためのメモアプリ
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-8">
-        {/* Hero Section */}
-        <div className="text-center space-y-4 py-8">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight lg:text-5xl">
-            日常を<span className="text-primary">アイデア</span>に変える
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            「ファクト→抽象化→転用」のフレームワークで、
-            あなたの思考を加速させる最強のメモツール。
-          </p>
-        </div>
-
-        {/* Input Form */}
-        <section>
-          <MemoForm onAddMemo={handleAddMemo} />
-        </section>
-
-        {/* Memo List */}
-        <section className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold">あなたのメモ</h3>
-            <span className="ml-auto text-sm text-muted-foreground">
-              {memos.length} 件のメモ
-            </span>
-          </div>
-
-          <div className="grid gap-6">
-            {memos.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                まだメモがありません。新しいメモを作成して、魔法を始めましょう。
-              </div>
-            ) : (
-              memos.map((memo) => (
-                <MemoCard key={memo.id} memo={memo} />
-              ))
-            )}
-          </div>
-        </section>
+    <div className="flex h-screen w-full bg-stone-100 dark:bg-stone-950 overflow-hidden">
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block w-64 h-full border-r bg-background">
+        <AppSidebar
+          pages={pages}
+          activePageId={activePageId}
+          onSelectPage={setActivePageId}
+          onAddPage={handleAddPage}
+        />
       </div>
-    </main>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center p-4 border-b bg-background">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="p-0 w-72">
+              <AppSidebar
+                pages={pages}
+                activePageId={activePageId}
+                onSelectPage={(id) => {
+                  setActivePageId(id);
+                  // Close sheet logic would go here if controlled
+                }}
+                onAddPage={handleAddPage}
+                className="border-none"
+              />
+            </SheetContent>
+          </Sheet>
+          <span className="ml-4 font-semibold">Memo of Magic</span>
+        </div>
+
+        {/* Notebook Area */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 flex justify-center">
+          <div className="w-full max-w-7xl h-full min-h-[800px]">
+            <AnimatePresence mode="wait">
+              {activePage ? (
+                <motion.div
+                  key={activePage.id}
+                  initial={{ opacity: 0, rotateY: 90, transformOrigin: "left" }}
+                  animate={{ opacity: 1, rotateY: 0 }}
+                  exit={{ opacity: 0, rotateY: -90, transformOrigin: "right" }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="w-full h-full"
+                  style={{ perspective: "1000px" }}
+                >
+                  <NotebookCanvas
+                    page={activePage}
+                    onUpdate={handleUpdatePage}
+                  />
+                </motion.div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  ページを選択または作成してください
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

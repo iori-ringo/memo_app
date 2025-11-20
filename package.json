@@ -2,34 +2,79 @@
   "name": "memo_app",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/dist/main.js",
+  "description": "Magic Memo Desktop App",
+  "author": "User",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "electron:dev": "concurrently -k \"npm run dev\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
+    "electron:build": "npm run build && tsc -p electron && electron-builder"
+  },
+  "build": {
+    "appId": "com.magicmemo.app",
+    "productName": "Magic Memo",
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity"
+    },
+    "files": [
+      "out/**/*",
+      "electron/dist/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    }
   },
   "dependencies": {
-    "@radix-ui/react-label": "^2.1.8",
-    "@radix-ui/react-slot": "^1.2.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
-    "framer-motion": "^12.23.24",
-    "lucide-react": "^0.554.0",
-    "next": "16.0.3",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "@google/generative-ai": "^0.24.1",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@tiptap/extension-bubble-menu": "^3.11.0",
+    "@tiptap/extension-color": "^3.11.0",
+    "@tiptap/extension-task-item": "^3.11.0",
+    "@tiptap/extension-task-list": "^3.11.0",
+    "@tiptap/extension-text-style": "^3.11.0",
+    "dotenv": "^16.4.7",
+    "react-draggable": "^4.5.0",
+    "react-resizable": "^3.0.5"
   },
   "devDependencies": {
+    "@floating-ui/dom": "^1.7.4",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4",
+    "@tiptap/extension-placeholder": "^3.11.0",
+    "@tiptap/react": "^3.11.0",
+    "@tiptap/starter-kit": "^3.11.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-resizable": "^3.0.8",
+    "@types/uuid": "^10.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "concurrently": "^9.2.1",
+    "date-fns": "^4.1.0",
+    "electron": "^39.2.2",
+    "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.554.0",
+    "next": "16.0.3",
+    "next-themes": "^0.4.6",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5",
+    "uuid": "^13.0.0",
+    "wait-on": "^9.0.3"
   }
 }
