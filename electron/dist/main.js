@@ -33,23 +33,23 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(require("node:fs"));
+const path = __importStar(require("node:path"));
 const electron_1 = require("electron");
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
         width: 1280,
         height: 800,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, "preload.js"),
             contextIsolation: true,
             nodeIntegration: false,
         },
     });
     const isDev = !electron_1.app.isPackaged;
     if (isDev) {
-        mainWindow.loadURL('http://localhost:3000');
+        mainWindow.loadURL("http://localhost:3000");
         mainWindow.webContents.openDevTools();
     }
     else {
@@ -61,15 +61,15 @@ function createWindow() {
         // and main is "electron/dist/main.js"
         // The 'out' folder should be at "../../out/index.html" relative to main.js?
         // Or just path.join(__dirname, '../../out/index.html')
-        mainWindow.loadFile(path.join(__dirname, '../../out/index.html'));
+        mainWindow.loadFile(path.join(__dirname, "../../out/index.html"));
     }
     // Open external links in browser
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-        if (url.startsWith('http')) {
+        if (url.startsWith("http")) {
             electron_1.shell.openExternal(url);
-            return { action: 'deny' };
+            return { action: "deny" };
         }
-        return { action: 'allow' };
+        return { action: "allow" };
     });
     createMenu();
 }
@@ -78,57 +78,56 @@ function createMenu() {
         {
             label: electron_1.app.name,
             submenu: [
-                { role: 'about' },
-                { type: 'separator' },
-                { role: 'services' },
-                { type: 'separator' },
-                { role: 'hide' },
-                { role: 'hideOthers' },
-                { role: 'unhide' },
-                { type: 'separator' },
-                { role: 'quit' },
+                { role: "about" },
+                { type: "separator" },
+                { role: "services" },
+                { type: "separator" },
+                { role: "hide" },
+                { role: "hideOthers" },
+                { role: "unhide" },
+                { type: "separator" },
+                { role: "quit" },
             ],
         },
         {
-            label: 'File',
+            label: "File",
             submenu: [
                 {
-                    label: 'New Page',
-                    accelerator: 'CmdOrCtrl+N',
-                    click: () => mainWindow?.webContents.send('new-page'),
+                    label: "New Page",
+                    accelerator: "CmdOrCtrl+M",
+                    click: () => mainWindow?.webContents.send("new-page"),
                 },
-                { type: 'separator' },
-                { role: 'close' },
+                { type: "separator" },
+                { role: "close" },
             ],
         },
         {
-            label: 'Edit',
+            label: "Edit",
             submenu: [
-                { role: 'undo' },
-                { role: 'redo' },
-                { type: 'separator' },
-                { role: 'cut' },
-                { role: 'copy' },
-                { role: 'paste' },
-                { role: 'selectAll' },
+                { role: "undo" },
+                { role: "redo" },
+                { type: "separator" },
+                { role: "cut" },
+                { role: "copy" },
+                { role: "paste" },
+                { role: "selectAll" },
             ],
         },
         {
-            label: 'View',
+            label: "View",
             submenu: [
-                { role: 'reload' },
-                { role: 'forceReload' },
-                { role: 'toggleDevTools' },
-                { type: 'separator' },
-                { role: 'resetZoom' },
-                { role: 'zoomIn' },
-                { role: 'zoomOut' },
-                { type: 'separator' },
-                { role: 'togglefullscreen' },
+                { role: "reload" },
+                { role: "forceReload" },
+                { role: "toggleDevTools" },
+                { type: "separator" },
+                { role: "resetZoom" },
+                { role: "zoomIn" },
+                { role: "zoomOut" },
+                { type: "separator" },
+                { role: "togglefullscreen" },
                 {
-                    label: 'Toggle Dark Mode',
-                    accelerator: 'CmdOrCtrl+D',
-                    click: () => mainWindow?.webContents.send('toggle-dark'),
+                    label: "Toggle Dark Mode",
+                    click: () => mainWindow?.webContents.send("toggle-dark"),
                 },
             ],
         },
@@ -137,33 +136,70 @@ function createMenu() {
     electron_1.Menu.setApplicationMenu(menu);
 }
 /* ---------- Data Persistence ---------- */
-const dataPath = path.join(electron_1.app.getPath('userData'), 'pages.json');
+const dataPath = path.join(electron_1.app.getPath("userData"), "pages.json");
 function ensureDataDir() {
     const dir = path.dirname(dataPath);
     if (!fs.existsSync(dir))
         fs.mkdirSync(dir, { recursive: true });
 }
-electron_1.ipcMain.handle('load-pages', async () => {
+electron_1.ipcMain.handle("load-pages", async () => {
     ensureDataDir();
     if (!fs.existsSync(dataPath))
         return null;
     try {
-        const raw = fs.readFileSync(dataPath, 'utf-8');
+        const raw = fs.readFileSync(dataPath, "utf-8");
         return JSON.parse(raw);
     }
     catch (e) {
-        console.error('Failed to read pages.json', e);
+        console.error("Failed to read pages.json", e);
         return null;
     }
 });
-electron_1.ipcMain.handle('save-pages', async (_event, pages) => {
+electron_1.ipcMain.handle("save-pages", async (_event, pages) => {
     ensureDataDir();
     try {
         fs.writeFileSync(dataPath, JSON.stringify(pages, null, 2));
         return true;
     }
     catch (e) {
-        console.error('Failed to write pages.json', e);
+        console.error("Failed to write pages.json", e);
+        return false;
+    }
+});
+/* ---------- Config Persistence ---------- */
+const configPath = path.join(electron_1.app.getPath("userData"), "config.json");
+electron_1.ipcMain.handle("load-config", async () => {
+    ensureDataDir();
+    if (!fs.existsSync(configPath))
+        return {};
+    try {
+        const raw = fs.readFileSync(configPath, "utf-8");
+        return JSON.parse(raw);
+    }
+    catch (e) {
+        console.error("Failed to read config.json", e);
+        return {};
+    }
+});
+electron_1.ipcMain.handle("save-config", async (_event, config) => {
+    ensureDataDir();
+    try {
+        // Merge with existing config to avoid overwriting other settings
+        let existingConfig = {};
+        if (fs.existsSync(configPath)) {
+            try {
+                existingConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+            }
+            catch (e) {
+                // Ignore error if file is corrupted
+            }
+        }
+        const newConfig = { ...existingConfig, ...config };
+        fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
+        return true;
+    }
+    catch (e) {
+        console.error("Failed to write config.json", e);
         return false;
     }
 });
@@ -195,16 +231,16 @@ async function callGemini(prompt, type) {
         throw new Error("AI生成に失敗しました。");
     }
 }
-electron_1.ipcMain.handle('generate-abstraction', async (_event, fact) => {
+electron_1.ipcMain.handle("generate-abstraction", async (_event, fact) => {
     const prompt = `以下の「事実」から、本質的な気づきや法則を抽出してください。
 
 事実:
 ${fact}
 
 抽象化（気づき・法則・本質）:`;
-    return callGemini(prompt, 'abstraction');
+    return callGemini(prompt, "abstraction");
 });
-electron_1.ipcMain.handle('generate-diversion', async (_event, fact, abstraction) => {
+electron_1.ipcMain.handle("generate-diversion", async (_event, fact, abstraction) => {
     const prompt = `以下の「抽象化」から、具体的なアクションや他の分野への応用アイデアを提案してください。
 
 事実:
@@ -214,24 +250,24 @@ ${fact}
 ${abstraction}
 
 転用（アクション・適用アイデア）:`;
-    return callGemini(prompt, 'diversion');
+    return callGemini(prompt, "diversion");
 });
-electron_1.ipcMain.handle('generate-summary', async (_event, content) => {
+electron_1.ipcMain.handle("generate-summary", async (_event, content) => {
     const prompt = `以下のテキストを簡潔に要約してください（1-2文で）:
 
 ${content}
 
 要約:`;
-    return callGemini(prompt, 'summary');
+    return callGemini(prompt, "summary");
 });
 electron_1.app.whenReady().then(() => {
     createWindow();
-    electron_1.app.on('activate', () => {
+    electron_1.app.on("activate", () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0)
             createWindow();
     });
 });
-electron_1.app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin')
+electron_1.app.on("window-all-closed", () => {
+    if (process.platform !== "darwin")
         electron_1.app.quit();
 });

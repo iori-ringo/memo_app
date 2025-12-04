@@ -1,0 +1,34 @@
+export const DEFAULT_LAYOUT = {
+    TITLE_HEIGHT: 10,
+    CENTER_POSITION: 50,
+    DIVERSION_POSITION: 75,
+};
+
+export const DEFAULT_OBJECT_SIZE = {
+    WIDTH: 200,
+    HEIGHT: 100,
+};
+
+export const DEFAULT_NEW_OBJECT_OFFSET = {
+    X: 100,
+    Y: 100,
+};
+
+export const SECTION_TYPES = {
+    TITLE: "title",
+    FACT: "fact",
+    ABSTRACTION: "abstraction",
+    DIVERSION: "diversion",
+} as const;
+
+export const Z_INDEX = {
+    BACKGROUND: 0,
+    BOUNDARY: 15,
+    CONTENT_LAYER: 10,
+    TEXT_BLOCK: 10,
+    TEXT_BLOCK_SELECTED: 20,
+    CONNECTION_LAYER: 30,
+    HANDWRITING_LAYER: 1,
+    RESIZE_HANDLE: 50,
+    MODE_INDICATOR: 50,
+};

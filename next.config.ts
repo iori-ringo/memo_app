@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  images: {
-    unoptimized: true,
-  },
+	output: "export",
+	assetPrefix: ".",
+	images: {
+		unoptimized: true,
+	},
 };
 
 export default nextConfig;
