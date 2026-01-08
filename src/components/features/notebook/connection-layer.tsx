@@ -1,54 +1,43 @@
-import React from "react";
-import type { CanvasObject, Connection } from "@/types/note";
+'use client'
+
+import type { MouseEvent } from 'react'
+import type { CanvasObject, Connection } from '@/types/note'
 
 interface ConnectionLayerProps {
-	connections: Connection[];
-	objects: CanvasObject[];
-	selectedConnectionId?: string | null;
-	onSelect?: (connectionId: string) => void;
-	onDelete?: (connectionId: string) => void;
-	isPenMode?: boolean;
-	isConnectMode?: boolean;
-	onConnect?: (fromId: string, toId: string) => void;
+	connections: Connection[]
+	objects: CanvasObject[]
+	selectedConnectionId?: string | null
+	onSelect?: (connectionId: string) => void
+	onDelete?: (connectionId: string) => void
+	isPenMode?: boolean
 }
 
-export function ConnectionLayer({
+export const ConnectionLayer = ({
 	connections,
 	objects,
 	selectedConnectionId,
 	onSelect,
 	onDelete,
 	isPenMode = false,
-	isConnectMode = false,
-	onConnect,
-}: ConnectionLayerProps) {
-	const [dragStart, setDragStart] = React.useState<{ x: number; y: number; objectId: string } | null>(null);
-	const [dragCurrent, setDragCurrent] = React.useState<{ x: number; y: number } | null>(null);
-
-	// Helper to find object center
-	const getCenter = (id: string) => {
-		const obj = objects.find((o) => o.id === id);
-		if (!obj) return null;
-		return {
-			x: obj.x + obj.width / 2,
-			y: obj.y + obj.height / 2,
-		};
-	};
-
-	const handleClick = (e: React.MouseEvent, connectionId: string) => {
-		e.stopPropagation();
+}: ConnectionLayerProps) => {
+	const handleClick = (e: MouseEvent, connectionId: string) => {
+		e.stopPropagation()
 		if (onSelect) {
-			onSelect(connectionId);
+			onSelect(connectionId)
 		}
-	};
+	}
 
 	// Helper to find intersection point between line and rectangle
-	const getIntersection = (p1: { x: number; y: number }, p2: { x: number; y: number }, rect: { x: number; y: number; width: number; height: number }) => {
-		const dx = p2.x - p1.x;
-		const dy = p2.y - p1.y;
+	const getIntersection = (
+		p1: { x: number; y: number },
+		p2: { x: number; y: number },
+		rect: { x: number; y: number; width: number; height: number }
+	) => {
+		const dx = p2.x - p1.x
+		const dy = p2.y - p1.y
 
 		// If points are same, return p1
-		if (dx === 0 && dy === 0) return p1;
+		if (dx === 0 && dy === 0) return p1
 
 		// Calculate intersections with all 4 sides
 		// Left: x = rect.x
@@ -56,41 +45,41 @@ export function ConnectionLayer({
 		// Top: y = rect.y
 		// Bottom: y = rect.y + rect.height
 
-		const tValues: number[] = [];
+		const tValues: number[] = []
 
 		// Left edge
 		if (dx !== 0) {
-			const t = (rect.x - p1.x) / dx;
+			const t = (rect.x - p1.x) / dx
 			if (t >= 0 && t <= 1) {
-				const y = p1.y + t * dy;
-				if (y >= rect.y && y <= rect.y + rect.height) tValues.push(t);
+				const y = p1.y + t * dy
+				if (y >= rect.y && y <= rect.y + rect.height) tValues.push(t)
 			}
 		}
 
 		// Right edge
 		if (dx !== 0) {
-			const t = (rect.x + rect.width - p1.x) / dx;
+			const t = (rect.x + rect.width - p1.x) / dx
 			if (t >= 0 && t <= 1) {
-				const y = p1.y + t * dy;
-				if (y >= rect.y && y <= rect.y + rect.height) tValues.push(t);
+				const y = p1.y + t * dy
+				if (y >= rect.y && y <= rect.y + rect.height) tValues.push(t)
 			}
 		}
 
 		// Top edge
 		if (dy !== 0) {
-			const t = (rect.y - p1.y) / dy;
+			const t = (rect.y - p1.y) / dy
 			if (t >= 0 && t <= 1) {
-				const x = p1.x + t * dx;
-				if (x >= rect.x && x <= rect.x + rect.width) tValues.push(t);
+				const x = p1.x + t * dx
+				if (x >= rect.x && x <= rect.x + rect.width) tValues.push(t)
 			}
 		}
 
 		// Bottom edge
 		if (dy !== 0) {
-			const t = (rect.y + rect.height - p1.y) / dy;
+			const t = (rect.y + rect.height - p1.y) / dy
 			if (t >= 0 && t <= 1) {
-				const x = p1.x + t * dx;
-				if (x >= rect.x && x <= rect.x + rect.width) tValues.push(t);
+				const x = p1.x + t * dx
+				if (x >= rect.x && x <= rect.x + rect.width) tValues.push(t)
 			}
 		}
 
@@ -108,41 +97,45 @@ export function ConnectionLayer({
 		// The intersection will be the one with smallest t > epsilon?
 		// Actually, since p1 is INSIDE rect, there should be exactly one intersection in the direction of p2.
 
-		if (tValues.length === 0) return p1; // Should not happen if p1 is center
+		if (tValues.length === 0) return p1 // Should not happen if p1 is center
 
-		const t = Math.min(...tValues);
+		const t = Math.min(...tValues)
 		return {
 			x: p1.x + t * dx,
-			y: p1.y + t * dy
-		};
-	};
+			y: p1.y + t * dy,
+		}
+	}
 
 	return (
 		<>
 			{/* Visual layer - behind text blocks */}
-			<svg className="absolute inset-0 z-0 overflow-visible" style={{ pointerEvents: "none" }}>
+			<svg
+				className="absolute inset-0 z-0 overflow-visible"
+				style={{ pointerEvents: 'none' }}
+				aria-hidden="true"
+			>
 				{connections.map((conn) => {
-					const sourceObj = objects.find((o) => o.id === conn.fromObjectId);
-					const targetObj = objects.find((o) => o.id === conn.toObjectId);
+					const sourceObj = objects.find((o) => o.id === conn.fromObjectId)
+					const targetObj = objects.find((o) => o.id === conn.toObjectId)
 
-					if (!sourceObj || !targetObj) return null;
+					if (!sourceObj || !targetObj) return null
 
 					const startCenter = {
 						x: sourceObj.x + sourceObj.width / 2,
 						y: sourceObj.y + sourceObj.height / 2,
-					};
+					}
 					const endCenter = {
 						x: targetObj.x + targetObj.width / 2,
 						y: targetObj.y + targetObj.height / 2,
-					};
+					}
 
 					// Calculate intersection points
 					// For source: ray from startCenter to endCenter, intersect with sourceObj
-					const start = getIntersection(startCenter, endCenter, sourceObj);
+					const start = getIntersection(startCenter, endCenter, sourceObj)
 					// For target: ray from endCenter to startCenter, intersect with targetObj
-					const end = getIntersection(endCenter, startCenter, targetObj);
+					const end = getIntersection(endCenter, startCenter, targetObj)
 
-					const isSelected = selectedConnectionId === conn.id;
+					const isSelected = selectedConnectionId === conn.id
 
 					return (
 						<g key={conn.id}>
@@ -153,14 +146,14 @@ export function ConnectionLayer({
 								x2={end.x}
 								y2={end.y}
 								stroke="currentColor"
-								strokeWidth={isSelected ? "4" : "2"}
+								strokeWidth={isSelected ? '4' : '2'}
 								className={
-									isSelected ? "text-primary" : "text-stone-400 dark:text-stone-600 opacity-50"
+									isSelected ? 'text-primary' : 'text-stone-400 dark:text-stone-600 opacity-50'
 								}
-								strokeDasharray={conn.style === "dashed" ? "5,5" : undefined}
+								strokeDasharray={conn.style === 'dashed' ? '5,5' : undefined}
 							/>
 						</g>
-					);
+					)
 				})}
 			</svg>
 
@@ -168,25 +161,26 @@ export function ConnectionLayer({
 			<svg
 				className="absolute inset-0 z-5 overflow-visible"
 				style={{ pointerEvents: 'none' }}
+				aria-hidden="true"
 			>
 				{connections.map((conn) => {
-					const sourceObj = objects.find((o) => o.id === conn.fromObjectId);
-					const targetObj = objects.find((o) => o.id === conn.toObjectId);
+					const sourceObj = objects.find((o) => o.id === conn.fromObjectId)
+					const targetObj = objects.find((o) => o.id === conn.toObjectId)
 
-					if (!sourceObj || !targetObj) return null;
+					if (!sourceObj || !targetObj) return null
 
 					const startCenter = {
 						x: sourceObj.x + sourceObj.width / 2,
 						y: sourceObj.y + sourceObj.height / 2,
-					};
+					}
 					const endCenter = {
 						x: targetObj.x + targetObj.width / 2,
 						y: targetObj.y + targetObj.height / 2,
-					};
+					}
 
 					// Use same intersection points for interaction line so it matches visual
-					const start = getIntersection(startCenter, endCenter, sourceObj);
-					const end = getIntersection(endCenter, startCenter, targetObj);
+					const start = getIntersection(startCenter, endCenter, sourceObj)
+					const end = getIntersection(endCenter, startCenter, targetObj)
 
 					return (
 						<g key={`click-${conn.id}`}>
@@ -198,14 +192,14 @@ export function ConnectionLayer({
 								y2={end.y}
 								stroke="transparent"
 								strokeWidth="20"
-								className={isPenMode ? "" : "cursor-pointer"}
+								className={isPenMode ? '' : 'cursor-pointer'}
 								style={{ pointerEvents: isPenMode ? 'none' : 'stroke' }}
 								onClick={(e) => handleClick(e, conn.id)}
 							/>
 						</g>
-					);
+					)
 				})}
 			</svg>
 		</>
-	);
+	)
 }

@@ -1,95 +1,89 @@
-import React, { useState, useRef, useEffect } from "react";
-import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
-import { Resizable, ResizeCallbackData } from "react-resizable";
-import { CanvasObject } from "@/types/note";
-import { RichTextEditor } from "@/components/features/editor/rich-text-editor";
-import { cn } from "@/lib/utils";
-import { GripVertical } from "lucide-react";
+'use client'
 
-import "react-resizable/css/styles.css";
+import type { Editor } from '@tiptap/react'
+import { GripVertical } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import type { DraggableData, DraggableEvent } from 'react-draggable'
+import Draggable from 'react-draggable'
+import type { ResizeCallbackData } from 'react-resizable'
+import { Resizable } from 'react-resizable'
+import { RichTextEditor } from '@/components/features/editor/rich-text-editor'
+import { cn } from '@/lib/utils'
+import type { CanvasObject } from '@/types/note'
+
+import 'react-resizable/css/styles.css'
 
 interface TextBlockProps {
-	object: CanvasObject;
-	onUpdate: (id: string, updates: Partial<CanvasObject>) => void;
-	onDelete?: (id: string) => void;
-	isSelected?: boolean;
-	onSelect?: (id: string) => void;
-	onEditorReady?: (objectId: string, editor: any) => void;
-	isPenMode?: boolean;
+	object: CanvasObject
+	onUpdate: (id: string, updates: Partial<CanvasObject>) => void
+	onDelete?: (id: string) => void
+	isSelected?: boolean
+	onSelect?: (id: string) => void
+	onEditorReady?: (objectId: string, editor: Editor) => void
+	isPenMode?: boolean
 }
 
-export function TextBlock({ object, onUpdate, onDelete, isSelected, onSelect, onEditorReady, isPenMode }: TextBlockProps) {
-	const [isEditing, setIsEditing] = useState(false);
-	const [currentSize, setCurrentSize] = useState({ width: object.width, height: object.height });
-	const [currentPos, setCurrentPos] = useState({ x: object.x, y: object.y });
-	const nodeRef = useRef<HTMLDivElement>(null);
+export const TextBlock = ({
+	object,
+	onUpdate,
+	onDelete: _onDelete,
+	isSelected,
+	onSelect,
+	onEditorReady,
+	isPenMode,
+}: TextBlockProps) => {
+	const [currentSize, setCurrentSize] = useState({
+		width: object.width,
+		height: object.height,
+	})
+	const [currentPos, setCurrentPos] = useState({ x: object.x, y: object.y })
+	const nodeRef = useRef<HTMLDivElement>(null)
 
 	// Update local state when object changes
 	useEffect(() => {
-		setCurrentSize({ width: object.width, height: object.height });
-		setCurrentPos({ x: object.x, y: object.y });
-	}, [object.width, object.height, object.x, object.y]);
+		setCurrentSize({ width: object.width, height: object.height })
+		setCurrentPos({ x: object.x, y: object.y })
+	}, [object.width, object.height, object.x, object.y])
 
-	const handleDrag = (e: DraggableEvent, data: DraggableData) => {
-		setCurrentPos({ x: data.x, y: data.y });
-	};
+	const handleDrag = (_e: DraggableEvent, data: DraggableData) => {
+		setCurrentPos({ x: data.x, y: data.y })
+	}
 
-	const handleDragStop = (e: DraggableEvent, data: DraggableData) => {
-		setCurrentPos({ x: data.x, y: data.y });
-		onUpdate(object.id, { x: data.x, y: data.y });
-	};
+	const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
+		setCurrentPos({ x: data.x, y: data.y })
+		onUpdate(object.id, { x: data.x, y: data.y })
+	}
 
-	const handleResize = (e: React.SyntheticEvent, data: ResizeCallbackData) => {
-		const { size, handle } = data;
+	const handleResize = (_e: React.SyntheticEvent, data: ResizeCallbackData) => {
+		const { size, handle } = data
 
 		// Calculate position change based on handle
 		// If resizing from left (w) or top (n), we need to adjust position
-		let newX = currentPos.x;
-		let newY = currentPos.y;
+		let newX = currentPos.x
+		let newY = currentPos.y
 
 		if (handle.includes('w')) {
-			newX = currentPos.x + (currentSize.width - size.width);
+			newX = currentPos.x + (currentSize.width - size.width)
 		}
 		if (handle.includes('n')) {
-			newY = currentPos.y + (currentSize.height - size.height);
+			newY = currentPos.y + (currentSize.height - size.height)
 		}
 
-		setCurrentSize({ width: size.width, height: size.height });
-		setCurrentPos({ x: newX, y: newY });
-	};
+		setCurrentSize({ width: size.width, height: size.height })
+		setCurrentPos({ x: newX, y: newY })
+	}
 
-	const handleResizeStop = (e: React.SyntheticEvent, data: ResizeCallbackData) => {
-		const { size, handle } = data;
+	const handleResizeStop = (_e: React.SyntheticEvent, data: ResizeCallbackData) => {
+		const { size } = data
 
-		// Final calculation using the latest state
-		let newX = currentPos.x;
-		let newY = currentPos.y;
-
-		// We need to recalculate based on the final size data provided by the event
-		// because handleResize might not have fired for the very last pixel
-		// Actually, relying on currentPos from handleResize is safer for visual consistency,
-		// but we should ensure the logic matches.
-
-		// Let's trust the currentPos updated by handleResize, but we need to be careful
-		// if handleResize wasn't called (e.g. just a click).
-		// A safer approach for the final commit is to calculate from the original object state + delta?
-		// No, react-resizable gives us the absolute size.
-
-		// Let's just commit the current local state to the parent
+		// Commit the current local state to the parent
 		onUpdate(object.id, {
 			width: size.width,
 			height: size.height,
 			x: currentPos.x,
-			y: currentPos.y
-		});
-	};
-
-	const handleDelete = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		if (onDelete) {
-			onDelete(object.id);
-		}
-	};
+			y: currentPos.y,
+		})
+	}
 
 	return (
 		<Draggable
@@ -102,24 +96,35 @@ export function TextBlock({ object, onUpdate, onDelete, isSelected, onSelect, on
 			disabled={isPenMode}
 			cancel=".react-resizable-handle"
 		>
-			<div
+			<section
 				ref={nodeRef}
 				className={cn(
-					"absolute flex flex-col bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm rounded-md border shadow-sm transition-shadow group",
-					isSelected ? "border-primary ring-1 ring-primary z-20" : "border-transparent hover:border-stone-300 dark:hover:border-stone-700 z-10",
-					"hover:shadow-md"
+					'absolute flex flex-col bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm rounded-md border shadow-sm transition-shadow group',
+					isSelected
+						? 'border-primary ring-1 ring-primary z-20'
+						: 'border-transparent hover:border-stone-300 dark:hover:border-stone-700 z-10',
+					'hover:shadow-md'
 				)}
 				style={{
 					width: currentSize.width,
 					height: currentSize.height,
-					pointerEvents: isPenMode ? 'none' : 'auto'
+					pointerEvents: isPenMode ? 'none' : 'auto',
 				}}
 				onClick={(e) => {
 					if (!isPenMode) {
-						e.stopPropagation();
-						onSelect?.(object.id);
+						e.stopPropagation()
+						onSelect?.(object.id)
 					}
 				}}
+				onKeyDown={(e) => {
+					if (!isPenMode && (e.key === 'Enter' || e.key === ' ')) {
+						e.preventDefault()
+						e.stopPropagation()
+						onSelect?.(object.id)
+					}
+				}}
+				tabIndex={isPenMode ? -1 : 0}
+				aria-label="Text block"
 			>
 				{/* Drag Handle - Top */}
 				<div className="drag-handle absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-stone-200 dark:bg-stone-800 rounded-t-md flex items-center justify-center cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity z-30">
@@ -155,7 +160,7 @@ export function TextBlock({ object, onUpdate, onDelete, isSelected, onSelect, on
 					<div
 						style={{
 							width: `${currentSize.width}px`,
-							height: `${currentSize.height}px`
+							height: `${currentSize.height}px`,
 						}}
 						className="overflow-hidden p-2 relative"
 					>
@@ -168,7 +173,7 @@ export function TextBlock({ object, onUpdate, onDelete, isSelected, onSelect, on
 						/>
 					</div>
 				</Resizable>
-			</div>
+			</section>
 		</Draggable>
-	);
+	)
 }

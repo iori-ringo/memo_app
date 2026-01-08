@@ -10,6 +10,9 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint",
+		"lint:biome": "biome check ./src",
+		"lint:fix": "biome check --write ./src",
+		"format": "biome format --write ./src",
 		"electron:dev": "concurrently -k \"npm run dev\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
 		"electron:build": "npm run build && tsc -p electron && electron-builder"
 	},
