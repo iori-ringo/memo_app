@@ -9,9 +9,9 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { type Editor, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Bold, Italic, List, ListOrdered } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { FontSize } from './extensions/font-size'
+import { Button } from '@/shared/ui/button'
+import { FontSize } from '../extensions/font-size'
 
 interface RichTextEditorProps {
 	content: string

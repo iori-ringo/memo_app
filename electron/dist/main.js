@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("node:fs"));
 const path = __importStar(require("node:path"));
 const electron_1 = require("electron");
+const types_1 = require("./ipc/types");
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
@@ -95,7 +96,7 @@ function createMenu() {
                 {
                     label: "New Page",
                     accelerator: "CmdOrCtrl+M",
-                    click: () => mainWindow?.webContents.send("new-page"),
+                    click: () => mainWindow?.webContents.send(types_1.IPC_CHANNELS.NEW_PAGE),
                 },
                 { type: "separator" },
                 { role: "close" },
@@ -127,7 +128,7 @@ function createMenu() {
                 { role: "togglefullscreen" },
                 {
                     label: "Toggle Dark Mode",
-                    click: () => mainWindow?.webContents.send("toggle-dark"),
+                    click: () => mainWindow?.webContents.send(types_1.IPC_CHANNELS.TOGGLE_DARK),
                 },
             ],
         },
@@ -142,7 +143,7 @@ function ensureDataDir() {
     if (!fs.existsSync(dir))
         fs.mkdirSync(dir, { recursive: true });
 }
-electron_1.ipcMain.handle("load-pages", async () => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.LOAD_PAGES, async () => {
     ensureDataDir();
     if (!fs.existsSync(dataPath))
         return null;
@@ -155,7 +156,7 @@ electron_1.ipcMain.handle("load-pages", async () => {
         return null;
     }
 });
-electron_1.ipcMain.handle("save-pages", async (_event, pages) => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.SAVE_PAGES, async (_event, pages) => {
     ensureDataDir();
     try {
         fs.writeFileSync(dataPath, JSON.stringify(pages, null, 2));
@@ -168,7 +169,7 @@ electron_1.ipcMain.handle("save-pages", async (_event, pages) => {
 });
 /* ---------- Config Persistence ---------- */
 const configPath = path.join(electron_1.app.getPath("userData"), "config.json");
-electron_1.ipcMain.handle("load-config", async () => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.LOAD_CONFIG, async () => {
     ensureDataDir();
     if (!fs.existsSync(configPath))
         return {};
@@ -181,7 +182,7 @@ electron_1.ipcMain.handle("load-config", async () => {
         return {};
     }
 });
-electron_1.ipcMain.handle("save-config", async (_event, config) => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.SAVE_CONFIG, async (_event, config) => {
     ensureDataDir();
     try {
         // Merge with existing config to avoid overwriting other settings
@@ -231,7 +232,7 @@ async function callGemini(prompt, type) {
         throw new Error("AI生成に失敗しました。");
     }
 }
-electron_1.ipcMain.handle("generate-abstraction", async (_event, fact) => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.GENERATE_ABSTRACTION, async (_event, fact) => {
     const prompt = `以下の「事実」から、本質的な気づきや法則を抽出してください。
 
 事実:
@@ -240,7 +241,7 @@ ${fact}
 抽象化（気づき・法則・本質）:`;
     return callGemini(prompt, "abstraction");
 });
-electron_1.ipcMain.handle("generate-diversion", async (_event, fact, abstraction) => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.GENERATE_DIVERSION, async (_event, fact, abstraction) => {
     const prompt = `以下の「抽象化」から、具体的なアクションや他の分野への応用アイデアを提案してください。
 
 事実:
@@ -252,7 +253,7 @@ ${abstraction}
 転用（アクション・適用アイデア）:`;
     return callGemini(prompt, "diversion");
 });
-electron_1.ipcMain.handle("generate-summary", async (_event, content) => {
+electron_1.ipcMain.handle(types_1.IPC_CHANNELS.GENERATE_SUMMARY, async (_event, content) => {
     const prompt = `以下のテキストを簡潔に要約してください（1-2文で）:
 
 ${content}

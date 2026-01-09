@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { app, BrowserWindow, ipcMain, Menu, shell } from "electron";
+import { IPC_CHANNELS, type AppConfig } from "./ipc/types";
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -66,7 +67,7 @@ function createMenu() {
 				{
 					label: "New Page",
 					accelerator: "CmdOrCtrl+M",
-					click: () => mainWindow?.webContents.send("new-page"),
+					click: () => mainWindow?.webContents.send(IPC_CHANNELS.NEW_PAGE),
 				},
 				{ type: "separator" },
 				{ role: "close" },
@@ -98,7 +99,7 @@ function createMenu() {
 				{ role: "togglefullscreen" },
 				{
 					label: "Toggle Dark Mode",
-					click: () => mainWindow?.webContents.send("toggle-dark"),
+					click: () => mainWindow?.webContents.send(IPC_CHANNELS.TOGGLE_DARK),
 				},
 			],
 		},
@@ -116,7 +117,7 @@ function ensureDataDir() {
 	if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-ipcMain.handle("load-pages", async () => {
+ipcMain.handle(IPC_CHANNELS.LOAD_PAGES, async () => {
 	ensureDataDir();
 	if (!fs.existsSync(dataPath)) return null;
 	try {
@@ -128,7 +129,7 @@ ipcMain.handle("load-pages", async () => {
 	}
 });
 
-ipcMain.handle("save-pages", async (_event, pages) => {
+ipcMain.handle(IPC_CHANNELS.SAVE_PAGES, async (_event, pages) => {
 	ensureDataDir();
 	try {
 		fs.writeFileSync(dataPath, JSON.stringify(pages, null, 2));
@@ -142,7 +143,7 @@ ipcMain.handle("save-pages", async (_event, pages) => {
 /* ---------- Config Persistence ---------- */
 const configPath = path.join(app.getPath("userData"), "config.json");
 
-ipcMain.handle("load-config", async () => {
+ipcMain.handle(IPC_CHANNELS.LOAD_CONFIG, async (): Promise<AppConfig> => {
 	ensureDataDir();
 	if (!fs.existsSync(configPath)) return {};
 	try {
@@ -154,7 +155,7 @@ ipcMain.handle("load-config", async () => {
 	}
 });
 
-ipcMain.handle("save-config", async (_event, config) => {
+ipcMain.handle(IPC_CHANNELS.SAVE_CONFIG, async (_event, config: AppConfig) => {
 	ensureDataDir();
 	try {
 		// Merge with existing config to avoid overwriting other settings
@@ -210,7 +211,7 @@ async function callGemini(prompt: string, type: keyof typeof MOCK_RESPONSES): Pr
 	}
 }
 
-ipcMain.handle("generate-abstraction", async (_event, fact: string) => {
+ipcMain.handle(IPC_CHANNELS.GENERATE_ABSTRACTION, async (_event, fact: string) => {
 	const prompt = `以下の「事実」から、本質的な気づきや法則を抽出してください。
 
 事実:
@@ -220,7 +221,7 @@ ${fact}
 	return callGemini(prompt, "abstraction");
 });
 
-ipcMain.handle("generate-diversion", async (_event, fact: string, abstraction: string) => {
+ipcMain.handle(IPC_CHANNELS.GENERATE_DIVERSION, async (_event, fact: string, abstraction: string) => {
 	const prompt = `以下の「抽象化」から、具体的なアクションや他の分野への応用アイデアを提案してください。
 
 事実:
@@ -233,7 +234,7 @@ ${abstraction}
 	return callGemini(prompt, "diversion");
 });
 
-ipcMain.handle("generate-summary", async (_event, content: string) => {
+ipcMain.handle(IPC_CHANNELS.GENERATE_SUMMARY, async (_event, content: string) => {
 	const prompt = `以下のテキストを簡潔に要約してください（1-2文で）:
 
 ${content}

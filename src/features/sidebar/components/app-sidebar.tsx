@@ -16,17 +16,17 @@ import {
 	Trash2,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { ModeToggle } from '@/components/common/mode-toggle'
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { ModeToggle } from '@/shared/common/mode-toggle'
+import { Button } from '@/shared/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
+} from '@/shared/ui/dropdown-menu'
+import { Input } from '@/shared/ui/input'
+import { ScrollArea } from '@/shared/ui/scroll-area'
 import type { NotePage } from '@/types/note'
 
 interface AppSidebarProps {

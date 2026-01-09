@@ -7,7 +7,7 @@ import type { DraggableData, DraggableEvent } from 'react-draggable'
 import Draggable from 'react-draggable'
 import type { ResizeCallbackData } from 'react-resizable'
 import { Resizable } from 'react-resizable'
-import { RichTextEditor } from '@/components/features/editor/rich-text-editor'
+import { RichTextEditor } from '@/features/editor/components/rich-text-editor'
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
 

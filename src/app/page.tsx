@@ -1,4 +1,4 @@
-import { HomeContent } from './_components/home-content'
+import { HomeContent } from '@/features/notes/components/home-content'
 
 export default function Home() {
 	return <HomeContent />

@@ -16,15 +16,15 @@ import {
 	Strikethrough,
 	Trash2,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { Button } from '@/shared/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
+} from '@/shared/ui/dropdown-menu'
+import { Separator } from '@/shared/ui/separator'
 
 interface RibbonToolbarProps {
 	editor: Editor | null
