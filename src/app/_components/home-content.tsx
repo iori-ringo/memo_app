@@ -174,7 +174,7 @@ export const HomeContent = () => {
 		})
 
 		const cleanupToggleDark = window.electronAPI.onToggleDark(() => {
-			setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+			setTheme(resolvedTheme === 'dark' ? 'light' : 'light')
 		})
 
 		return () => {
