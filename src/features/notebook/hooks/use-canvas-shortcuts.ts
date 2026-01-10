@@ -155,8 +155,8 @@ export const useCanvasShortcuts = ({
 					activeEditor.chain().focus().setTextAlign('left').run()
 					return
 				}
-				// Cmd+C: Align Center
-				if (e.key === 'c') {
+				// Cmd+G: Align Center
+				if (e.key === 'g') {
 					e.preventDefault()
 					activeEditor.chain().focus().setTextAlign('center').run()
 					return

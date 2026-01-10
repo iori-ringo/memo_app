@@ -148,23 +148,16 @@ export const AppSidebar = ({
 			: format(lastEdited, 'yyyy/MM/dd', { locale: ja })
 
 		return (
-			<div
+			<button
+				type="button"
 				key={page.id}
-				role="button"
-				tabIndex={0}
 				className={cn(
-					'group w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors hover:bg-accent/50 relative cursor-pointer',
+					'group w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors hover:bg-accent/50 relative cursor-pointer text-left border-0 bg-transparent',
 					activePageId === page.id && !isTrash
 						? 'bg-accent text-accent-foreground'
 						: 'text-muted-foreground'
 				)}
 				onClick={() => !isTrash && onSelectPage(page.id)}
-				onKeyDown={(e) => {
-					if (!isTrash && (e.key === 'Enter' || e.key === ' ')) {
-						e.preventDefault()
-						onSelectPage(page.id)
-					}
-				}}
 				onDoubleClick={() => !isTrash && handleStartEditing(page)}
 			>
 				<div className="flex-1 min-w-0 flex flex-col gap-0.5">
@@ -257,7 +250,7 @@ export const AppSidebar = ({
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
-			</div>
+			</button>
 		)
 	}
 
