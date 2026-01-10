@@ -25,10 +25,10 @@ const ResizeHandle = ({ position }: { position: string }) => (
 		className={cn(
 			'absolute w-3 h-3 bg-primary border border-white rounded-sm',
 			'opacity-0 group-hover:opacity-100 transition-opacity z-50',
-			position.includes('n') && '-top-1.5',
-			position.includes('s') && '-bottom-1.5',
-			position.includes('w') && '-left-1.5',
-			position.includes('e') && '-right-1.5'
+			position.includes('n') && '-top-1',
+			position.includes('s') && '-bottom-1',
+			position.includes('w') && '-left-1',
+			position.includes('e') && '-right-1'
 		)}
 	/>
 )

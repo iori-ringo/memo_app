@@ -19,6 +19,7 @@ export interface AppConfig {
 	theme?: 'light' | 'dark' | 'system'
 	lastActivePageId?: string
 	sidebarWidth?: number
+	__migrated_v2?: boolean // Internal migration flag
 }
 
 // CanvasObject 型（src/types/note.ts と同期）

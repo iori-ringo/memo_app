@@ -1,3 +1,4 @@
+import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import * as dotenv from 'dotenv'
@@ -24,7 +25,7 @@ interface ConfigStoreSchema {
 }
 
 const pagesStore = new Store<PagesStoreSchema>({
-	name: 'pages',
+	name: 'pages-store', // Changed to avoid collision with old pages.json
 	defaults: {
 		pages: [],
 	},
@@ -36,6 +37,88 @@ const configStore = new Store<ConfigStoreSchema>({
 		config: {},
 	},
 })
+
+/**
+ * Migrate data from old format (pages.json with object format) to new electron-store format
+ */
+function migrateOldData() {
+	const oldPagesPath = path.join(app.getPath('userData'), 'pages.json')
+
+	// Check if already migrated
+	const alreadyMigrated = configStore.get('config')?.__migrated_v2
+	if (alreadyMigrated) {
+		log.info('Migration already completed, skipping')
+		return
+	}
+
+	// Check if we already have data in the new store
+	const existingPages = pagesStore.get('pages')
+	if (existingPages && existingPages.length > 0) {
+		log.info('New store already has data, marking as migrated')
+		configStore.set('config', { ...configStore.get('config'), __migrated_v2: true })
+		return
+	}
+
+	// Check if old file exists and has data
+	if (!fs.existsSync(oldPagesPath)) {
+		log.info('No old pages.json found, skipping migration')
+		configStore.set('config', { ...configStore.get('config'), __migrated_v2: true })
+		return
+	}
+
+	try {
+		const rawData = fs.readFileSync(oldPagesPath, 'utf-8')
+		const oldData = JSON.parse(rawData)
+
+		// Check if it's old format (object with numeric keys starting from "0")
+		const keys = Object.keys(oldData)
+		const hasNumericKeys = keys.some((key) => !Number.isNaN(Number(key)))
+		const hasPages = Array.isArray(oldData.pages)
+
+		if (hasPages) {
+			// Already converted to new format (pages array)
+			log.info('Data is already in new array format')
+			pagesStore.set('pages', oldData.pages)
+			configStore.set('config', { ...configStore.get('config'), __migrated_v2: true })
+			return
+		}
+
+		if (!hasNumericKeys) {
+			log.info('No valid data to migrate')
+			configStore.set('config', { ...configStore.get('config'), __migrated_v2: true })
+			return
+		}
+
+		// Convert old format to array
+		const pages: NotePage[] = []
+		for (const key of keys) {
+			if (!Number.isNaN(Number(key)) && oldData[key]?.id) {
+				pages.push(oldData[key] as NotePage)
+			}
+		}
+
+		if (pages.length > 0) {
+			// Sort by updatedAt desc (most recent first)
+			pages.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+
+			// Save to electron-store
+			pagesStore.set('pages', pages)
+			log.info(`Migrated ${pages.length} pages from old format`)
+
+			// Backup old file
+			const backupPath = oldPagesPath.replace('.json', '.backup.json')
+			if (!fs.existsSync(backupPath)) {
+				fs.copyFileSync(oldPagesPath, backupPath)
+				log.info(`Created backup at ${backupPath}`)
+			}
+		}
+
+		// Mark migration as complete
+		configStore.set('config', { ...configStore.get('config'), __migrated_v2: true })
+	} catch (e) {
+		log.error('Failed to migrate old data', e)
+	}
+}
 
 let mainWindow: BrowserWindow | null = null
 
@@ -307,6 +390,10 @@ ${content}
 
 app.whenReady().then(() => {
 	log.info('App starting...')
+
+	// Migrate old data format if needed
+	migrateOldData()
+
 	createWindow()
 
 	app.on('activate', () => {

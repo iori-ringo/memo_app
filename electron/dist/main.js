@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(require("node:fs"));
 const path = __importStar(require("node:path"));
 const generative_ai_1 = require("@google/generative-ai");
 const dotenv = __importStar(require("dotenv"));
@@ -50,7 +51,7 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 electron_log_1.default.transports.file.level = 'info';
 electron_log_1.default.transports.console.level = 'debug';
 const pagesStore = new electron_store_1.default({
-    name: 'pages',
+    name: 'pages-store', // Changed to avoid collision with old pages.json
     defaults: {
         pages: [],
     },
@@ -61,6 +62,76 @@ const configStore = new electron_store_1.default({
         config: {},
     },
 });
+/**
+ * Migrate data from old format (pages.json with object format) to new electron-store format
+ */
+function migrateOldData() {
+    const oldPagesPath = path.join(electron_1.app.getPath('userData'), 'pages.json');
+    // Check if already migrated
+    const alreadyMigrated = configStore.get('config')?.__migrated_v2;
+    if (alreadyMigrated) {
+        electron_log_1.default.info('Migration already completed, skipping');
+        return;
+    }
+    // Check if we already have data in the new store
+    const existingPages = pagesStore.get('pages');
+    if (existingPages && existingPages.length > 0) {
+        electron_log_1.default.info('New store already has data, marking as migrated');
+        configStore.set('config', { ...configStore.get('config'), __migrated_v2: true });
+        return;
+    }
+    // Check if old file exists and has data
+    if (!fs.existsSync(oldPagesPath)) {
+        electron_log_1.default.info('No old pages.json found, skipping migration');
+        configStore.set('config', { ...configStore.get('config'), __migrated_v2: true });
+        return;
+    }
+    try {
+        const rawData = fs.readFileSync(oldPagesPath, 'utf-8');
+        const oldData = JSON.parse(rawData);
+        // Check if it's old format (object with numeric keys starting from "0")
+        const keys = Object.keys(oldData);
+        const hasNumericKeys = keys.some((key) => !Number.isNaN(Number(key)));
+        const hasPages = Array.isArray(oldData.pages);
+        if (hasPages) {
+            // Already converted to new format (pages array)
+            electron_log_1.default.info('Data is already in new array format');
+            pagesStore.set('pages', oldData.pages);
+            configStore.set('config', { ...configStore.get('config'), __migrated_v2: true });
+            return;
+        }
+        if (!hasNumericKeys) {
+            electron_log_1.default.info('No valid data to migrate');
+            configStore.set('config', { ...configStore.get('config'), __migrated_v2: true });
+            return;
+        }
+        // Convert old format to array
+        const pages = [];
+        for (const key of keys) {
+            if (!Number.isNaN(Number(key)) && oldData[key]?.id) {
+                pages.push(oldData[key]);
+            }
+        }
+        if (pages.length > 0) {
+            // Sort by updatedAt desc (most recent first)
+            pages.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+            // Save to electron-store
+            pagesStore.set('pages', pages);
+            electron_log_1.default.info(`Migrated ${pages.length} pages from old format`);
+            // Backup old file
+            const backupPath = oldPagesPath.replace('.json', '.backup.json');
+            if (!fs.existsSync(backupPath)) {
+                fs.copyFileSync(oldPagesPath, backupPath);
+                electron_log_1.default.info(`Created backup at ${backupPath}`);
+            }
+        }
+        // Mark migration as complete
+        configStore.set('config', { ...configStore.get('config'), __migrated_v2: true });
+    }
+    catch (e) {
+        electron_log_1.default.error('Failed to migrate old data', e);
+    }
+}
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
@@ -305,6 +376,8 @@ ${content}
 /* ---------- App Lifecycle ---------- */
 electron_1.app.whenReady().then(() => {
     electron_log_1.default.info('App starting...');
+    // Migrate old data format if needed
+    migrateOldData();
     createWindow();
     electron_1.app.on('activate', () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0)
