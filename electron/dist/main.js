@@ -32,45 +32,62 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = __importStar(require("node:fs"));
 const path = __importStar(require("node:path"));
+const generative_ai_1 = require("@google/generative-ai");
+const dotenv = __importStar(require("dotenv"));
 const electron_1 = require("electron");
+const electron_log_1 = __importDefault(require("electron-log"));
+const electron_store_1 = __importDefault(require("electron-store"));
 const types_1 = require("./ipc/types");
+// Load env vars
+dotenv.config({ path: path.join(__dirname, '../../.env.local') });
+dotenv.config({ path: path.join(__dirname, '../../.env') });
+// Configure electron-log
+electron_log_1.default.transports.file.level = 'info';
+electron_log_1.default.transports.console.level = 'debug';
+const pagesStore = new electron_store_1.default({
+    name: 'pages',
+    defaults: {
+        pages: [],
+    },
+});
+const configStore = new electron_store_1.default({
+    name: 'config',
+    defaults: {
+        config: {},
+    },
+});
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
         width: 1280,
         height: 800,
         webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
+            preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false,
+            sandbox: true,
         },
     });
     const isDev = !electron_1.app.isPackaged;
     if (isDev) {
-        mainWindow.loadURL("http://localhost:3000");
+        mainWindow.loadURL('http://localhost:3000');
         mainWindow.webContents.openDevTools();
     }
     else {
-        // In production, we load the index.html from the 'out' directory
-        // The 'out' directory is copied to the root of the app resource
-        // We need to adjust the path based on where electron-builder puts files
-        // Usually it's in the same directory as main.js or one level up
-        // Since we configured files: ["out/**/*", "electron/dist/**/*"]
-        // and main is "electron/dist/main.js"
-        // The 'out' folder should be at "../../out/index.html" relative to main.js?
-        // Or just path.join(__dirname, '../../out/index.html')
-        mainWindow.loadFile(path.join(__dirname, "../../out/index.html"));
+        mainWindow.loadFile(path.join(__dirname, '../../out/index.html'));
     }
     // Open external links in browser
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-        if (url.startsWith("http")) {
+        if (url.startsWith('http')) {
             electron_1.shell.openExternal(url);
-            return { action: "deny" };
+            return { action: 'deny' };
         }
-        return { action: "allow" };
+        return { action: 'allow' };
     });
     createMenu();
 }
@@ -79,55 +96,55 @@ function createMenu() {
         {
             label: electron_1.app.name,
             submenu: [
-                { role: "about" },
-                { type: "separator" },
-                { role: "services" },
-                { type: "separator" },
-                { role: "hide" },
-                { role: "hideOthers" },
-                { role: "unhide" },
-                { type: "separator" },
-                { role: "quit" },
+                { role: 'about' },
+                { type: 'separator' },
+                { role: 'services' },
+                { type: 'separator' },
+                { role: 'hide' },
+                { role: 'hideOthers' },
+                { role: 'unhide' },
+                { type: 'separator' },
+                { role: 'quit' },
             ],
         },
         {
-            label: "File",
+            label: 'File',
             submenu: [
                 {
-                    label: "New Page",
-                    accelerator: "CmdOrCtrl+M",
+                    label: 'New Page',
+                    accelerator: 'CmdOrCtrl+M',
                     click: () => mainWindow?.webContents.send(types_1.IPC_CHANNELS.NEW_PAGE),
                 },
-                { type: "separator" },
-                { role: "close" },
+                { type: 'separator' },
+                { role: 'close' },
             ],
         },
         {
-            label: "Edit",
+            label: 'Edit',
             submenu: [
-                { role: "undo" },
-                { role: "redo" },
-                { type: "separator" },
-                { role: "cut" },
-                { role: "copy" },
-                { role: "paste" },
-                { role: "selectAll" },
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                { role: 'selectAll' },
             ],
         },
         {
-            label: "View",
+            label: 'View',
             submenu: [
-                { role: "reload" },
-                { role: "forceReload" },
-                { role: "toggleDevTools" },
-                { type: "separator" },
-                { role: "resetZoom" },
-                { role: "zoomIn" },
-                { role: "zoomOut" },
-                { type: "separator" },
-                { role: "togglefullscreen" },
+                { role: 'reload' },
+                { role: 'forceReload' },
+                { role: 'toggleDevTools' },
+                { type: 'separator' },
+                { role: 'resetZoom' },
+                { role: 'zoomIn' },
+                { role: 'zoomOut' },
+                { type: 'separator' },
+                { role: 'togglefullscreen' },
                 {
-                    label: "Toggle Dark Mode",
+                    label: 'Toggle Dark Mode',
                     click: () => mainWindow?.webContents.send(types_1.IPC_CHANNELS.TOGGLE_DARK),
                 },
             ],
@@ -136,85 +153,97 @@ function createMenu() {
     const menu = electron_1.Menu.buildFromTemplate(template);
     electron_1.Menu.setApplicationMenu(menu);
 }
-/* ---------- Data Persistence ---------- */
-const dataPath = path.join(electron_1.app.getPath("userData"), "pages.json");
-function ensureDataDir() {
-    const dir = path.dirname(dataPath);
-    if (!fs.existsSync(dir))
-        fs.mkdirSync(dir, { recursive: true });
+/* ---------- Validation Helpers ---------- */
+function isValidNotePage(page) {
+    if (typeof page !== 'object' || page === null)
+        return false;
+    const p = page;
+    return (typeof p.id === 'string' &&
+        typeof p.title === 'string' &&
+        typeof p.notebookId === 'string' &&
+        Array.isArray(p.tags) &&
+        typeof p.createdAt === 'number' &&
+        typeof p.updatedAt === 'number');
 }
+function isValidPages(pages) {
+    return Array.isArray(pages) && pages.every(isValidNotePage);
+}
+function isValidAppConfig(config) {
+    if (typeof config !== 'object' || config === null)
+        return false;
+    const c = config;
+    if (c.theme !== undefined && !['light', 'dark', 'system'].includes(c.theme))
+        return false;
+    if (c.lastActivePageId !== undefined && typeof c.lastActivePageId !== 'string')
+        return false;
+    if (c.sidebarWidth !== undefined && typeof c.sidebarWidth !== 'number')
+        return false;
+    return true;
+}
+/* ---------- Data Persistence ---------- */
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.LOAD_PAGES, async () => {
-    ensureDataDir();
-    if (!fs.existsSync(dataPath))
-        return null;
     try {
-        const raw = fs.readFileSync(dataPath, "utf-8");
-        return JSON.parse(raw);
+        const pages = pagesStore.get('pages');
+        electron_log_1.default.info('Loaded pages data', { count: pages?.length ?? 0 });
+        return pages;
     }
     catch (e) {
-        console.error("Failed to read pages.json", e);
+        electron_log_1.default.error('Failed to load pages', e);
         return null;
     }
 });
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.SAVE_PAGES, async (_event, pages) => {
-    ensureDataDir();
+    if (!isValidPages(pages)) {
+        electron_log_1.default.warn('Invalid pages format received', { type: typeof pages });
+        return false;
+    }
     try {
-        fs.writeFileSync(dataPath, JSON.stringify(pages, null, 2));
+        pagesStore.set('pages', pages);
+        electron_log_1.default.info('Saved pages data', { count: pages.length });
         return true;
     }
     catch (e) {
-        console.error("Failed to write pages.json", e);
+        electron_log_1.default.error('Failed to save pages', e);
         return false;
     }
 });
 /* ---------- Config Persistence ---------- */
-const configPath = path.join(electron_1.app.getPath("userData"), "config.json");
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.LOAD_CONFIG, async () => {
-    ensureDataDir();
-    if (!fs.existsSync(configPath))
-        return {};
     try {
-        const raw = fs.readFileSync(configPath, "utf-8");
-        return JSON.parse(raw);
+        const config = configStore.get('config');
+        electron_log_1.default.info('Loaded config');
+        return config;
     }
     catch (e) {
-        console.error("Failed to read config.json", e);
+        electron_log_1.default.error('Failed to load config', e);
         return {};
     }
 });
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.SAVE_CONFIG, async (_event, config) => {
-    ensureDataDir();
+    if (!isValidAppConfig(config)) {
+        electron_log_1.default.warn('Invalid config format received', { type: typeof config });
+        return false;
+    }
     try {
-        // Merge with existing config to avoid overwriting other settings
-        let existingConfig = {};
-        if (fs.existsSync(configPath)) {
-            try {
-                existingConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-            }
-            catch (e) {
-                // Ignore error if file is corrupted
-            }
-        }
+        // Merge with existing config
+        const existingConfig = configStore.get('config');
         const newConfig = { ...existingConfig, ...config };
-        fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
+        configStore.set('config', newConfig);
+        electron_log_1.default.info('Saved config');
         return true;
     }
     catch (e) {
-        console.error("Failed to write config.json", e);
+        electron_log_1.default.error('Failed to save config', e);
         return false;
     }
 });
-const generative_ai_1 = require("@google/generative-ai");
-const dotenv = __importStar(require("dotenv"));
-// Load env vars
-dotenv.config({ path: path.join(__dirname, "../../.env.local") });
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+/* ---------- AI Features ---------- */
 const API_KEY = process.env.GEMINI_API_KEY;
 const genAI = API_KEY ? new generative_ai_1.GoogleGenerativeAI(API_KEY) : null;
 const MOCK_RESPONSES = {
-    abstraction: "これは抽象化のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。",
-    diversion: "これは転用のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。",
-    summary: "これは要約のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。",
+    abstraction: 'これは抽象化のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。',
+    diversion: 'これは転用のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。',
+    summary: 'これは要約のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。',
 };
 async function callGemini(prompt, type) {
     if (!genAI) {
@@ -222,26 +251,34 @@ async function callGemini(prompt, type) {
         return MOCK_RESPONSES[type];
     }
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         return response.text();
     }
     catch (error) {
-        console.error("Gemini API error:", error);
-        throw new Error("AI生成に失敗しました。");
+        electron_log_1.default.error('Gemini API error:', error);
+        throw new Error('AI生成に失敗しました。');
     }
 }
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.GENERATE_ABSTRACTION, async (_event, fact) => {
+    if (typeof fact !== 'string') {
+        electron_log_1.default.warn('Invalid fact format for abstraction');
+        throw new Error('Invalid input');
+    }
     const prompt = `以下の「事実」から、本質的な気づきや法則を抽出してください。
 
 事実:
 ${fact}
 
 抽象化（気づき・法則・本質）:`;
-    return callGemini(prompt, "abstraction");
+    return callGemini(prompt, 'abstraction');
 });
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.GENERATE_DIVERSION, async (_event, fact, abstraction) => {
+    if (typeof fact !== 'string' || typeof abstraction !== 'string') {
+        electron_log_1.default.warn('Invalid input format for diversion');
+        throw new Error('Invalid input');
+    }
     const prompt = `以下の「抽象化」から、具体的なアクションや他の分野への応用アイデアを提案してください。
 
 事実:
@@ -251,24 +288,30 @@ ${fact}
 ${abstraction}
 
 転用（アクション・適用アイデア）:`;
-    return callGemini(prompt, "diversion");
+    return callGemini(prompt, 'diversion');
 });
 electron_1.ipcMain.handle(types_1.IPC_CHANNELS.GENERATE_SUMMARY, async (_event, content) => {
+    if (typeof content !== 'string') {
+        electron_log_1.default.warn('Invalid content format for summary');
+        throw new Error('Invalid input');
+    }
     const prompt = `以下のテキストを簡潔に要約してください（1-2文で）:
 
 ${content}
 
 要約:`;
-    return callGemini(prompt, "summary");
+    return callGemini(prompt, 'summary');
 });
+/* ---------- App Lifecycle ---------- */
 electron_1.app.whenReady().then(() => {
+    electron_log_1.default.info('App starting...');
     createWindow();
-    electron_1.app.on("activate", () => {
+    electron_1.app.on('activate', () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0)
             createWindow();
     });
 });
-electron_1.app.on("window-all-closed", () => {
-    if (process.platform !== "darwin")
+electron_1.app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin')
         electron_1.app.quit();
 });

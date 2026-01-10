@@ -1,48 +1,75 @@
-import * as fs from "node:fs";
-import * as path from "node:path";
-import { app, BrowserWindow, ipcMain, Menu, shell } from "electron";
-import { IPC_CHANNELS, type AppConfig } from "./ipc/types";
+import * as path from 'node:path'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import * as dotenv from 'dotenv'
+import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
+import log from 'electron-log'
+import Store from 'electron-store'
+import { type AppConfig, IPC_CHANNELS, type NotePage } from './ipc/types'
 
-let mainWindow: BrowserWindow | null = null;
+// Load env vars
+dotenv.config({ path: path.join(__dirname, '../../.env.local') })
+dotenv.config({ path: path.join(__dirname, '../../.env') })
+
+// Configure electron-log
+log.transports.file.level = 'info'
+log.transports.console.level = 'debug'
+
+// Type-safe stores
+interface PagesStoreSchema {
+	pages: NotePage[]
+}
+
+interface ConfigStoreSchema {
+	config: AppConfig
+}
+
+const pagesStore = new Store<PagesStoreSchema>({
+	name: 'pages',
+	defaults: {
+		pages: [],
+	},
+})
+
+const configStore = new Store<ConfigStoreSchema>({
+	name: 'config',
+	defaults: {
+		config: {},
+	},
+})
+
+let mainWindow: BrowserWindow | null = null
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 800,
 		webPreferences: {
-			preload: path.join(__dirname, "preload.js"),
+			preload: path.join(__dirname, 'preload.js'),
 			contextIsolation: true,
 			nodeIntegration: false,
+			sandbox: true,
 		},
-	});
+	})
 
-	const isDev = !app.isPackaged;
+	const isDev = !app.isPackaged
 
 	if (isDev) {
-		mainWindow.loadURL("http://localhost:3000");
-		mainWindow.webContents.openDevTools();
+		mainWindow.loadURL('http://localhost:3000')
+		mainWindow.webContents.openDevTools()
 	} else {
-		// In production, we load the index.html from the 'out' directory
-		// The 'out' directory is copied to the root of the app resource
-		// We need to adjust the path based on where electron-builder puts files
-		// Usually it's in the same directory as main.js or one level up
-		// Since we configured files: ["out/**/*", "electron/dist/**/*"]
-		// and main is "electron/dist/main.js"
-		// The 'out' folder should be at "../../out/index.html" relative to main.js?
-		// Or just path.join(__dirname, '../../out/index.html')
-		mainWindow.loadFile(path.join(__dirname, "../../out/index.html"));
+		mainWindow.loadFile(path.join(__dirname, '../../out/index.html'))
 	}
 
 	// Open external links in browser
 	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-		if (url.startsWith("http")) {
-			shell.openExternal(url);
-			return { action: "deny" };
+		if (url.startsWith('http')) {
+			shell.openExternal(url)
+			return { action: 'deny' }
 		}
-		return { action: "allow" };
-	});
+		return { action: 'allow' }
+	})
 
-	createMenu();
+	createMenu()
 }
 
 function createMenu() {
@@ -50,179 +77,207 @@ function createMenu() {
 		{
 			label: app.name,
 			submenu: [
-				{ role: "about" },
-				{ type: "separator" },
-				{ role: "services" },
-				{ type: "separator" },
-				{ role: "hide" },
-				{ role: "hideOthers" },
-				{ role: "unhide" },
-				{ type: "separator" },
-				{ role: "quit" },
+				{ role: 'about' },
+				{ type: 'separator' },
+				{ role: 'services' },
+				{ type: 'separator' },
+				{ role: 'hide' },
+				{ role: 'hideOthers' },
+				{ role: 'unhide' },
+				{ type: 'separator' },
+				{ role: 'quit' },
 			],
 		},
 		{
-			label: "File",
+			label: 'File',
 			submenu: [
 				{
-					label: "New Page",
-					accelerator: "CmdOrCtrl+M",
+					label: 'New Page',
+					accelerator: 'CmdOrCtrl+M',
 					click: () => mainWindow?.webContents.send(IPC_CHANNELS.NEW_PAGE),
 				},
-				{ type: "separator" },
-				{ role: "close" },
+				{ type: 'separator' },
+				{ role: 'close' },
 			],
 		},
 		{
-			label: "Edit",
+			label: 'Edit',
 			submenu: [
-				{ role: "undo" },
-				{ role: "redo" },
-				{ type: "separator" },
-				{ role: "cut" },
-				{ role: "copy" },
-				{ role: "paste" },
-				{ role: "selectAll" },
+				{ role: 'undo' },
+				{ role: 'redo' },
+				{ type: 'separator' },
+				{ role: 'cut' },
+				{ role: 'copy' },
+				{ role: 'paste' },
+				{ role: 'selectAll' },
 			],
 		},
 		{
-			label: "View",
+			label: 'View',
 			submenu: [
-				{ role: "reload" },
-				{ role: "forceReload" },
-				{ role: "toggleDevTools" },
-				{ type: "separator" },
-				{ role: "resetZoom" },
-				{ role: "zoomIn" },
-				{ role: "zoomOut" },
-				{ type: "separator" },
-				{ role: "togglefullscreen" },
+				{ role: 'reload' },
+				{ role: 'forceReload' },
+				{ role: 'toggleDevTools' },
+				{ type: 'separator' },
+				{ role: 'resetZoom' },
+				{ role: 'zoomIn' },
+				{ role: 'zoomOut' },
+				{ type: 'separator' },
+				{ role: 'togglefullscreen' },
 				{
-					label: "Toggle Dark Mode",
+					label: 'Toggle Dark Mode',
 					click: () => mainWindow?.webContents.send(IPC_CHANNELS.TOGGLE_DARK),
 				},
 			],
 		},
-	];
+	]
 
-	const menu = Menu.buildFromTemplate(template);
-	Menu.setApplicationMenu(menu);
+	const menu = Menu.buildFromTemplate(template)
+	Menu.setApplicationMenu(menu)
+}
+
+/* ---------- Validation Helpers ---------- */
+
+function isValidNotePage(page: unknown): page is NotePage {
+	if (typeof page !== 'object' || page === null) return false
+	const p = page as NotePage
+	return (
+		typeof p.id === 'string' &&
+		typeof p.title === 'string' &&
+		typeof p.notebookId === 'string' &&
+		Array.isArray(p.tags) &&
+		typeof p.createdAt === 'number' &&
+		typeof p.updatedAt === 'number'
+	)
+}
+
+function isValidPages(pages: unknown): pages is NotePage[] {
+	return Array.isArray(pages) && pages.every(isValidNotePage)
+}
+
+function isValidAppConfig(config: unknown): config is AppConfig {
+	if (typeof config !== 'object' || config === null) return false
+	const c = config as AppConfig
+	if (c.theme !== undefined && !['light', 'dark', 'system'].includes(c.theme)) return false
+	if (c.lastActivePageId !== undefined && typeof c.lastActivePageId !== 'string') return false
+	if (c.sidebarWidth !== undefined && typeof c.sidebarWidth !== 'number') return false
+	return true
 }
 
 /* ---------- Data Persistence ---------- */
-const dataPath = path.join(app.getPath("userData"), "pages.json");
 
-function ensureDataDir() {
-	const dir = path.dirname(dataPath);
-	if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-
-ipcMain.handle(IPC_CHANNELS.LOAD_PAGES, async () => {
-	ensureDataDir();
-	if (!fs.existsSync(dataPath)) return null;
+ipcMain.handle(IPC_CHANNELS.LOAD_PAGES, async (): Promise<NotePage[] | null> => {
 	try {
-		const raw = fs.readFileSync(dataPath, "utf-8");
-		return JSON.parse(raw);
+		const pages = pagesStore.get('pages')
+		log.info('Loaded pages data', { count: pages?.length ?? 0 })
+		return pages
 	} catch (e) {
-		console.error("Failed to read pages.json", e);
-		return null;
+		log.error('Failed to load pages', e)
+		return null
 	}
-});
+})
 
-ipcMain.handle(IPC_CHANNELS.SAVE_PAGES, async (_event, pages) => {
-	ensureDataDir();
-	try {
-		fs.writeFileSync(dataPath, JSON.stringify(pages, null, 2));
-		return true;
-	} catch (e) {
-		console.error("Failed to write pages.json", e);
-		return false;
+ipcMain.handle(IPC_CHANNELS.SAVE_PAGES, async (_event, pages: unknown): Promise<boolean> => {
+	if (!isValidPages(pages)) {
+		log.warn('Invalid pages format received', { type: typeof pages })
+		return false
 	}
-});
+	try {
+		pagesStore.set('pages', pages)
+		log.info('Saved pages data', { count: pages.length })
+		return true
+	} catch (e) {
+		log.error('Failed to save pages', e)
+		return false
+	}
+})
 
 /* ---------- Config Persistence ---------- */
-const configPath = path.join(app.getPath("userData"), "config.json");
 
 ipcMain.handle(IPC_CHANNELS.LOAD_CONFIG, async (): Promise<AppConfig> => {
-	ensureDataDir();
-	if (!fs.existsSync(configPath)) return {};
 	try {
-		const raw = fs.readFileSync(configPath, "utf-8");
-		return JSON.parse(raw);
+		const config = configStore.get('config')
+		log.info('Loaded config')
+		return config
 	} catch (e) {
-		console.error("Failed to read config.json", e);
-		return {};
+		log.error('Failed to load config', e)
+		return {}
 	}
-});
+})
 
-ipcMain.handle(IPC_CHANNELS.SAVE_CONFIG, async (_event, config: AppConfig) => {
-	ensureDataDir();
+ipcMain.handle(IPC_CHANNELS.SAVE_CONFIG, async (_event, config: unknown): Promise<boolean> => {
+	if (!isValidAppConfig(config)) {
+		log.warn('Invalid config format received', { type: typeof config })
+		return false
+	}
 	try {
-		// Merge with existing config to avoid overwriting other settings
-		let existingConfig = {};
-		if (fs.existsSync(configPath)) {
-			try {
-				existingConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-			} catch (e) {
-				// Ignore error if file is corrupted
-			}
-		}
-		const newConfig = { ...existingConfig, ...config };
-		fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
-		return true;
+		// Merge with existing config
+		const existingConfig = configStore.get('config')
+		const newConfig = { ...existingConfig, ...config }
+		configStore.set('config', newConfig)
+		log.info('Saved config')
+		return true
 	} catch (e) {
-		console.error("Failed to write config.json", e);
-		return false;
+		log.error('Failed to save config', e)
+		return false
 	}
-});
+})
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import * as dotenv from "dotenv";
+/* ---------- AI Features ---------- */
 
-// Load env vars
-dotenv.config({ path: path.join(__dirname, "../../.env.local") });
-dotenv.config({ path: path.join(__dirname, "../../.env") });
-
-const API_KEY = process.env.GEMINI_API_KEY;
-const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
+const API_KEY = process.env.GEMINI_API_KEY
+const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null
 
 const MOCK_RESPONSES = {
 	abstraction:
-		"これは抽象化のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。",
+		'これは抽象化のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。',
 	diversion:
-		"これは転用のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。",
+		'これは転用のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。',
 	summary:
-		"これは要約のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。",
-};
+		'これは要約のサンプルテキストです。実際のAI機能を使用するには、.env.localファイルにGEMINI_API_KEYを設定してください。',
+}
 
 async function callGemini(prompt: string, type: keyof typeof MOCK_RESPONSES): Promise<string> {
 	if (!genAI) {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		return MOCK_RESPONSES[type];
+		await new Promise((resolve) => setTimeout(resolve, 1000))
+		return MOCK_RESPONSES[type]
 	}
 	try {
-		const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-		const result = await model.generateContent(prompt);
-		const response = await result.response;
-		return response.text();
+		const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+		const result = await model.generateContent(prompt)
+		const response = await result.response
+		return response.text()
 	} catch (error) {
-		console.error("Gemini API error:", error);
-		throw new Error("AI生成に失敗しました。");
+		log.error('Gemini API error:', error)
+		throw new Error('AI生成に失敗しました。')
 	}
 }
 
-ipcMain.handle(IPC_CHANNELS.GENERATE_ABSTRACTION, async (_event, fact: string) => {
-	const prompt = `以下の「事実」から、本質的な気づきや法則を抽出してください。
+ipcMain.handle(
+	IPC_CHANNELS.GENERATE_ABSTRACTION,
+	async (_event, fact: unknown): Promise<string> => {
+		if (typeof fact !== 'string') {
+			log.warn('Invalid fact format for abstraction')
+			throw new Error('Invalid input')
+		}
+		const prompt = `以下の「事実」から、本質的な気づきや法則を抽出してください。
 
 事実:
 ${fact}
 
-抽象化（気づき・法則・本質）:`;
-	return callGemini(prompt, "abstraction");
-});
+抽象化（気づき・法則・本質）:`
+		return callGemini(prompt, 'abstraction')
+	}
+)
 
-ipcMain.handle(IPC_CHANNELS.GENERATE_DIVERSION, async (_event, fact: string, abstraction: string) => {
-	const prompt = `以下の「抽象化」から、具体的なアクションや他の分野への応用アイデアを提案してください。
+ipcMain.handle(
+	IPC_CHANNELS.GENERATE_DIVERSION,
+	async (_event, fact: unknown, abstraction: unknown): Promise<string> => {
+		if (typeof fact !== 'string' || typeof abstraction !== 'string') {
+			log.warn('Invalid input format for diversion')
+			throw new Error('Invalid input')
+		}
+		const prompt = `以下の「抽象化」から、具体的なアクションや他の分野への応用アイデアを提案してください。
 
 事実:
 ${fact}
@@ -230,27 +285,35 @@ ${fact}
 抽象化:
 ${abstraction}
 
-転用（アクション・適用アイデア）:`;
-	return callGemini(prompt, "diversion");
-});
+転用（アクション・適用アイデア）:`
+		return callGemini(prompt, 'diversion')
+	}
+)
 
-ipcMain.handle(IPC_CHANNELS.GENERATE_SUMMARY, async (_event, content: string) => {
+ipcMain.handle(IPC_CHANNELS.GENERATE_SUMMARY, async (_event, content: unknown): Promise<string> => {
+	if (typeof content !== 'string') {
+		log.warn('Invalid content format for summary')
+		throw new Error('Invalid input')
+	}
 	const prompt = `以下のテキストを簡潔に要約してください（1-2文で）:
 
 ${content}
 
-要約:`;
-	return callGemini(prompt, "summary");
-});
+要約:`
+	return callGemini(prompt, 'summary')
+})
+
+/* ---------- App Lifecycle ---------- */
 
 app.whenReady().then(() => {
-	createWindow();
+	log.info('App starting...')
+	createWindow()
 
-	app.on("activate", () => {
-		if (BrowserWindow.getAllWindows().length === 0) createWindow();
-	});
-});
+	app.on('activate', () => {
+		if (BrowserWindow.getAllWindows().length === 0) createWindow()
+	})
+})
 
-app.on("window-all-closed", () => {
-	if (process.platform !== "darwin") app.quit();
-});
+app.on('window-all-closed', () => {
+	if (process.platform !== 'darwin') app.quit()
+})

@@ -2,16 +2,12 @@
 
 import type { Editor } from '@tiptap/react'
 import { GripVertical } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import type { DraggableData, DraggableEvent } from 'react-draggable'
-import Draggable from 'react-draggable'
-import type { ResizeCallbackData } from 'react-resizable'
-import { Resizable } from 'react-resizable'
+import { useCallback, useEffect, useState } from 'react'
+import type { DraggableData, Position, ResizableDelta, RndResizeCallback } from 'react-rnd'
+import { Rnd } from 'react-rnd'
 import { RichTextEditor } from '@/features/editor/components/rich-text-editor'
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
-
-import 'react-resizable/css/styles.css'
 
 interface TextBlockProps {
 	object: CanvasObject
@@ -23,6 +19,20 @@ interface TextBlockProps {
 	isPenMode?: boolean
 }
 
+// Custom resize handle component
+const ResizeHandle = ({ position }: { position: string }) => (
+	<div
+		className={cn(
+			'absolute w-3 h-3 bg-primary border border-white rounded-sm',
+			'opacity-0 group-hover:opacity-100 transition-opacity z-50',
+			position.includes('n') && '-top-1.5',
+			position.includes('s') && '-bottom-1.5',
+			position.includes('w') && '-left-1.5',
+			position.includes('e') && '-right-1.5'
+		)}
+	/>
+)
+
 export const TextBlock = ({
 	object,
 	onUpdate,
@@ -32,97 +42,110 @@ export const TextBlock = ({
 	onEditorReady,
 	isPenMode,
 }: TextBlockProps) => {
-	const [currentSize, setCurrentSize] = useState({
-		width: object.width,
-		height: object.height,
-	})
-	const [currentPos, setCurrentPos] = useState({ x: object.x, y: object.y })
-	const nodeRef = useRef<HTMLDivElement>(null)
+	const [position, setPosition] = useState({ x: object.x, y: object.y })
+	const [size, setSize] = useState({ width: object.width, height: object.height })
 
-	// Update local state when object changes
+	// Sync with external object changes
 	useEffect(() => {
-		setCurrentSize({ width: object.width, height: object.height })
-		setCurrentPos({ x: object.x, y: object.y })
-	}, [object.width, object.height, object.x, object.y])
+		setPosition({ x: object.x, y: object.y })
+		setSize({ width: object.width, height: object.height })
+	}, [object.x, object.y, object.width, object.height])
 
-	const handleDrag = (_e: DraggableEvent, data: DraggableData) => {
-		setCurrentPos({ x: data.x, y: data.y })
-	}
+	const handleDragStop = useCallback(
+		(_e: unknown, data: DraggableData) => {
+			const newPos = { x: data.x, y: data.y }
+			setPosition(newPos)
+			onUpdate(object.id, newPos)
+		},
+		[object.id, onUpdate]
+	)
 
-	const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
-		setCurrentPos({ x: data.x, y: data.y })
-		onUpdate(object.id, { x: data.x, y: data.y })
-	}
+	const handleResizeStop: RndResizeCallback = useCallback(
+		(_e, _direction, ref, _delta: ResizableDelta, newPosition: Position) => {
+			const newSize = {
+				width: ref.offsetWidth,
+				height: ref.offsetHeight,
+			}
+			setSize(newSize)
+			setPosition(newPosition)
+			onUpdate(object.id, {
+				...newSize,
+				x: newPosition.x,
+				y: newPosition.y,
+			})
+		},
+		[object.id, onUpdate]
+	)
 
-	const handleResize = (_e: React.SyntheticEvent, data: ResizeCallbackData) => {
-		const { size, handle } = data
+	const handleClick = useCallback(
+		(e: React.MouseEvent) => {
+			if (!isPenMode) {
+				e.stopPropagation()
+				onSelect?.(object.id)
+			}
+		},
+		[isPenMode, object.id, onSelect]
+	)
 
-		// Calculate position change based on handle
-		// If resizing from left (w) or top (n), we need to adjust position
-		let newX = currentPos.x
-		let newY = currentPos.y
-
-		if (handle.includes('w')) {
-			newX = currentPos.x + (currentSize.width - size.width)
-		}
-		if (handle.includes('n')) {
-			newY = currentPos.y + (currentSize.height - size.height)
-		}
-
-		setCurrentSize({ width: size.width, height: size.height })
-		setCurrentPos({ x: newX, y: newY })
-	}
-
-	const handleResizeStop = (_e: React.SyntheticEvent, data: ResizeCallbackData) => {
-		const { size } = data
-
-		// Commit the current local state to the parent
-		onUpdate(object.id, {
-			width: size.width,
-			height: size.height,
-			x: currentPos.x,
-			y: currentPos.y,
-		})
-	}
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent) => {
+			if (!isPenMode && (e.key === 'Enter' || e.key === ' ')) {
+				e.preventDefault()
+				e.stopPropagation()
+				onSelect?.(object.id)
+			}
+		},
+		[isPenMode, object.id, onSelect]
+	)
 
 	return (
-		<Draggable
-			nodeRef={nodeRef}
-			position={{ x: currentPos.x, y: currentPos.y }}
-			onDrag={handleDrag}
-			onStop={handleDragStop}
-			handle=".drag-handle"
+		<Rnd
+			position={position}
+			size={size}
+			onDragStop={handleDragStop}
+			onResizeStop={handleResizeStop}
+			dragHandleClassName="drag-handle"
 			bounds="parent"
-			disabled={isPenMode}
-			cancel=".react-resizable-handle"
+			disableDragging={isPenMode}
+			minWidth={50}
+			minHeight={30}
+			maxWidth={800}
+			maxHeight={800}
+			enableResizing={
+				isPenMode
+					? false
+					: {
+							topLeft: true,
+							topRight: true,
+							bottomLeft: true,
+							bottomRight: true,
+							top: false,
+							right: false,
+							bottom: false,
+							left: false,
+						}
+			}
+			resizeHandleComponent={{
+				topLeft: <ResizeHandle position="nw" />,
+				topRight: <ResizeHandle position="ne" />,
+				bottomLeft: <ResizeHandle position="sw" />,
+				bottomRight: <ResizeHandle position="se" />,
+			}}
+			className={cn(
+				'flex flex-col bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm rounded-md border shadow-sm transition-shadow group',
+				isSelected
+					? 'border-primary ring-1 ring-primary z-20'
+					: 'border-transparent hover:border-stone-300 dark:hover:border-stone-700 z-10',
+				'hover:shadow-md'
+			)}
+			style={{
+				pointerEvents: isPenMode ? 'none' : 'auto',
+			}}
 		>
 			<section
-				ref={nodeRef}
-				className={cn(
-					'absolute flex flex-col bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm rounded-md border shadow-sm transition-shadow group',
-					isSelected
-						? 'border-primary ring-1 ring-primary z-20'
-						: 'border-transparent hover:border-stone-300 dark:hover:border-stone-700 z-10',
-					'hover:shadow-md'
-				)}
-				style={{
-					width: currentSize.width,
-					height: currentSize.height,
-					pointerEvents: isPenMode ? 'none' : 'auto',
-				}}
-				onClick={(e) => {
-					if (!isPenMode) {
-						e.stopPropagation()
-						onSelect?.(object.id)
-					}
-				}}
-				onKeyDown={(e) => {
-					if (!isPenMode && (e.key === 'Enter' || e.key === ' ')) {
-						e.preventDefault()
-						e.stopPropagation()
-						onSelect?.(object.id)
-					}
-				}}
+				className="w-full h-full relative"
+				onClick={handleClick}
+				onKeyDown={handleKeyDown}
 				tabIndex={isPenMode ? -1 : 0}
 				aria-label="Text block"
 			>
@@ -136,44 +159,17 @@ export const TextBlock = ({
 					<GripVertical className="w-3 h-3 text-muted-foreground" />
 				</div>
 
-				<Resizable
-					width={currentSize.width}
-					height={currentSize.height}
-					onResize={handleResize}
-					onResizeStop={handleResizeStop}
-					minConstraints={[50, 30]}
-					maxConstraints={[800, 800]}
-					resizeHandles={['nw', 'ne', 'sw', 'se']}
-					handle={(h, ref) => (
-						<div
-							ref={ref}
-							className={`react-resizable-handle react-resizable-handle-${h} absolute w-3 h-3 bg-primary border border-white rounded-sm opacity-0 group-hover:opacity-100 transition-opacity z-50 cursor-${h}-resize`}
-							style={{
-								top: h.includes('n') ? '-6px' : undefined,
-								bottom: h.includes('s') ? '-6px' : undefined,
-								left: h.includes('w') ? '-6px' : undefined,
-								right: h.includes('e') ? '-6px' : undefined,
-							}}
-						/>
-					)}
-				>
-					<div
-						style={{
-							width: `${currentSize.width}px`,
-							height: `${currentSize.height}px`,
-						}}
-						className="overflow-hidden p-2 relative"
-					>
-						<RichTextEditor
-							content={object.content}
-							onChange={(content) => onUpdate(object.id, { content })}
-							className="h-full w-full focus:outline-none"
-							variant="canvas"
-							onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
-						/>
-					</div>
-				</Resizable>
+				{/* Content */}
+				<div className="w-full h-full overflow-hidden p-2">
+					<RichTextEditor
+						content={object.content}
+						onChange={(content) => onUpdate(object.id, { content })}
+						className="h-full w-full focus:outline-none"
+						variant="canvas"
+						onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
+					/>
+				</div>
 			</section>
-		</Draggable>
+		</Rnd>
 	)
 }
