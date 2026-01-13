@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Magic Memo
 
-## Getting Started
+macOS 向けのデスクトップメモアプリケーション。Electron + Next.js で構築されています。
 
-First, run the development server:
+## 技術スタック
+
+- **フロントエンド**: Next.js 16 + React 19 + TypeScript
+- **デスクトップ**: Electron 39
+- **スタイリング**: Tailwind CSS 4 + shadcn/ui
+- **エディタ**: Tiptap (リッチテキスト)
+- **AI機能**: Google Gemini API
+- **リント/フォーマット**: Biome
+
+## 開発環境のセットアップ
+
+### 1. 依存関係のインストール
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. 環境変数の設定
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`.env.local` ファイルを作成し、以下を設定:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env.local
+# エディタで .env.local を開き、APIキーを設定
+```
 
-## Learn More
+### 3. 開発サーバーの起動
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Electron + Next.js 開発サーバー
+npm run electron:dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## コマンド一覧
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| コマンド | 説明 |
+|---------|-----|
+| `npm run electron:dev` | 開発サーバー起動（Electron + Next.js） |
+| `npm run electron:build` | 本番ビルド（dmg生成） |
+| `npm run dev` | Next.js 開発サーバーのみ |
+| `npm run build` | Next.js ビルドのみ |
+| `npm run lint` | Biome によるリント |
+| `npm run lint:fix` | リントエラーの自動修正 |
+| `npm run format` | コードフォーマット |
 
-## Deploy on Vercel
+## ディレクトリ構造
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+memo_app/
+├── electron/           # Electron メインプロセス
+│   ├── main.ts         # エントリーポイント
+│   ├── preload.ts      # プリロードスクリプト
+│   └── ipc/            # IPC 型定義
+├── src/
+│   ├── app/            # Next.js App Router
+│   ├── features/       # 機能別モジュール
+│   │   ├── editor/     # リッチテキストエディタ
+│   │   ├── notebook/   # ノートブックキャンバス
+│   │   ├── notes/      # ノート管理
+│   │   └── sidebar/    # サイドバー
+│   ├── shared/         # 共有コンポーネント
+│   ├── lib/            # ユーティリティ
+│   └── types/          # 型定義
+├── public/             # 静的ファイル
+└── assets/             # アプリアイコン等
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ショートカットキー
+
+| ショートカット | 機能 |
+|--------------|-----|
+| `Cmd+M` | 新規ページ作成 |
+| `Cmd+Z` | 元に戻す |
+| `Cmd+Shift+Z` | やり直し |
+| `Cmd+C/V/X` | コピー/ペースト/カット |
+
+## トラブルシューティング
+
+### Electron が起動しない
+
+```bash
+# Next.js のビルドを確認
+npm run build
+
+# electron/dist を再生成
+npx tsc -p electron
+```
+
+### ポート 3000 が使用中
+
+```bash
+# 使用中のプロセスを確認
+lsof -i :3000
+
+# プロセスを終了
+kill -9 <PID>
+```
+
+## ライセンス
+
+Private - All rights reserved
