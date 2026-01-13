@@ -40,5 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# ダウンロードファイル(dmgファイル)⇒容量が重すぎるので、commitしない
+# Build outputs
 /dist/
+electron/dist/
+src/dist/
