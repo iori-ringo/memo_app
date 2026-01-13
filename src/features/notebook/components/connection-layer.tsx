@@ -17,7 +17,6 @@ export const ConnectionLayer = ({
 	objects,
 	selectedConnectionId,
 	onSelect,
-	onDelete,
 	isPenMode = false,
 }: ConnectionLayerProps) => {
 	const handleClick = (e: MouseEvent, connectionId: string) => {
@@ -185,7 +184,9 @@ export const ConnectionLayer = ({
 					return (
 						<g key={`click-${conn.id}`}>
 							{/* Invisible thick line for easier clicking */}
+							{/* biome-ignore lint/a11y/useSemanticElements: SVG line element cannot be replaced with button */}
 							<line
+								role="button"
 								x1={start.x}
 								y1={start.y}
 								x2={end.x}
