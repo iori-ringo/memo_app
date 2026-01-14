@@ -10,6 +10,9 @@ import { app, BrowserWindow, shell } from 'electron'
 const DEFAULT_WIDTH = 1280
 const DEFAULT_HEIGHT = 800
 
+/** Allowed URL schemes for external links */
+const ALLOWED_EXTERNAL_SCHEMES = ['https:', 'mailto:']
+
 /** Main window instance */
 let mainWindow: BrowserWindow | null = null
 
@@ -25,33 +28,52 @@ export function getMainWindow(): BrowserWindow | null {
  * Creates the main application window
  */
 export function createWindow(): void {
+	const isDev = !app.isPackaged
+
 	mainWindow = new BrowserWindow({
 		width: DEFAULT_WIDTH,
 		height: DEFAULT_HEIGHT,
 		webPreferences: {
-			preload: path.join(__dirname, 'preload.js'),
+			// Use app.getAppPath() for reliable path resolution in both dev and production
+			preload: path.join(app.getAppPath(), 'electron/dist/preload.js'),
 			contextIsolation: true,
 			nodeIntegration: false,
 			sandbox: true,
 		},
 	})
 
-	const isDev = !app.isPackaged
-
 	if (isDev) {
 		mainWindow.loadURL('http://localhost:3000')
 		mainWindow.webContents.openDevTools()
 	} else {
-		mainWindow.loadFile(path.join(__dirname, '../../out/index.html'))
+		mainWindow.loadFile(path.join(app.getAppPath(), 'out/index.html'))
 	}
 
-	// Open external links in browser
-	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-		if (url.startsWith('http')) {
-			shell.openExternal(url)
-			return { action: 'deny' }
+	// Block navigation to external URLs (security)
+	// Development: allow localhost, Production: allow file:// protocol
+	mainWindow.webContents.on('will-navigate', (event, url) => {
+		const isAllowed = isDev ? url.startsWith('http://localhost:3000') : url.startsWith('file://')
+		if (!isAllowed) {
+			event.preventDefault()
 		}
-		return { action: 'allow' }
+	})
+
+	// Open external links in browser with restricted schemes
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		try {
+			const { protocol } = new URL(url)
+			if (ALLOWED_EXTERNAL_SCHEMES.includes(protocol)) {
+				shell.openExternal(url)
+			}
+		} catch {
+			// Invalid URL - ignore
+		}
+		return { action: 'deny' }
+	})
+
+	// Clean up window reference when closed
+	mainWindow.on('closed', () => {
+		mainWindow = null
 	})
 
 	createMenu()

@@ -7,16 +7,23 @@ import { IPC_CHANNELS } from '@electron/ipc/types'
 import { log } from '@electron/utils/logger'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import * as dotenv from 'dotenv'
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
 
-// Load environment variables
-dotenv.config({ path: path.join(__dirname, '../../.env.local') })
-dotenv.config({ path: path.join(__dirname, '../../.env') })
+/**
+ * Load environment variables
+ * Development: Load from .env.local / .env files in project root
+ * Production: Expect environment variables to be set externally
+ * (e.g., via system environment, or future server integration)
+ */
+if (!app.isPackaged) {
+	dotenv.config({ path: path.join(app.getAppPath(), '.env.local') })
+	dotenv.config({ path: path.join(app.getAppPath(), '.env') })
+}
 
-/** API key for Gemini */
+/** API key for Gemini (from environment variable) */
 const API_KEY = process.env.GEMINI_API_KEY
 
-/** Gemini AI client instance */
+/** Gemini AI client instance (null if API key not configured) */
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null
 
 /** Mock responses when API key is not configured */
