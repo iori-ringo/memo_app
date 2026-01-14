@@ -2,55 +2,6 @@
 trigger: always_on
 ---
 
-# Repository Guidelines
-
-## Project Structure & Modules
-
-- `src/app/`: Next.js App Router (pages, layout, global styles).
-- `src/components/`: UI components (`shadcn/` for shadcn UI atoms, `ui/` for local components).
-- `src/hooks/`: React hooks (name as `useXxx.ts`).
-- `public/`: Static assets served at `/`.
-- Config: `next.config.ts`, `tsconfig.json` (path alias `@/*` → `src/*`), `postcss.config.mjs` (Tailwind v4), `biome.json` (lint/format).
-
-## Build, Test, and Development
-
-- `npm run dev`: Start local dev server with Turbopack at `http://localhost:3000`.
-- `npm run build`: Production build (`.next/`).
-- `npm run start`: Start the production server (after `build`).
-- `npm run lint`: Run Next + Biome lint rules.
-
-Example:
-
-```
-npm run dev
-# edit files in src/app/page.tsx, hot-reloads
-```
-
-## Coding Style & Naming
-
-- Language: TypeScript, strict mode enabled.
-- Formatting: Biome (tabs, width 2, single quotes, trailing commas, semicolons as needed). VS Code is configured to format and organize imports on save.
-- Components: `PascalCase` filenames in `src/components`, exported React components in `.tsx`.
-- Hooks: `camelCase` files named `useXxx.ts` in `src/hooks`.
-- Imports: Prefer path aliases (e.g., `import { X } from '@/components/ui'`).
-- Styling: Tailwind CSS v4 via `src/app/globals.css`.
-
-## Testing Guidelines
-
-- No test suite is configured yet. If adding tests, consider Vitest for unit tests and Playwright for E2E. Place tests near source files (`file.test.ts`), and add a `test` script in `package.json`.
-
-## Commit & Pull Requests
-
-- Commits: Keep them small and focused. If possible, follow Conventional Commits (`feat:`, `fix:`, `chore:`) for clarity and changelog generation.
-- PRs: Include a concise description, screenshots/GIFs for UI changes, and link related issues. Ensure `npm run lint` passes and the app builds (`npm run build`).
-- Branching: Use short, descriptive names (e.g., `feat/search-bar`, `fix/breadcrumb-a11y`).
-
-## Notes & Tips
-
-- File-based routing lives in `src/app` (e.g., `src/app/movies/page.tsx` → `/movies`).
-- shadcn UI components are under `src/components/shadcn`; prefer extending locally in `src/components/ui`.
-- If adding utilities, create `src/lib/` and import via `@/lib/...` to match existing aliases.
-
 ## 一般的な開発ルール
 
 - コードフォーマットとリンティングには Biome を使用する
@@ -336,14 +287,6 @@ src/features/
 - グローバル認証状態には AuthContext を使用する
 - 可能な限りクライアントサイドの状態を最小限にする
 
-## パフォーマンスガイドライン
-
-- デフォルトで Server Components を使用する
-- Suspense で適切なローディング状態を実装する
-- 大きなデータセットを取得する際はレスポンスをストリーミングする
-- Next.js Image コンポーネントで画像を最適化する
-- HTML `<img>` タグの代わりに Next.js の `<Image />` コンポーネントを必ず使用する
-
 ## セキュリティガイドライン
 
 - 秘密情報や API キーを決してハードコーディングしない
@@ -368,7 +311,7 @@ src/features/
 
 ```
 npm run build
-npm run lint
+npm run lint:fix
 ```
 
 ## 他の部分のコーディングに関して
@@ -379,3 +322,37 @@ npm run lint
 ## MACOS用のデスクトップアプリのメモアプリのベストプラクティス
 
 npm rnu typecheck は実行不要です。
+
+## KODAWARI.md の更新ルール
+
+このプロジェクトは就活ポートフォリオとして使用されるため、技術的なこだわりを `KODAWARI.md` に記録しています。
+
+### 更新タイミング
+
+以下の作業を行った際は、`KODAWARI.md` に追記してください：
+
+1. **新機能の実装** - 特に技術的に工夫した点やベストプラクティスを適用した箇所
+2. **リファクタリング** - アーキテクチャ改善、パフォーマンス最適化など
+3. **セキュリティ強化** - 新たに適用したセキュリティ対策
+4. **ライブラリ選定** - 選定理由が明確な技術選択
+5. **独自実装** - ライブラリに頼らず自前で実装した機能
+
+### 記載フォーマット
+
+既存のセクションに追記するか、新しいセクションを追加してください：
+
+```markdown
+### [機能名/改善内容]
+
+[実装の概要と技術的なこだわりポイント]
+
+```typescript
+// コード例（必要に応じて）
+```
+```
+
+### 注意点
+
+- 単純なバグ修正や軽微な変更は追記不要
+- 技術的な意思決定や工夫があった場合のみ追記
+- 簡潔に、かつ技術面接で説明できるレベルの詳細度で記載
