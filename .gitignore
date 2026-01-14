@@ -44,3 +44,6 @@ next-env.d.ts
 /dist/
 electron/dist/
 src/dist/
+
+# Portfolio documentation (private)
+KODAWARI.md
