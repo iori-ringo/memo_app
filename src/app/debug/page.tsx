@@ -4,5 +4,5 @@ export default function DebugPage() {
 			<h1 className="text-2xl font-bold">Debug Page</h1>
 			<p>If you can see this, Next.js is working correctly.</p>
 		</div>
-	);
+	)
 }
