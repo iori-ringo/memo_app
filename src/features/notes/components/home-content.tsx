@@ -41,21 +41,36 @@ export const HomeContent = () => {
 		}
 	}, [isClient, cleanupOldTrash])
 
-	// Electronリスナー
+	// Platform event listeners (Electron menu events, etc.)
 	useEffect(() => {
-		if (!window.electronAPI) return
+		let isMounted = true
+		let cleanupFn: (() => void) | undefined
 
-		const cleanupNewPage = window.electronAPI.onNewPage(() => {
-			handleAddPage()
-		})
+		// Import dynamically to avoid SSR issues
+		const setupListeners = async () => {
+			const { platformEvents } = await import('@/lib/platform-events')
 
-		const cleanupToggleDark = window.electronAPI.onToggleDark(() => {
-			setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-		})
+			// Prevent registration if unmounted during await
+			if (!isMounted) return
+
+			const cleanupNewPage = platformEvents.onNewPage(() => {
+				handleAddPage()
+			})
+			const cleanupToggleDark = platformEvents.onToggleDark(() => {
+				setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+			})
+
+			cleanupFn = () => {
+				cleanupNewPage()
+				cleanupToggleDark()
+			}
+		}
+
+		setupListeners()
 
 		return () => {
-			cleanupNewPage()
-			cleanupToggleDark()
+			isMounted = false
+			cleanupFn?.()
 		}
 	}, [handleAddPage, resolvedTheme, setTheme])
 
