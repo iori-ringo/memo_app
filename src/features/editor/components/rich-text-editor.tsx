@@ -10,7 +10,7 @@ import { type Editor, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Bold, Italic, List, ListOrdered } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/shared/ui/button'
+import { Button } from '@/shared/shadcn/button'
 import { FontSize } from '../extensions/font-size'
 
 interface RichTextEditorProps {

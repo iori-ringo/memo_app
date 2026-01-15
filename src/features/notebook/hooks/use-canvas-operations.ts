@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { DEFAULT_OBJECT_SIZE, SECTION_TYPES } from '@/lib/constants'
+import { DEFAULT_OBJECT_SIZE, SECTION_TYPES } from '@/features/notebook/constants'
 import type { CanvasObject, NotePage, SectionType, Stroke } from '@/types/note'
 
 export const useCanvasOperations = (

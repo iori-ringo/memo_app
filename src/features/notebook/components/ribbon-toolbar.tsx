@@ -17,14 +17,14 @@ import {
 	Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/shared/ui/button'
+import { Button } from '@/shared/shadcn/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu'
-import { Separator } from '@/shared/ui/separator'
+} from '@/shared/shadcn/dropdown-menu'
+import { Separator } from '@/shared/shadcn/separator'
 
 interface RibbonToolbarProps {
 	editor: Editor | null

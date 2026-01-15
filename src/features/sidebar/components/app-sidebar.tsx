@@ -17,16 +17,16 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { ModeToggle } from '@/shared/common/mode-toggle'
-import { Button } from '@/shared/ui/button'
+import { Button } from '@/shared/shadcn/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu'
-import { Input } from '@/shared/ui/input'
-import { ScrollArea } from '@/shared/ui/scroll-area'
+} from '@/shared/shadcn/dropdown-menu'
+import { Input } from '@/shared/shadcn/input'
+import { ScrollArea } from '@/shared/shadcn/scroll-area'
+import { ModeToggle } from '@/shared/ui/mode-toggle'
 import type { NotePage } from '@/types/note'
 
 interface AppSidebarProps {
