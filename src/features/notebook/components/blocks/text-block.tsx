@@ -1,3 +1,25 @@
+/**
+ * TextBlock - ドラッグ/リサイズ可能なテキストブロックコンポーネント
+ *
+ * キャンバス上に配置されるテキストブロック。
+ * react-draggable と react-resizable を組み合わせて実装。
+ *
+ * @features
+ * - ドラッグ移動（上下のハンドルで操作）
+ * - 四隅からのリサイズ（nw, ne, sw, se）
+ * - RichTextEditor 内蔵（TipTap 使用）
+ * - 選択状態の視覚的フィードバック
+ *
+ * @interaction
+ * - クリック: 選択
+ * - ドラッグ: 移動（drag-handle クラスを持つ要素から）
+ * - リサイズ: 四隅のハンドルをドラッグ
+ * - ペンモード時: 操作無効（pointer-events: none）
+ *
+ * @config
+ * - HANDLE_SIZE_PX: リサイズハンドルのサイズ
+ * - HANDLE_OFFSET_PX: ハンドルの位置オフセット
+ */
 'use client'
 
 import type { Editor } from '@tiptap/react'
@@ -24,16 +46,16 @@ interface TextBlockProps {
 }
 
 // -----------------------------------------------------------------------------
-// Resize Handle Configuration
+// リサイズハンドルの設定
 // -----------------------------------------------------------------------------
 // ハンドルのサイズ (px)
 const HANDLE_SIZE_PX = 13
 // ハンドルの位置オフセット (px) - マイナス値で外側に配置
 const HANDLE_OFFSET_PX = -13
 
-// Resize handle component - positioned based on configuration
-// Uses group-hover for visibility (CSS-based, no JavaScript state needed)
-// IMPORTANT: Must forward all props to DOM element for react-resizable drag events to work
+// リサイズハンドルコンポーネント - 設定に基づいて配置
+// JSの状態管理を行わず、CSSのgroup-hoverで表示切り替えを行う
+// 重要: react-resizableのドラッグイベントを機能させるため、すべてのpropsをDOM要素に渡す必要があります
 const ResizeHandle = ({
 	position,
 	innerRef,
@@ -48,9 +70,9 @@ const ResizeHandle = ({
 	<div
 		ref={innerRef}
 		className={cn(
-			// Tailwind sizing classes (w-5 h-5) removed in favor of inline styles for precise control
+			// 厳密な制御のためにインラインスタイルを使用するため、Tailwindのサイズクラス(w-5 h-5)は削除
 			'absolute bg-primary border-2 border-white rounded-full shadow-md z-50 transition-opacity',
-			// Use group-hover for CSS-based hover detection, or show always when selected
+			// JSによる検知の代わりにgroup-hoverを使用、または選択時は常に表示
 			isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
 			position === 'nw' && 'cursor-nw-resize',
 			position === 'ne' && 'cursor-ne-resize',
@@ -60,7 +82,7 @@ const ResizeHandle = ({
 		style={{
 			width: `${HANDLE_SIZE_PX}px`,
 			height: `${HANDLE_SIZE_PX}px`,
-			// Position calculation based on offset
+			// オフセットに基づく位置計算
 			top: position.includes('n') ? `${HANDLE_OFFSET_PX}px` : undefined,
 			bottom: position.includes('s') ? `${HANDLE_OFFSET_PX}px` : undefined,
 			left: position.includes('w') ? `${HANDLE_OFFSET_PX}px` : undefined,
@@ -86,7 +108,7 @@ export const TextBlock = ({
 	const [currentPos, setCurrentPos] = useState({ x: object.x, y: object.y })
 	const nodeRef = useRef<HTMLDivElement>(null)
 
-	// Update local state when object changes
+	// オブジェクト変更時にローカル状態を更新
 	useEffect(() => {
 		setCurrentSize({ width: object.width, height: object.height })
 		setCurrentPos({ x: object.x, y: object.y })
@@ -108,8 +130,8 @@ export const TextBlock = ({
 		(_e: React.SyntheticEvent, data: ResizeCallbackData) => {
 			const { size, handle } = data
 
-			// Calculate position change based on handle
-			// If resizing from left (w) or top (n), we need to adjust position
+			// ハンドルに基づいて位置の変更を計算
+			// 左(w)または上(n)からリサイズする場合、位置の調整が必要
 			let newX = currentPos.x
 			let newY = currentPos.y
 
@@ -130,7 +152,7 @@ export const TextBlock = ({
 		(_e: React.SyntheticEvent, data: ResizeCallbackData) => {
 			const { size } = data
 
-			// Commit the current local state to the parent
+			// 現在のローカル状態を親にコミット
 			onUpdate(object.id, {
 				width: size.width,
 				height: size.height,
@@ -174,9 +196,9 @@ export const TextBlock = ({
 			cancel=".react-resizable-handle"
 		>
 			{/* 
-				Using CSS group-hover instead of JavaScript onMouseEnter/onMouseLeave
-				The 'group' class enables group-hover: utilities for child elements
-				Padding/margin ensure hover area includes the resize handles outside the box
+				JavaScriptのonMouseEnter/onMouseLeaveの代わりにCSSのgroup-hoverを使用
+				'group'クラスは子要素に対してgroup-hover:ユーティリティを有効にします
+				パディング/マージンにより、ホバー領域がボックス外のリサイズハンドルを含むようになります
 			*/}
 			<div
 				ref={nodeRef}
@@ -217,7 +239,7 @@ export const TextBlock = ({
 						tabIndex={isPenMode ? -1 : 0}
 						aria-label="Text block"
 					>
-						{/* Drag Handle - Top */}
+						{/* ドラッグハンドル - 上部 */}
 						<div
 							className={cn(
 								'drag-handle absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-stone-200 dark:bg-stone-800 rounded-t-md flex items-center justify-center cursor-grab active:cursor-grabbing transition-opacity z-30',
@@ -227,7 +249,7 @@ export const TextBlock = ({
 							<GripVertical className="w-3 h-3 text-muted-foreground" />
 						</div>
 
-						{/* Drag Handle - Bottom */}
+						{/* ドラッグハンドル - 下部 */}
 						<div
 							className={cn(
 								'drag-handle absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-stone-200 dark:bg-stone-800 rounded-b-md flex items-center justify-center cursor-grab active:cursor-grabbing transition-opacity z-30',
@@ -237,7 +259,7 @@ export const TextBlock = ({
 							<GripVertical className="w-3 h-3 text-muted-foreground" />
 						</div>
 
-						{/* Content */}
+						{/* コンテンツ */}
 						<div className="w-full h-full overflow-hidden p-2">
 							<RichTextEditor
 								content={object.content}

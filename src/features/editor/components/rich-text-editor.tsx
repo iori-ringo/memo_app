@@ -1,5 +1,32 @@
 'use client'
 
+/**
+ * RichTextEditor - 汎用リッチテキストエディタコンポーネント
+ *
+ * TipTap を使用した WYSIWYG エディタ。
+ * notebook/blocks/text-block.tsx から使用される。
+ *
+ * @example
+ * ```tsx
+ * <RichTextEditor
+ *   content={html}
+ *   onChange={setHtml}
+ *   variant="canvas"  // キャンバスモード（ツールバーなし）
+ *   onEditorReady={(editor) => setActiveEditor(editor)}
+ * />
+ * ```
+ *
+ * @features
+ * - 太字・斜体・リスト等の基本フォーマット
+ * - タスクリスト対応
+ * - テキスト配置（左寄せ・中央・右寄せ）
+ * - フォントサイズ・カラー変更
+ *
+ * @dependencies
+ * - TipTap v3
+ * - ../extensions/font-size.ts（カスタム拡張）
+ */
+
 import { Color } from '@tiptap/extension-color'
 import Placeholder from '@tiptap/extension-placeholder'
 import TaskItem from '@tiptap/extension-task-item'
@@ -19,6 +46,7 @@ interface RichTextEditorProps {
 	placeholder?: string
 	className?: string
 	editable?: boolean
+	/** 'default': ツールバー表示, 'canvas': ツールバー非表示 */
 	variant?: 'default' | 'canvas'
 	onEditorReady?: (editor: Editor) => void
 }
