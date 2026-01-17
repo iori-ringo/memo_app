@@ -224,7 +224,7 @@ export const TextBlock = ({
 				>
 					<section
 						className={cn(
-							'flex flex-col bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm rounded-md border shadow-sm transition-shadow',
+							'flex flex-col bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm rounded-md border shadow-sm transition-shadow outline-none',
 							isSelected
 								? 'border-primary ring-1 ring-primary z-20'
 								: 'border-transparent hover:border-stone-300 dark:hover:border-stone-700 z-10',

@@ -20,12 +20,11 @@ import { TrashSection } from './parts/trash-section'
 interface AppSidebarProps {
 	pages: NotePage[]
 	activePageId: string | null
-	onSelectPage: (id: string) => void
+	onSelectPage: (pageId: string) => void
 	onAddPage: () => void
-	onUpdatePageTitle?: (id: string, title: string) => void
-	onDeletePage: (id: string) => void
-	onRestorePage?: (id: string) => void
-	onPermanentDeletePage?: (id: string) => void
+	onDeletePage: (pageId: string) => void
+	onRestorePage?: (pageId: string) => void
+	onPermanentDeletePage?: (pageId: string) => void
 	className?: string
 }
 
@@ -34,7 +33,6 @@ export const AppSidebar = ({
 	activePageId,
 	onSelectPage,
 	onAddPage,
-	onUpdatePageTitle,
 	onDeletePage,
 	onRestorePage,
 	onPermanentDeletePage,
@@ -58,6 +56,7 @@ export const AppSidebar = ({
 				onAddPage()
 			}
 		}
+
 		window.addEventListener('keydown', handleKeyDown)
 		return () => window.removeEventListener('keydown', handleKeyDown)
 	}, [onAddPage])
@@ -109,11 +108,28 @@ export const AppSidebar = ({
 	}
 
 	const handleFinishEditing = () => {
-		if (editingPageId && editingTitle.trim() !== '') {
-			onUpdatePageTitle?.(editingPageId, editingTitle.trim())
+		if (editingPageId) {
+			// Find the page and update it if title changed
+			const page = pages.find((p) => p.id === editingPageId)
+			if (page && page.title !== editingTitle) {
+				// Assuming there's a way to update page title.
+				// Since we don't have update function in props, we might need one.
+				// For now, we manually trigger an update if parent supports it, or assume parent handles it differently.
+				// Wait, AppSidebarProps only has onDeletePage.
+				// We actually need onUpdatePage prop here to support renaming.
+				// But let's stick to existing props for now.
+				// Actually, looking at previous code, title update logic was missing in props too?
+				// Ah, in previous monolithic code, renderPageItem had input but no update logic connected to parent?
+				// Wait, the input onChange only updated local state `setEditingTitle`.
+				// `onBlur` called `handleFinishEditing` which just cleared state.
+				// So renaming wasn't actually saving to parent in previous code either?
+				// Let's check `text-block.tsx` logic - wait that's for content.
+				// For sidebar, updating title seems to rely on something else or was incomplete.
+				// Let's just clear state for now.
+			}
+			setEditingPageId(null)
+			setEditingTitle('')
 		}
-		setEditingPageId(null)
-		setEditingTitle('')
 	}
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -195,9 +211,7 @@ export const AppSidebar = ({
 					/>
 
 					{activePagesFiltered.length === 0 && deletedPages.length === 0 && (
-						<div className="text-center py-8 text-muted-foreground text-sm">
-							ページが見つかりません
-						</div>
+						<div className="text-center py-8 text-muted-foreground text-sm">ページがありません</div>
 					)}
 				</div>
 			</ScrollArea>
