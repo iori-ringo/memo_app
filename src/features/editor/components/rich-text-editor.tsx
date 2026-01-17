@@ -57,7 +57,8 @@ export const RichTextEditor = ({
 		},
 		editorProps: {
 			attributes: {
-				class: 'prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[100px]',
+				class:
+					'prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[100px] rounded-md',
 			},
 		},
 		onCreate: ({ editor }) => {

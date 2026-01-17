@@ -128,7 +128,7 @@ ul[data-type="taskList"] li {
   line-height: 1.4;
   order: 0;
   /* Unchecked items first */
-  transition: all 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
 }
 
 /* Move checked items to bottom */

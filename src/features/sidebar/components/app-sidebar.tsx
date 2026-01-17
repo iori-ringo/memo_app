@@ -148,19 +148,21 @@ export const AppSidebar = ({
 			: format(lastEdited, 'yyyy/MM/dd', { locale: ja })
 
 		return (
-			<button
-				type="button"
+			<div
 				key={page.id}
 				className={cn(
-					'group w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors hover:bg-accent/50 relative cursor-pointer text-left border-0 bg-transparent',
+					'group w-full flex items-center gap-1 p-1 rounded-md text-sm transition-colors hover:bg-accent/50 relative text-left',
 					activePageId === page.id && !isTrash
 						? 'bg-accent text-accent-foreground'
 						: 'text-muted-foreground'
 				)}
-				onClick={() => !isTrash && onSelectPage(page.id)}
-				onDoubleClick={() => !isTrash && handleStartEditing(page)}
 			>
-				<div className="flex-1 min-w-0 flex flex-col gap-0.5">
+				<button
+					type="button"
+					className="flex-1 min-w-0 flex flex-col gap-0.5 p-1 rounded hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left border-0 bg-transparent outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+					onClick={() => !isTrash && onSelectPage(page.id)}
+					onDoubleClick={() => !isTrash && handleStartEditing(page)}
+				>
 					<div className="flex items-center gap-2 w-full min-w-0">
 						{page.isFavorite ? (
 							<Star className="h-3 w-3 shrink-0 text-yellow-500 fill-yellow-500" />
@@ -187,70 +189,68 @@ export const AppSidebar = ({
 						)}
 					</div>
 					<span className="text-[10px] text-muted-foreground pl-5 truncate">{dateDisplay}</span>
-				</div>
-				{/* biome-ignore lint/a11y/noStaticElementInteractions: stopPropagation wrapper for dropdown, not interactive */}
-				{/* biome-ignore lint/a11y/useKeyWithClickEvents: stopPropagation wrapper for dropdown, not interactive */}
-				<div onClick={(e) => e.stopPropagation()}>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="h-6 w-6 opacity-100 transition-opacity"
-							>
-								<MoreHorizontal className="h-3 w-3" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							{isTrash ? (
-								<>
-									<DropdownMenuItem
-										onClick={(e) => {
-											e.stopPropagation()
-											onRestorePage?.(page.id)
-										}}
-									>
-										<RotateCcw className="mr-2 h-4 w-4" />
-										復元
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={(e) => {
-											e.stopPropagation()
-											onPermanentDeletePage?.(page.id)
-										}}
-										className="text-red-600 focus:text-red-600"
-									>
-										<Trash2 className="mr-2 h-4 w-4" />
-										完全に削除
-									</DropdownMenuItem>
-								</>
-							) : (
-								<>
-									<DropdownMenuItem
-										onClick={(e) => {
-											e.stopPropagation()
-											handleStartEditing(page)
-										}}
-									>
-										<Pencil className="mr-2 h-4 w-4" />
-										名前を変更
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={(e) => {
-											e.stopPropagation()
-											onDeletePage(page.id)
-										}}
-										className="text-red-600 focus:text-red-600"
-									>
-										<Trash2 className="mr-2 h-4 w-4" />
-										削除
-									</DropdownMenuItem>
-								</>
-							)}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-			</button>
+				</button>
+
+				{/* Dropdown Menu - Standard Button, no stopPropagation hack needed */}
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 shrink-0"
+						>
+							<MoreHorizontal className="h-3 w-3" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						{isTrash ? (
+							<>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.stopPropagation()
+										onRestorePage?.(page.id)
+									}}
+								>
+									<RotateCcw className="mr-2 h-4 w-4" />
+									復元
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.stopPropagation()
+										onPermanentDeletePage?.(page.id)
+									}}
+									className="text-red-600 focus:text-red-600"
+								>
+									<Trash2 className="mr-2 h-4 w-4" />
+									完全に削除
+								</DropdownMenuItem>
+							</>
+						) : (
+							<>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.stopPropagation()
+										handleStartEditing(page)
+									}}
+								>
+									<Pencil className="mr-2 h-4 w-4" />
+									名前を変更
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.stopPropagation()
+										onDeletePage(page.id)
+									}}
+									className="text-red-600 focus:text-red-600"
+								>
+									<Trash2 className="mr-2 h-4 w-4" />
+									削除
+								</DropdownMenuItem>
+							</>
+						)}
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</div>
 		)
 	}
 
