@@ -1,18 +1,41 @@
+/**
+ * NotebookCanvas - ノートブックのメインキャンバスコンポーネント
+ *
+ * 「メモの魔力」ノートの中核となるキャンバス。
+ *
+ * @layers
+ * 1. CanvasBackground - 背景線とセクション区切り
+ * 2. TextBlock - ドラッグ可能なテキストブロック
+ * 3. ConnectionLayer - オブジェクト間の接続線
+ * 4. HandwritingLayer - 手書き入力レイヤー
+ *
+ * @modes
+ * - 通常モード: テキストブロックの編集
+ * - ペンモード (P): 手書き入力
+ * - 接続モード (C): ブロック間接続の作成
+ * - 消しゴムモード (Shift+E): オブジェクト削除
+ *
+ * @dependencies
+ * - hooks/use-canvas-layout: レイアウト管理
+ * - hooks/use-canvas-operations: CRUD操作
+ * - hooks/use-canvas-selection: 選択状態管理
+ * - hooks/use-canvas-shortcuts: キーボードショートカット
+ */
 'use client'
 
 import { Star } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { HandwritingLayer } from '@/features/notebook/components/blocks/handwriting-layer'
+import { TextBlock } from '@/features/notebook/components/blocks/text-block'
+import { CanvasBackground } from '@/features/notebook/components/canvas/canvas-background'
+import { ConnectionLayer } from '@/features/notebook/components/canvas/connection-layer'
+import { RibbonToolbar } from '@/features/notebook/components/toolbar/ribbon-toolbar'
 import { useCanvasLayout } from '@/features/notebook/hooks/use-canvas-layout'
 import { useCanvasOperations } from '@/features/notebook/hooks/use-canvas-operations'
 import { useCanvasSelection } from '@/features/notebook/hooks/use-canvas-selection'
 import { useCanvasShortcuts } from '@/features/notebook/hooks/use-canvas-shortcuts'
 import { Button } from '@/shared/shadcn/button'
 import type { NotePage } from '@/types/note'
-import { CanvasBackground } from './canvas-background'
-import { ConnectionLayer } from './connection-layer'
-import { HandwritingLayer } from './handwriting-layer'
-import { RibbonToolbar } from './ribbon-toolbar'
-import { TextBlock } from './text-block'
 
 interface NotebookCanvasProps {
 	page: NotePage

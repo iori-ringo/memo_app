@@ -1,3 +1,19 @@
+/**
+ * CanvasBackground - キャンバス背景コンポーネント
+ *
+ * ノートブックの背景線とセクション区切りを描画。
+ *
+ * @sections
+ * - Title（タイトル）: 上部エリア
+ * - Fact（ファクト）: 左ページ、事実を記録
+ * - Abstraction（抽象化）: 右ページ左側
+ * - Diversion（転用）: 右ページ右側
+ *
+ * @features
+ * - ドラッグ可能なセクション境界線
+ * - ノートブック風の横罫線パターン
+ * - ダークモード対応
+ */
 'use client'
 
 import type { MouseEvent as ReactMouseEvent, ReactNode } from 'react'
