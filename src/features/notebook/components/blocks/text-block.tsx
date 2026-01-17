@@ -29,7 +29,7 @@ import type { DraggableData, DraggableEvent } from 'react-draggable'
 import Draggable from 'react-draggable'
 import type { ResizeCallbackData } from 'react-resizable'
 import { Resizable } from 'react-resizable'
-import { RichTextEditor } from '@/features/notebook/components/blocks/editor/rich-text-editor'
+import { RichTextEditor } from '@/features/notebook/components/blocks/rich-text-editor'
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
 
