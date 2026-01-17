@@ -29,7 +29,7 @@ import type { DraggableData, DraggableEvent } from 'react-draggable'
 import Draggable from 'react-draggable'
 import type { ResizeCallbackData } from 'react-resizable'
 import { Resizable } from 'react-resizable'
-import { RichTextEditor } from '@/features/editor/components/rich-text-editor'
+import { RichTextEditor } from '@/features/notebook/components/blocks/editor/rich-text-editor'
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
 
@@ -265,7 +265,6 @@ export const TextBlock = ({
 								content={object.content}
 								onChange={(content) => onUpdate(object.id, { content })}
 								className="h-full w-full focus:outline-none"
-								variant="canvas"
 								onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
 							/>
 						</div>
