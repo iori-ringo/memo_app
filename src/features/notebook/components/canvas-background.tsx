@@ -4,7 +4,7 @@ import type { MouseEvent as ReactMouseEvent, ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
-interface CanvasBackgroundProps {
+type CanvasBackgroundProps = {
 	className?: string
 	children?: ReactNode
 	titleHeight?: number

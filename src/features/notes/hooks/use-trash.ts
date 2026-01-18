@@ -4,7 +4,7 @@ import { saveNotes } from '../services/note-storage'
 
 const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000
 
-interface UseTrashProps {
+type UseTrashProps = {
 	pages: NotePage[]
 	setPages: React.Dispatch<React.SetStateAction<NotePage[]>>
 	activePageId: string | null

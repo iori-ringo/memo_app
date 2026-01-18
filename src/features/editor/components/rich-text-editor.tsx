@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/shared/ui/button'
 import { FontSize } from '../extensions/font-size'
 
-interface RichTextEditorProps {
+type RichTextEditorProps = {
 	content: string
 	onChange: (content: string) => void
 	placeholder?: string
