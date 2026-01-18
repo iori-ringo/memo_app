@@ -29,7 +29,7 @@ import { Input } from '@/shared/ui/input'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import type { NotePage } from '@/types/note'
 
-interface AppSidebarProps {
+type AppSidebarProps = {
 	pages: NotePage[]
 	activePageId: string | null
 	onSelectPage: (id: string) => void

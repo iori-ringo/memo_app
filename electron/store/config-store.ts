@@ -7,7 +7,7 @@ import type { AppConfig } from '@electron/ipc/types'
 import Store from 'electron-store'
 
 /** Schema for the config store */
-interface ConfigStoreSchema {
+type ConfigStoreSchema = {
 	config: AppConfig
 }
 

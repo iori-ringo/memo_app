@@ -2,7 +2,7 @@ export type NoteContent = string // HTML string from Tiptap
 
 export type SectionType = 'title' | 'fact' | 'abstraction' | 'diversion'
 
-export interface CanvasObject {
+export type CanvasObject = {
 	id: string
 	type: 'text'
 	section: SectionType
@@ -23,7 +23,7 @@ export interface CanvasObject {
 	}
 }
 
-export interface Stroke {
+export type Stroke = {
 	id: string
 	points: { x: number; y: number; pressure?: number }[]
 	color: string
@@ -31,7 +31,7 @@ export interface Stroke {
 	isHighlighter: boolean
 }
 
-export interface Connection {
+export type Connection = {
 	id: string
 	fromObjectId: string
 	toObjectId: string
@@ -39,7 +39,7 @@ export interface Connection {
 	style: 'solid' | 'dashed' | 'hand-drawn'
 }
 
-export interface NotePage {
+export type NotePage = {
 	id: string
 	notebookId: string
 	title: string // Keep title as metadata, but also have it as an object?
@@ -71,7 +71,7 @@ export interface NotePage {
 	diversion?: string
 }
 
-export interface Notebook {
+export type Notebook = {
 	id: string
 	name: string
 	pages: NotePage[]
@@ -79,7 +79,7 @@ export interface Notebook {
 	updatedAt: number
 }
 
-export interface AppState {
+export type AppState = {
 	notebooks: Notebook[]
 	activeNotebookId: string
 	activePageId: string | null
@@ -87,13 +87,13 @@ export interface AppState {
 
 // --- Electron / App Configuration Types (Shared) ---
 
-export interface AppConfig {
+export type AppConfig = {
 	theme?: 'light' | 'dark' | 'system'
 	lastActivePageId?: string
 	sidebarWidth?: number
 }
 
-export interface ElectronAPI {
+export type ElectronAPI = {
 	loadPages: () => Promise<NotePage[] | null>
 	savePages: (pages: NotePage[]) => Promise<boolean>
 	loadConfig: () => Promise<AppConfig>

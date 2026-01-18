@@ -3,7 +3,7 @@
 import type { MouseEvent } from 'react'
 import type { CanvasObject, Connection } from '@/types/note'
 
-interface ConnectionLayerProps {
+type ConnectionLayerProps = {
 	connections: Connection[]
 	objects: CanvasObject[]
 	selectedConnectionId?: string | null

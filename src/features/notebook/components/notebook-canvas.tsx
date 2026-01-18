@@ -14,7 +14,7 @@ import { HandwritingLayer } from './handwriting-layer'
 import { RibbonToolbar } from './ribbon-toolbar'
 import { TextBlock } from './text-block'
 
-interface NotebookCanvasProps {
+type NotebookCanvasProps = {
 	page: NotePage
 	onUpdate: (id: string, updates: Partial<NotePage>) => void
 }

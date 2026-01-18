@@ -26,7 +26,7 @@ import {
 } from '@/shared/ui/dropdown-menu'
 import { Separator } from '@/shared/ui/separator'
 
-interface RibbonToolbarProps {
+type RibbonToolbarProps = {
 	editor: Editor | null
 	isConnectMode: boolean
 	isPenMode: boolean

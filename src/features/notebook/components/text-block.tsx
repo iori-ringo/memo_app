@@ -13,7 +13,7 @@ import type { CanvasObject } from '@/types/note'
 
 import 'react-resizable/css/styles.css'
 
-interface TextBlockProps {
+type TextBlockProps = {
 	object: CanvasObject
 	onUpdate: (id: string, updates: Partial<CanvasObject>) => void
 	onDelete?: (id: string) => void

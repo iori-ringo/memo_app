@@ -1,7 +1,7 @@
 import type { Editor } from '@tiptap/react'
 import { useEffect } from 'react'
 
-interface UseCanvasShortcutsProps {
+type UseCanvasShortcutsProps = {
 	selectedObjectId: string | null
 	selectedConnectionId: string | null
 	isPenMode: boolean
@@ -39,18 +39,18 @@ export const useCanvasShortcuts = ({
 		const handleKeyDown = (e: KeyboardEvent) => {
 			const isCmdOrCtrl = e.metaKey || e.ctrlKey
 
-			// Ignore if typing in an input or textarea or contenteditable (unless it's a command)
+			// 入力フィールドやテキストエリア、contenteditable で入力中の場合は無視する（コマンドの場合を除く）
 			const isTyping =
 				e.target instanceof HTMLInputElement ||
 				e.target instanceof HTMLTextAreaElement ||
 				(e.target instanceof HTMLElement && e.target.isContentEditable)
 
-			// Allow commands even when typing, but be careful not to block default typing behavior
-			// For example, Cmd+B is bold, which is fine. But we want to intercept specific ones.
+			// 入力中でもコマンドは許可するが、デフォルトの入力動作をブロックしないように注意する
+			// 例: Cmd+B (太字) はOKだが、特定のコマンドはインターセプトしたい
 
-			// --- Global Canvas Shortcuts (Cmd+...) ---
+			// --- グローバルキャンバスショートカット (Cmd+...) ---
 
-			// Cmd+D: Delete selected object/connection (Overrides Dark Mode)
+			// Cmd+D: 選択したオブジェクト/接続を削除 (ダークモード切り替えを上書き)
 			if (isCmdOrCtrl && e.key === 'd') {
 				e.preventDefault()
 				if (selectedObjectId) {
@@ -64,7 +64,7 @@ export const useCanvasShortcuts = ({
 				return
 			}
 
-			// Cmd+N: New Text Box
+			// Cmd+N: 新規テキストボックス
 			if (isCmdOrCtrl && e.key === 'n') {
 				e.preventDefault()
 				const { x, y } = mousePositionRef.current
@@ -72,7 +72,7 @@ export const useCanvasShortcuts = ({
 				return
 			}
 
-			// Cmd+P: Pen Mode
+			// Cmd+P: ペンモード
 			if (isCmdOrCtrl && e.key === 'p') {
 				e.preventDefault()
 				setIsPenMode(true)
@@ -81,7 +81,7 @@ export const useCanvasShortcuts = ({
 				return
 			}
 
-			// Cmd+E: Eraser Mode
+			// Cmd+E: 消しゴムモード
 			if (isCmdOrCtrl && e.key === 'e') {
 				e.preventDefault()
 				setIsObjectEraserMode(true)
@@ -90,16 +90,16 @@ export const useCanvasShortcuts = ({
 				return
 			}
 
-			// --- Text Formatting Shortcuts (Only when editor is active) ---
+			// --- テキスト書式設定ショートカット (エディタがアクティブな場合のみ) ---
 			if (activeEditor && isCmdOrCtrl) {
-				// Cmd + / - : Font Size
+				// Cmd + / - : フォントサイズ
 				if (e.key === '+' || e.key === '=') {
-					// + or = (often same key)
+					// + または = (多くの場合同じキー)
 					e.preventDefault()
-					// We need to know the current font size to increase it.
-					// Tiptap's attributes might help, or we can rely on the editor command if we implemented one.
-					// Our FontSize extension uses setFontSize.
-					// Let's assume a step of 2px.
+					// サイズを大きくするために現在のフォントサイズを知る必要がある
+					// Tiptapの属性が使えるかもしれないし、実装していればエディタコマンドに頼ることもできる
+					// FontSize拡張機能は setFontSize を使用している
+					// 2px単位で増減すると仮定
 					const currentSize = activeEditor.getAttributes('textStyle').fontSize || '16px'
 					const sizeNum = parseInt(currentSize.replace('px', ''), 10)
 					activeEditor
@@ -123,45 +123,45 @@ export const useCanvasShortcuts = ({
 					return
 				}
 
-				// Cmd+O: Strikethrough
+				// Cmd+O: 取り消し線
 				if (e.key === 'o') {
 					e.preventDefault()
 					activeEditor.chain().focus().toggleStrike().run()
 					return
 				}
 
-				// Cmd+1: Bullet List
+				// Cmd+1: 箇条書き
 				if (e.key === '1') {
 					e.preventDefault()
 					activeEditor.chain().focus().toggleBulletList().run()
 					return
 				}
-				// Cmd+2: Numbered List
+				// Cmd+2: 番号付きリスト
 				if (e.key === '2') {
 					e.preventDefault()
 					activeEditor.chain().focus().toggleOrderedList().run()
 					return
 				}
-				// Cmd+3: Checkbox List (TaskList)
+				// Cmd+3: チェックボックスリスト (タスクリスト)
 				if (e.key === '3') {
 					e.preventDefault()
 					activeEditor.chain().focus().toggleTaskList().run()
 					return
 				}
 
-				// Cmd+L: Align Left
+				// Cmd+L: 左揃え
 				if (e.key === 'l') {
 					e.preventDefault()
 					activeEditor.chain().focus().setTextAlign('left').run()
 					return
 				}
-				// Cmd+G: Align Center
+				// Cmd+G: 中央揃え
 				if (e.key === 'g') {
 					e.preventDefault()
 					activeEditor.chain().focus().setTextAlign('center').run()
 					return
 				}
-				// Cmd+R: Align Right
+				// Cmd+R: 右揃え
 				if (e.key === 'r') {
 					e.preventDefault()
 					activeEditor.chain().focus().setTextAlign('right').run()
@@ -169,7 +169,7 @@ export const useCanvasShortcuts = ({
 				}
 			}
 
-			// --- Standard Non-Cmd Shortcuts ---
+			// --- 標準的な非Cmdショートカット ---
 
 			if (e.key === 'Delete' || e.key === 'Backspace') {
 				if (!isTyping) {
@@ -195,7 +195,7 @@ export const useCanvasShortcuts = ({
 				}
 			}
 
-			// Mode toggles (Single keys, only when not typing)
+			// モード切り替え (単一キー、入力中でない場合のみ)
 			if (!isTyping && !isCmdOrCtrl) {
 				if (e.key === 'p') {
 					setIsPenMode(!isPenMode)
