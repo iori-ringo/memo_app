@@ -192,7 +192,7 @@ export const RibbonToolbar = ({
 						onClick={() => editor?.chain().focus().setColor(color.value).run()}
 						disabled={!editor}
 						className={cn(
-							'w-6 h-6 rounded border border-stone-300 dark:border-stone-700 hover:ring-2 hover:ring-primary hover:ring-offset-1',
+							'w-4 h-4 rounded border border-stone-300 dark:border-stone-700 hover:ring-2 hover:ring-primary hover:ring-offset-1',
 							editor?.isActive('textStyle', { color: color.value }) &&
 								'ring-2 ring-primary ring-offset-1'
 						)}
@@ -250,7 +250,7 @@ export const RibbonToolbar = ({
 					title="接続モード (C)"
 				>
 					<Link2 className="h-4 w-4 mr-1" />
-					{isConnectMode && <span className="text-xs">Connect</span>}
+					<span className="text-xs">Connect</span>
 				</Button>
 				<Button
 					variant={isPenMode ? 'default' : 'ghost'}
@@ -260,7 +260,7 @@ export const RibbonToolbar = ({
 					title="ペンモード (P)"
 				>
 					<Pen className="h-4 w-4 mr-1" />
-					{isPenMode && <span className="text-xs">Pen</span>}
+					<span className="text-xs">Pen</span>
 				</Button>
 				<Button
 					variant={isObjectEraserMode ? 'default' : 'ghost'}
@@ -270,7 +270,7 @@ export const RibbonToolbar = ({
 					title="オブジェクト消しゴム (Shift+E)"
 				>
 					<Eraser className="h-4 w-4 mr-1" />
-					{isObjectEraserMode && <span className="text-xs">Obj</span>}
+					<span className="text-xs">Obj</span>
 				</Button>
 			</div>
 
@@ -288,25 +288,6 @@ export const RibbonToolbar = ({
 				<Trash2 className="h-4 w-4 mr-1" />
 				<span className="text-xs">削除</span>
 			</Button>
-
-			{/* Spacer */}
-			<div className="flex-1" />
-
-			{/* Mode Indicators */}
-			<div className="flex items-center gap-2">
-				{isPenMode && (
-					<div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 animate-in fade-in zoom-in duration-200">
-						<Pen className="w-3 h-3" />
-						Pen Mode
-					</div>
-				)}
-				{isConnectMode && (
-					<div className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 animate-in fade-in zoom-in duration-200">
-						<Link2 className="w-3 h-3" />
-						Connect Mode
-					</div>
-				)}
-			</div>
 		</div>
 	)
 }
