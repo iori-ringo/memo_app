@@ -7,7 +7,7 @@ import type { NotePage } from '@electron/ipc/types'
 import Store from 'electron-store'
 
 /** Schema for the pages store */
-interface PagesStoreSchema {
+type PagesStoreSchema = {
 	pages: NotePage[]
 }
 

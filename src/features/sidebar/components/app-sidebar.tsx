@@ -17,7 +17,7 @@ import { PageListItem } from './parts/page-list-item'
 import { SidebarHeader } from './parts/sidebar-header'
 import { TrashSection } from './parts/trash-section'
 
-interface AppSidebarProps {
+type AppSidebarProps = {
 	pages: NotePage[]
 	activePageId: string | null
 	onSelectPage: (pageId: string) => void

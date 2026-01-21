@@ -10,7 +10,7 @@ export type { SectionType, CanvasObject, Stroke, Connection } from '@/features/n
 
 export type NoteContent = string // TipTap からの HTML 文字列
 
-export interface NotePage {
+export type NotePage = {
 	id: string
 	notebookId: string
 	title: string // Keep title as metadata, but also have it as an object?
@@ -36,7 +36,7 @@ export interface NotePage {
 	}
 }
 
-export interface Notebook {
+export type Notebook = {
 	id: string
 	name: string
 	pages: NotePage[]
@@ -44,7 +44,7 @@ export interface Notebook {
 	updatedAt: number
 }
 
-export interface AppState {
+export type AppState = {
 	notebooks: Notebook[]
 	activeNotebookId: string
 	activePageId: string | null
@@ -52,13 +52,13 @@ export interface AppState {
 
 // --- Electron / App Configuration Types (Shared) ---
 
-export interface AppConfig {
+export type AppConfig = {
 	theme?: 'light' | 'dark' | 'system'
 	lastActivePageId?: string
 	sidebarWidth?: number
 }
 
-export interface ElectronAPI {
+export type ElectronAPI = {
 	loadPages: () => Promise<NotePage[] | null>
 	savePages: (pages: NotePage[]) => Promise<boolean>
 	loadConfig: () => Promise<AppConfig>

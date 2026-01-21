@@ -37,7 +37,7 @@ import { useCanvasShortcuts } from '@/features/notebook/hooks/use-canvas-shortcu
 import { Button } from '@/shared/shadcn/button'
 import type { NotePage } from '@/types/note'
 
-interface NotebookCanvasProps {
+type NotebookCanvasProps = {
 	page: NotePage
 	onUpdate: (id: string, updates: Partial<NotePage>) => void
 }
@@ -159,7 +159,7 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 		<div className="flex flex-col h-full relative bg-stone-50 dark:bg-stone-900 overflow-hidden">
 			{/* Toolbar */}
 			<div className="z-20 bg-white dark:bg-stone-800 border-b shadow-sm">
-				<div className="flex items-center justify-between px-4 py-2">
+				<div className="flex items-center justify-between pl-4 pr-1 py-2">
 					<div className="flex items-center gap-2">
 						<Button
 							variant="ghost"

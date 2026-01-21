@@ -23,7 +23,7 @@ import { useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import type { Stroke } from '@/types/note'
 
-interface HandwritingLayerProps {
+type HandwritingLayerProps = {
 	strokes: Stroke[]
 	onUpdate: (strokes: Stroke[]) => void
 	isPenMode: boolean
