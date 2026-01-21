@@ -1,43 +1,14 @@
-export type NoteContent = string // HTML string from Tiptap
+/**
+ * ノート関連のグローバル型定義
+ *
+ * キャンバス関連の型（CanvasObject, Stroke, Connection）は
+ * features/notebook/types.ts で定義され、後方互換性のためここから再エクスポート。
+ */
 
-export type SectionType = 'title' | 'fact' | 'abstraction' | 'diversion'
+// キャンバス関連の型を再エクスポート
+export type { CanvasObject, Connection, SectionType, Stroke } from '@/features/notebook/types'
 
-export type CanvasObject = {
-	id: string
-	type: 'text'
-	section: SectionType
-	content: string
-	x: number // Percentage 0-100 relative to the section or page? Let's say relative to the page for simplicity, or section.
-	// The plan said "relative coordinates (%) or absolute (px)".
-	// Let's use absolute px relative to the page container for now, or relative to section.
-	// To keep it simple and robust against resize, let's use absolute for now, but maybe relative is better for responsive.
-	// Let's stick to the plan: "x: number, y: number".
-	y: number
-	width: number
-	height: number
-	style?: {
-		color?: string
-		fontSize?: number
-		bold?: boolean
-		italic?: boolean
-	}
-}
-
-export type Stroke = {
-	id: string
-	points: { x: number; y: number; pressure?: number }[]
-	color: string
-	width: number
-	isHighlighter: boolean
-}
-
-export type Connection = {
-	id: string
-	fromObjectId: string
-	toObjectId: string
-	type: 'arrow' | 'line'
-	style: 'solid' | 'dashed' | 'hand-drawn'
-}
+export type NoteContent = string // TipTap からの HTML 文字列
 
 export type NotePage = {
 	id: string
@@ -57,18 +28,12 @@ export type NotePage = {
 	strokes: Stroke[]
 	connections: Connection[]
 
-	// Layout preferences (section boundaries)
+	// レイアウト設定（セクション境界）
 	layout?: {
-		titleHeight?: number // Percentage 0-100
-		centerPosition?: number // Percentage 0-100
-		diversionPosition?: number // Percentage 0-100
+		titleHeight?: number // パーセンテージ 0-100
+		centerPosition?: number // パーセンテージ 0-100
+		diversionPosition?: number // パーセンテージ 0-100
 	}
-
-	// Legacy fields (optional, for migration)
-	summary?: string
-	fact?: string
-	abstraction?: string
-	diversion?: string
 }
 
 export type Notebook = {

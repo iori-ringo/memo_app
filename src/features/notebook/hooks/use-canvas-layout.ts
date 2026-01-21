@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DEFAULT_LAYOUT } from '@/lib/constants'
+import { DEFAULT_LAYOUT } from '@/features/notebook/constants'
 import type { NotePage } from '@/types/note'
 
 export const useCanvasLayout = (
