@@ -5,11 +5,11 @@ import { Menu } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect } from 'react'
 import { NotebookCanvas } from '@/features/notebook/components/notebook-canvas'
+import { useNotes } from '@/features/notes/hooks/use-notes'
+import { useTrash } from '@/features/notes/hooks/use-trash'
 import { AppSidebar } from '@/features/sidebar/components/app-sidebar'
 import { Button } from '@/shared/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/shared/ui/sheet'
-import { useNotes } from '../hooks/use-notes'
-import { useTrash } from '../hooks/use-trash'
 
 export const HomeContent = () => {
 	const { setTheme, resolvedTheme } = useTheme()

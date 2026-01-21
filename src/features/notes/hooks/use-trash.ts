@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
+import { saveNotes } from '@/features/notes/services/note-storage'
 import type { NotePage } from '@/types/note'
-import { saveNotes } from '../services/note-storage'
 
 const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000
 
@@ -11,7 +11,7 @@ type UseTrashProps = {
 	setActivePageId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-interface UseTrashReturn {
+type UseTrashReturn = {
 	trashedPages: NotePage[]
 	cleanupOldTrash: () => void
 	handleDeletePage: (id: string) => Promise<void>
