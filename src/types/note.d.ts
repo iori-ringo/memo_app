@@ -6,7 +6,7 @@
  */
 
 // キャンバス関連の型を再エクスポート
-export type { SectionType, CanvasObject, Stroke, Connection } from '@/features/notebook/types'
+export type { CanvasObject, Connection, SectionType, Stroke } from '@/features/notebook/types'
 
 export type NoteContent = string // TipTap からの HTML 文字列
 
