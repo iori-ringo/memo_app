@@ -108,6 +108,10 @@ useEffect(() => {
 **責務**: 「データの永続化」。UIから切り離されたデータの読み書きと状態管理。
 
 - **`components/home-content.tsx`**: アプリのメインレイアウト（Container コンポーネント）
+  - **役割**: アプリのシェル（外枠）であり、すべての状態を集約して子に流す Container
+  - Sidebar + NotebookCanvas を配置・統合
+  - `useNotes` / `useTrash` を呼び出し、子コンポーネントに props で配布
+  - Electronメニューイベント（新規作成、ダークモード）を受信
 - **`hooks/use-notes.ts`**: ノートのCRUD操作と状態管理
 - **`hooks/use-trash.ts`**: ゴミ箱機能（ソフトデリート、復元、自動クリーンアップ）
 - **`services/note-storage.ts`**: ファイルシステムやlocalStorageへの永続化処理
