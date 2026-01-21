@@ -1,3 +1,17 @@
+/**
+ * ConnectionLayer - 接続線レイヤーコンポーネント
+ *
+ * テキストブロック間の接続線（矢印・実線・破線）を描画。
+ *
+ * @algorithm
+ * 線の描画はブロック中心から中心への直線を計算し、
+ * 各ブロックの矩形境界との交点を求めて、枠からはみ出さないようにする。
+ * getIntersection() でパラメトリック方程式を使用して交点を算出。
+ *
+ * @layers
+ * - Visual Layer (z-0): SVG線の表示
+ * - Interaction Layer (z-5): クリック判定用の太い透明線
+ */
 'use client'
 
 import type { MouseEvent } from 'react'

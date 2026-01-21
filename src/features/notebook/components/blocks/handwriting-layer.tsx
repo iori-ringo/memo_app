@@ -1,3 +1,23 @@
+/**
+ * HandwritingLayer - 手書き入力レイヤーコンポーネント
+ *
+ * Canvas 要素を使用した手書きストロークの描画と管理。
+ *
+ * @modes
+ * - ペンモード: 手書きストロークを追加
+ * - 消しゴムモード: ストロークのポイントを部分削除
+ * - オブジェクト消しゴムモード: ストローク全体をクリックで削除
+ *
+ * @drawing
+ * - PointerEvent を使用（タッチ/マウス/ペン対応）
+ * - 筆圧情報も取得可能（e.pressure）
+ * - ハイライターモード対応（半透明で描画）
+ *
+ * @state
+ * - strokes: 保存済みのストローク配列
+ * - currentStroke: 描画中のストローク
+ * - mousePos: 消しゴムプレビュー用のマウス位置
+ */
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
@@ -28,7 +48,7 @@ export const HandwritingLayer = ({
 	const [currentStroke, setCurrentStroke] = useState<Stroke | null>(null)
 	const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
 
-	// Resize canvas to match container
+	// コンテナに合わせてキャンバスサイズを変更
 	useEffect(() => {
 		const canvas = canvasRef.current
 		if (!canvas) return
@@ -37,12 +57,12 @@ export const HandwritingLayer = ({
 			const parent = canvas.parentElement
 			if (!parent) return
 
-			// Set canvas size to match parent
+			// キャンバスサイズを親要素に合わせる
 			const rect = parent.getBoundingClientRect()
 			canvas.width = rect.width
 			canvas.height = rect.height
 
-			// Redraw after resize
+			// サイズ変更後に再描画
 			const ctx = canvas.getContext('2d')
 			if (!ctx) return
 
@@ -72,10 +92,10 @@ export const HandwritingLayer = ({
 				ctx.globalAlpha = 1.0
 			}
 
-			// Draw strokes
+			// ストロークを描画
 			if (isEraserMode && mousePos) {
 				const eraserRadius = 10
-				// Draw non-affected strokes normally
+				// 影響を受けないストロークを通常通り描画
 				strokes.forEach((stroke) => {
 					const isAffected = stroke.points.some((point) => {
 						const dist = Math.sqrt((point.x - mousePos.x) ** 2 + (point.y - mousePos.y) ** 2)
@@ -85,7 +105,7 @@ export const HandwritingLayer = ({
 						drawStroke(stroke)
 					}
 				})
-				// Draw affected strokes highlighted
+				// 影響を受けるストロークをハイライト表示
 				strokes.forEach((stroke) => {
 					const isAffected = stroke.points.some((point) => {
 						const dist = Math.sqrt((point.x - mousePos.x) ** 2 + (point.y - mousePos.y) ** 2)
@@ -96,7 +116,7 @@ export const HandwritingLayer = ({
 					}
 				})
 
-				// Draw eraser cursor
+				// 消しゴムカーソルを描画
 				ctx.beginPath()
 				ctx.arc(mousePos.x, mousePos.y, eraserRadius, 0, Math.PI * 2)
 				ctx.strokeStyle = '#999'
@@ -115,10 +135,10 @@ export const HandwritingLayer = ({
 			}
 		}
 
-		// Initial resize
+		// 初回リサイズ
 		resizeCanvas()
 
-		// Watch for size changes
+		// サイズ変更を監視
 		const resizeObserver = new ResizeObserver(resizeCanvas)
 		if (canvas.parentElement) {
 			resizeObserver.observe(canvas.parentElement)
@@ -131,7 +151,7 @@ export const HandwritingLayer = ({
 
 	const handlePointerDown = (e: React.PointerEvent) => {
 		if (!isPenMode && !isEraserMode && !isObjectEraserMode) return
-		e.preventDefault() // Prevent scrolling/selection
+		e.preventDefault() // スクロール/選択を防止
 		const rect = canvasRef.current?.getBoundingClientRect()
 		if (!rect) return
 
@@ -139,7 +159,7 @@ export const HandwritingLayer = ({
 		const y = e.clientY - rect.top
 
 		if (isObjectEraserMode) {
-			// Object eraser: remove entire stroke on click
+			// オブジェクト消しゴム: クリックでストローク全体を削除
 			const clickedStroke = strokes.find((stroke) =>
 				stroke.points.some((point) => Math.sqrt((point.x - x) ** 2 + (point.y - y) ** 2) < 15)
 			)
@@ -148,7 +168,7 @@ export const HandwritingLayer = ({
 				onUpdate(newStrokes)
 			}
 		} else if (isEraserMode) {
-			// Normal eraser: start erasing
+			// 通常消しゴム: 消去開始
 			const pressure = e.pressure
 			setCurrentStroke({
 				id: uuidv4(),
@@ -158,7 +178,7 @@ export const HandwritingLayer = ({
 				isHighlighter,
 			})
 		} else if (isPenMode) {
-			// Pen mode: start drawing
+			// ペンモード: 描画開始
 			const pressure = e.pressure
 			setCurrentStroke({
 				id: uuidv4(),
@@ -177,7 +197,7 @@ export const HandwritingLayer = ({
 		const x = e.clientX - rect.left
 		const y = e.clientY - rect.top
 
-		// Update mouse position for eraser preview
+		// 消しゴムプレビュー用のマウス位置を更新
 		if (isEraserMode) {
 			setMousePos({ x, y })
 		}
@@ -188,7 +208,7 @@ export const HandwritingLayer = ({
 		const pressure = e.pressure
 
 		if (isEraserMode) {
-			// Erase parts of strokes that touch the eraser path
+			// 消しゴムのパスに触れたストロークの一部を消去
 			const eraserRadius = 10
 			const newStrokes = strokes
 				.map((stroke) => {
@@ -197,12 +217,12 @@ export const HandwritingLayer = ({
 						return dist > eraserRadius
 					})
 
-					// If no points left, mark for deletion
+					// ポイントが残っていない場合、削除対象としてマーク
 					if (remainingPoints.length === 0) {
 						return null
 					}
 
-					// If points were removed, update the stroke
+					// ポイントが削除された場合、ストロークを更新
 					if (remainingPoints.length < stroke.points.length) {
 						return { ...stroke, points: remainingPoints }
 					}
@@ -227,7 +247,7 @@ export const HandwritingLayer = ({
 
 	const handlePointerUp = (_e: React.PointerEvent) => {
 		if (isEraserMode) {
-			// For eraser, we don't need to save a stroke
+			// 消しゴムの場合、ストロークを保存する必要はない
 			setCurrentStroke(null)
 			setMousePos(null)
 		} else if (isPenMode && currentStroke) {
