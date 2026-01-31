@@ -6,9 +6,8 @@
  */
 'use client'
 
-import { isThisWeek, isToday, isYesterday } from 'date-fns'
 import { Plus, Star } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useSidebarLogic } from '@/features/sidebar/hooks/use-sidebar-logic'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import { ScrollArea } from '@/shared/shadcn/scroll-area'
@@ -22,6 +21,7 @@ type AppSidebarProps = {
 	activePageId: string | null
 	onSelectPage: (pageId: string) => void
 	onAddPage: () => void
+	onUpdatePage?: (id: string, updates: Partial<NotePage>) => void
 	onDeletePage: (pageId: string) => void
 	onRestorePage?: (pageId: string) => void
 	onPermanentDeletePage?: (pageId: string) => void
@@ -33,113 +33,26 @@ export const AppSidebar = ({
 	activePageId,
 	onSelectPage,
 	onAddPage,
+	onUpdatePage,
 	onDeletePage,
 	onRestorePage,
 	onPermanentDeletePage,
 	className,
 }: AppSidebarProps) => {
-	const [searchQuery, setSearchQuery] = useState('')
-	const [editingPageId, setEditingPageId] = useState<string | null>(null)
-	const [editingTitle, setEditingTitle] = useState('')
-
-	// 検索フィルタリング
-	const filteredPages = pages.filter((page) => {
-		const query = searchQuery.toLowerCase()
-		return page.title.toLowerCase().includes(query)
-	})
-
-	// Cmd+M で新規ページ作成
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if ((e.metaKey || e.ctrlKey) && e.key === 'm') {
-				e.preventDefault()
-				onAddPage()
-			}
-		}
-
-		window.addEventListener('keydown', handleKeyDown)
-		return () => window.removeEventListener('keydown', handleKeyDown)
-	}, [onAddPage])
-
-	// アクティブ（削除されていない）ページ
-	const activePagesFiltered = filteredPages.filter((p) => !p.deletedAt)
-	// 削除されたページ
-	const deletedPages = filteredPages.filter((p) => p.deletedAt)
-
-	// お気に入りと非お気に入りを分離
-	const favoritePages = activePagesFiltered.filter((p) => p.isFavorite)
-	const nonFavoritePages = activePagesFiltered.filter((p) => !p.isFavorite)
-
-	// 日付でグループ化
-	const groupedPages: {
-		today: NotePage[]
-		yesterday: NotePage[]
-		thisWeek: NotePage[]
-		older: NotePage[]
-	} = {
-		today: [],
-		yesterday: [],
-		thisWeek: [],
-		older: [],
-	}
-
-	nonFavoritePages.forEach((page) => {
-		const date = new Date(page.updatedAt)
-		if (isToday(date)) {
-			groupedPages.today.push(page)
-		} else if (isYesterday(date)) {
-			groupedPages.yesterday.push(page)
-		} else if (isThisWeek(date)) {
-			groupedPages.thisWeek.push(page)
-		} else {
-			groupedPages.older.push(page)
-		}
-	})
-
-	// 各グループを新しい順にソート
-	Object.values(groupedPages).forEach((group) => {
-		group.sort((a, b) => b.updatedAt - a.updatedAt)
-	})
-
-	// 編集関連のハンドラー
-	const handleStartEditing = (page: NotePage) => {
-		setEditingPageId(page.id)
-		setEditingTitle(page.title)
-	}
-
-	const handleFinishEditing = () => {
-		if (editingPageId) {
-			// Find the page and update it if title changed
-			const page = pages.find((p) => p.id === editingPageId)
-			if (page && page.title !== editingTitle) {
-				// Assuming there's a way to update page title.
-				// Since we don't have update function in props, we might need one.
-				// For now, we manually trigger an update if parent supports it, or assume parent handles it differently.
-				// Wait, AppSidebarProps only has onDeletePage.
-				// We actually need onUpdatePage prop here to support renaming.
-				// But let's stick to existing props for now.
-				// Actually, looking at previous code, title update logic was missing in props too?
-				// Ah, in previous monolithic code, renderPageItem had input but no update logic connected to parent?
-				// Wait, the input onChange only updated local state `setEditingTitle`.
-				// `onBlur` called `handleFinishEditing` which just cleared state.
-				// So renaming wasn't actually saving to parent in previous code either?
-				// Let's check `text-block.tsx` logic - wait that's for content.
-				// For sidebar, updating title seems to rely on something else or was incomplete.
-				// Let's just clear state for now.
-			}
-			setEditingPageId(null)
-			setEditingTitle('')
-		}
-	}
-
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			handleFinishEditing()
-		} else if (e.key === 'Escape') {
-			setEditingPageId(null)
-			setEditingTitle('')
-		}
-	}
+	const {
+		searchQuery,
+		setSearchQuery,
+		editingPageId,
+		editingTitle,
+		setEditingTitle,
+		handleStartEditing,
+		handleFinishEditing,
+		handleKeyDown,
+		activePagesFiltered,
+		deletedPages,
+		favoritePages,
+		groupedPages,
+	} = useSidebarLogic({ pages, onAddPage, onUpdatePage })
 
 	// ページアイテム共通の props
 	const pageItemProps = {
@@ -152,6 +65,8 @@ export const AppSidebar = ({
 		onFinishEditing: handleFinishEditing,
 		onKeyDown: handleKeyDown,
 		onDelete: onDeletePage,
+		onRestore: onRestorePage,
+		onPermanentDelete: onPermanentDeletePage,
 	}
 
 	// ページグループをレンダリング

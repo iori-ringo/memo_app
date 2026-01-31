@@ -9,7 +9,7 @@ import { Book, Search } from 'lucide-react'
 import { Input } from '@/shared/shadcn/input'
 import { ModeToggle } from '@/shared/ui/mode-toggle'
 
-interface SidebarHeaderProps {
+type SidebarHeaderProps = {
 	searchQuery: string
 	onSearchChange: (value: string) => void
 }

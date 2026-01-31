@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { loadNotes, saveConfig, saveNotes } from '@/features/notes/services/note-storage'
 import type { NotePage } from '@/types/note'
-import { loadNotes, saveConfig, saveNotes } from '../services/note-storage'
 
 const INITIAL_PAGE: NotePage = {
 	id: '1',
@@ -15,7 +15,7 @@ const INITIAL_PAGE: NotePage = {
 	connections: [],
 }
 
-interface UseNotesReturn {
+type UseNotesReturn = {
 	pages: NotePage[]
 	setPages: React.Dispatch<React.SetStateAction<NotePage[]>>
 	activePageId: string | null

@@ -29,7 +29,7 @@ export const ColorTools = ({ editor }: ColorToolsProps) => {
 					onClick={() => editor?.chain().focus().setColor(color.value).run()}
 					disabled={!editor}
 					className={cn(
-						'w-6 h-6 rounded border border-stone-300 dark:border-stone-700 hover:ring-2 hover:ring-primary hover:ring-offset-1',
+						'w-4 h-4 rounded border border-stone-300 dark:border-stone-700 hover:ring-2 hover:ring-primary hover:ring-offset-1',
 						editor?.isActive('textStyle', { color: color.value }) &&
 							'ring-2 ring-primary ring-offset-1'
 					)}
