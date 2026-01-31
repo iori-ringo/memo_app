@@ -54,3 +54,6 @@
 - `chore/error-logging`（フェーズ5）
 - `perf/notebook-ux`（フェーズ6）
 - `docs/update-readme`（フェーズ7）
+
+■どっかで、スマホの画面も作りたい。
+これは、HTM、CSSのみで静的な画面で出力してもらいながら、それの修正を行なっていくのがいい気がする

@@ -51,23 +51,32 @@ npm run electron:dev
 
 ```
 memo_app/
-├── electron/           # Electron メインプロセス
-│   ├── main.ts         # エントリーポイント
-│   ├── preload.ts      # プリロードスクリプト
-│   └── ipc/            # IPC 型定義
+├── electron/              # Electron メインプロセス
+│   ├── main.ts            # エントリーポイント
+│   ├── preload.ts         # プリロードスクリプト
+│   ├── handlers/          # IPC ハンドラー
+│   ├── ipc/               # IPC 型定義
+│   ├── store/             # データ永続化
+│   ├── utils/             # ユーティリティ
+│   └── window/            # ウィンドウ管理
 ├── src/
-│   ├── app/            # Next.js App Router
-│   ├── features/       # 機能別モジュール
-│   │   ├── editor/     # リッチテキストエディタ
-│   │   ├── notebook/   # ノートブックキャンバス
-│   │   ├── notes/      # ノート管理
-│   │   └── sidebar/    # サイドバー
-│   ├── shared/         # 共有コンポーネント
-│   ├── lib/            # ユーティリティ
-│   └── types/          # 型定義
-├── public/             # 静的ファイル
-└── assets/             # アプリアイコン等
+│   ├── app/               # Next.js App Router
+│   ├── features/          # 機能別モジュール
+│   │   ├── notebook/      # ノートブックキャンバス + エディタ
+│   │   │   ├── components/  # UI コンポーネント
+│   │   │   ├── extensions/  # Tiptap 拡張機能
+│   │   │   └── hooks/       # カスタムフック
+│   │   ├── notes/         # ノート管理
+│   │   └── sidebar/       # サイドバー
+│   │       └── components/  # Desktop/Mobile 対応
+│   ├── shared/            # 共有コンポーネント
+│   ├── lib/               # ユーティリティ
+│   └── types/             # 型定義
+├── public/                # 静的ファイル
+└── assets/                # アプリアイコン等
 ```
+
+> 📚 詳細なアーキテクチャは [src/ARCHITECTURE.md](./src/ARCHITECTURE.md) を参照
 
 ## ショートカットキー
 
