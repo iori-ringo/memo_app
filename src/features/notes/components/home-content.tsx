@@ -1,15 +1,20 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { NotebookCanvas } from '@/features/notebook/components/canvas/notebook-canvas'
 import { useNotes } from '@/features/notes/hooks/use-notes'
 import { useTrash } from '@/features/notes/hooks/use-trash'
-import { AppSidebar } from '@/features/sidebar/components/app-sidebar'
-import { Button } from '@/shared/shadcn/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/shared/shadcn/sheet'
+import { DesktopSidebar } from '@/features/sidebar/components/desktop-sidebar'
+import { MobileDrawer } from '@/features/sidebar/components/mobile-drawer'
+
+// 静的JSXの抽出（rendering-hoist-jsx）
+const emptyState = (
+	<div className="flex items-center justify-center h-full text-muted-foreground">
+		ページを選択または作成してください
+	</div>
+)
 
 export const HomeContent = () => {
 	const { setTheme, resolvedTheme } = useTheme()
@@ -23,7 +28,6 @@ export const HomeContent = () => {
 		isClient,
 		handleAddPage,
 		handleUpdatePage,
-		handleUpdatePageTitle,
 	} = useNotes()
 
 	const { cleanupOldTrash, handleDeletePage, handleRestorePage, handlePermanentDeletePage } =
@@ -34,35 +38,63 @@ export const HomeContent = () => {
 			setActivePageId,
 		})
 
-	// 起動時にゴミ箱の自動クリーンアップ
+	// useLatest パターン: 最新の値を ref に保存（advanced-use-latest）
+	const latestRef = useRef({
+		handleAddPage,
+		setTheme,
+		resolvedTheme,
+	})
+
+	// 状態が変わるたびに ref を更新（軽量）
+	useEffect(() => {
+		latestRef.current = {
+			handleAddPage,
+			setTheme,
+			resolvedTheme,
+		}
+	}, [handleAddPage, setTheme, resolvedTheme])
+
+	// cleanupOldTrashをrefで保持（初回のみ実行用）
+	const cleanupOldTrashRef = useRef(cleanupOldTrash)
+	useEffect(() => {
+		cleanupOldTrashRef.current = cleanupOldTrash
+	}, [cleanupOldTrash])
+
+	// 起動時にゴミ箱の自動クリーンアップ（初回のみ実行）
 	useEffect(() => {
 		if (isClient) {
-			cleanupOldTrash()
+			cleanupOldTrashRef.current()
 		}
-	}, [isClient, cleanupOldTrash])
+	}, [isClient])
 
 	// Platform event listeners (Electron menu events, etc.)
+	// リスナーは初回のみ登録、ref経由で最新値を参照
 	useEffect(() => {
 		let isMounted = true
 		let cleanupFn: (() => void) | undefined
 
-		// Import dynamically to avoid SSR issues
 		const setupListeners = async () => {
-			const { platformEvents } = await import('@/lib/platform-events')
+			try {
+				const { platformEvents } = await import('@/lib/platform-events')
 
-			// Prevent registration if unmounted during await
-			if (!isMounted) return
+				if (!isMounted) return
 
-			const cleanupNewPage = platformEvents.onNewPage(() => {
-				handleAddPage()
-			})
-			const cleanupToggleDark = platformEvents.onToggleDark(() => {
-				setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-			})
+				const cleanupNewPage = platformEvents.onNewPage(() => {
+					latestRef.current.handleAddPage()
+				})
+				const cleanupToggleDark = platformEvents.onToggleDark(() => {
+					const { resolvedTheme, setTheme } = latestRef.current
+					// resolvedThemeがundefinedの場合はdarkをデフォルトに
+					setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+				})
 
-			cleanupFn = () => {
-				cleanupNewPage()
-				cleanupToggleDark()
+				cleanupFn = () => {
+					cleanupNewPage()
+					cleanupToggleDark()
+				}
+			} catch {
+				// Web環境やplatform-eventsが利用できない場合は無視
+				console.debug('Platform events not available')
 			}
 		}
 
@@ -72,51 +104,29 @@ export const HomeContent = () => {
 			isMounted = false
 			cleanupFn?.()
 		}
-	}, [handleAddPage, resolvedTheme, setTheme])
+	}, []) // 依存配列を空に: リスナーは初回のみ登録
 
-	if (!isClient) return null // ハイドレーションミスマッチを防止
+	if (!isClient) return null
+
+	// サイドバー用の共通プロップス
+	const sidebarProps = {
+		pages,
+		activePageId,
+		onSelectPage: setActivePageId,
+		onAddPage: handleAddPage,
+		onUpdatePage: handleUpdatePage,
+		onDeletePage: handleDeletePage,
+		onRestorePage: handleRestorePage,
+		onPermanentDeletePage: handlePermanentDeletePage,
+	}
 
 	return (
 		<div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
 			{/* Desktop Sidebar */}
-			<div className="hidden md:block w-64 shrink-0 h-full">
-				<AppSidebar
-					pages={pages}
-					activePageId={activePageId}
-					onSelectPage={setActivePageId}
-					onAddPage={handleAddPage}
-					onUpdatePageTitle={handleUpdatePageTitle}
-					onDeletePage={handleDeletePage}
-					onRestorePage={handleRestorePage}
-					onPermanentDeletePage={handlePermanentDeletePage}
-					className="h-full w-full border-r"
-				/>
-			</div>
+			<DesktopSidebar {...sidebarProps} />
 
 			{/* Mobile Drawer */}
-			<div className="md:hidden fixed top-4 left-4 z-50">
-				<Sheet>
-					<SheetTrigger asChild>
-						<Button variant="outline" size="icon">
-							<Menu className="h-4 w-4" />
-						</Button>
-					</SheetTrigger>
-					<SheetContent side="left" className="p-0 w-80">
-						<AppSidebar
-							pages={pages}
-							activePageId={activePageId}
-							onSelectPage={(id) => {
-								setActivePageId(id)
-							}}
-							onAddPage={handleAddPage}
-							onUpdatePageTitle={handleUpdatePageTitle}
-							onDeletePage={handleDeletePage}
-							onRestorePage={handleRestorePage}
-							onPermanentDeletePage={handlePermanentDeletePage}
-						/>
-					</SheetContent>
-				</Sheet>
-			</div>
+			<MobileDrawer {...sidebarProps} />
 
 			{/* Main Content */}
 			<div className="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -142,9 +152,7 @@ export const HomeContent = () => {
 									<NotebookCanvas page={activePage} onUpdate={handleUpdatePage} />
 								</motion.div>
 							) : (
-								<div className="flex items-center justify-center h-full text-muted-foreground">
-									ページを選択または作成してください
-								</div>
+								emptyState
 							)}
 						</AnimatePresence>
 					</div>

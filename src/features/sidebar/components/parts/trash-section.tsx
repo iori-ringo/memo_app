@@ -10,7 +10,7 @@ import { useState } from 'react'
 import type { NotePage } from '@/types/note'
 import { PageListItem } from './page-list-item'
 
-interface TrashSectionProps {
+type TrashSectionProps = {
 	deletedPages: NotePage[]
 	activePageId: string | null
 	editingPageId: string | null

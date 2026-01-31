@@ -19,7 +19,7 @@ import {
 } from '@/shared/shadcn/dropdown-menu'
 import type { NotePage } from '@/types/note'
 
-interface PageListItemProps {
+type PageListItemProps = {
 	page: NotePage
 	activePageId: string | null
 	isTrash?: boolean
