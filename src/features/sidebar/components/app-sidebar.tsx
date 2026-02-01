@@ -10,7 +10,6 @@ import { Plus, Star } from 'lucide-react'
 import { useSidebarLogic } from '@/features/sidebar/hooks/use-sidebar-logic'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
-import { ScrollArea } from '@/shared/shadcn/scroll-area'
 import type { NotePage } from '@/types/note'
 import { PageListItem } from './parts/page-list-item'
 import { SidebarHeader } from './parts/sidebar-header'
@@ -74,7 +73,7 @@ export const AppSidebar = ({
 		if (pageList.length === 0) return null
 		return (
 			<div className="mb-4">
-				<div className="text-xs font-semibold text-muted-foreground px-2 mb-2 flex items-center gap-2">
+				<div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-2">
 					{icon}
 					{label}
 				</div>
@@ -89,13 +88,15 @@ export const AppSidebar = ({
 		<div className={cn('flex flex-col h-full border-r bg-muted/30', className)}>
 			<SidebarHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
-			<ScrollArea className="flex-1">
-				<div className="p-2 space-y-1">
-					<Button variant="default" className="w-full justify-start gap-2 mb-4" onClick={onAddPage}>
-						<Plus className="h-4 w-4" />
-						新しいページ
-					</Button>
+			<div className="p-4 pt-3">
+				<Button variant="default" className="w-full justify-start gap-2" onClick={onAddPage}>
+					<Plus className="h-4 w-4" />
+					新しいページ
+				</Button>
+			</div>
 
+			<div className="flex-1 overflow-y-auto">
+				<div className="px-4 py-2 space-y-1">
 					{/* お気に入り */}
 					{renderPageGroup('お気に入り', favoritePages, <Star className="h-3 w-3 fill-current" />)}
 
@@ -129,7 +130,7 @@ export const AppSidebar = ({
 						<div className="text-center py-8 text-muted-foreground text-sm">ページがありません</div>
 					)}
 				</div>
-			</ScrollArea>
+			</div>
 		</div>
 	)
 }

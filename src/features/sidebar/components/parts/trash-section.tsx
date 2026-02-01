@@ -44,7 +44,7 @@ export const TrashSection = ({
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="w-full flex items-center gap-2 text-xs font-semibold text-muted-foreground px-2 mb-2 hover:text-foreground transition-colors"
+				className="w-full flex items-center gap-2 text-xs font-semibold text-muted-foreground mb-2 hover:text-foreground transition-colors"
 			>
 				{isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
 				<Trash2 className="h-3 w-3" />

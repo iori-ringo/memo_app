@@ -154,12 +154,71 @@ Desktop（固定サイドバー）とMobile（Sheet/ドロワー）で異なるU
 - **`components/mobile-drawer.tsx`**: Mobile用ドロワーラッパー
 - **`components/parts/`**: ページリスト、ゴミ箱、設定などの個別パーツ
 
+**こだわりポイント: インライン編集のベストプラクティス適用**
+
+`PageListItem` コンポーネント（`components/parts/page-list-item.tsx`）では、ページタイトルのインライン編集機能を実装しています。PatternFly、Atlassian Design、Cloudscape などの主要デザインシステムのガイドラインを参考に、以下のパターンを採用しました。
+
+1. **レイアウトの安定化**: 編集/表示モードで DOM 構造を大きく変えず、`flex-1 min-w-0` のシンプルな flex 構造で幅を制御。編集時もコンテナの高さが変わらないよう `border-b` のみ使用し、レイアウトジャンプを防止。
+
+2. **確実なフォーカス管理**: `autoFocus` 属性ではなく `useEffect` + `useRef` でフォーカスを制御。編集開始時にテキスト全選択も実行し、即座に入力可能な状態に。
+
+3. **blur 自動保存パターン**: 短いテキスト編集では blur で自動保存が UX のベストプラクティス。Escape キーでキャンセル、Enter キーで確定のキーボード操作にも対応。
+
+4. **ドロップダウン位置の明示的指定**: ScrollArea 内での配置を考慮し、`side="bottom"` `align="end"` `collisionPadding={8}` を明示指定。Radix UI の Portal と組み合わせ、親の overflow に影響されない正確な位置計算を実現。
+
+```typescript
+// フォーカス管理: autoFocus より確実な useEffect パターン
+const inputRef = useRef<HTMLInputElement>(null)
+
+useEffect(() => {
+  if (isEditing && inputRef.current) {
+    inputRef.current.focus()
+    inputRef.current.select() // 全選択で即編集可能に
+  }
+}, [isEditing])
+```
+
 **こだわりポイント: レスポンシブ対応のコンポーネント分離**
 
 Desktop（固定サイドバー）とMobile（Sheet/ドロワー）で異なるUIを提供していますが、これを `DesktopSidebar` と `MobileDrawer` に分離することで:
 - 各コンポーネントの責務が明確に
 - 将来的なプラットフォーム固有の最適化が容易に
 - テストやスタイル変更の影響範囲を限定
+
+**こだわりポイント: ScrollAreaの排除とパディング一元管理**
+
+サイドバー内の要素（検索欄、ボタン、ページリスト）の横幅を統一するため、以下のリファクタリングを実施しました。
+
+**課題**: shadcn/radix の `ScrollArea` はスクロールバー用のスペース（約10px）をViewport横に確保するため、ScrollArea内外で要素の幅がずれる問題がありました。
+
+**解決策**:
+1. `ScrollArea` を通常の `div` + `overflow-y-auto` に置き換え（オーバーレイスクロールバー化）
+2. 固定要素（ボタン）をスクロール領域の外に配置
+3. 親コンテナで `px-4` を一元管理し、子コンポーネントの個別パディングを削除
+
+```tsx
+// Before: ScrollArea内外で幅がずれる
+<SidebarHeader className="p-4" />      {/* 16px */}
+<ScrollArea>
+  <div className="p-2">                 {/* 8px + スクロールバー分ずれる */}
+    <Button className="mx-2" />         {/* 個別調整が必要 */}
+    <PageListItem className="px-2" />   {/* 個別調整が必要 */}
+  </div>
+</ScrollArea>
+
+// After: 親で一元管理
+<SidebarHeader className="p-4" />       {/* 16px */}
+<div className="p-4 pt-3">              {/* 16px - ボタンは外 */}
+  <Button className="w-full" />
+</div>
+<div className="overflow-y-auto">
+  <div className="px-4 py-2">           {/* 16px - 統一 */}
+    <PageListItem />                    {/* パディング不要 */}
+  </div>
+</div>
+```
+
+**学び**: `ScrollArea` はスクロールバーのカスタムスタイリングが必要な場合に有効ですが、他要素との幅統一が求められる場面では通常の `overflow-y-auto` の方がシンプルに解決できます。
 
 ### 型の Single Source of Truth (SSoT)
 
