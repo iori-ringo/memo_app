@@ -96,40 +96,49 @@ export const PageListItem = ({
 							: 'hover:bg-accent/50 text-muted-foreground'
 					)}
 				>
-					{/* アイコン */}
-					{page.isFavorite ? (
-						<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
-					) : (
-						<FileText className="h-3.5 w-3.5 shrink-0" />
-					)}
-
 					{/* コンテンツエリア */}
 					<div className="flex-1 min-w-0">
 						{isEditing ? (
 							// 編集モード
-							<div className="flex flex-col gap-0.5">
-								<input
-									ref={inputRef}
-									type="text"
-									value={editingTitle}
-									aria-label="ページ名の編集"
-									onChange={(e) => onTitleChange(e.target.value)}
-									onBlur={onFinishEditing}
-									onKeyDown={onKeyDown}
-									className="w-full bg-transparent border-b border-primary outline-none text-foreground text-sm font-medium px-0 py-0.5 focus-visible:ring-0"
-								/>
-								<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
+							<div className="flex items-center gap-1.5 w-full">
+								{/* アイコン（編集モード） */}
+								{page.isFavorite ? (
+									<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
+								) : (
+									<FileText className="h-3.5 w-3.5 shrink-0" />
+								)}
+								<div className="flex-1 min-w-0 flex flex-col gap-0.5">
+									<input
+										ref={inputRef}
+										type="text"
+										value={editingTitle}
+										aria-label="ページ名の編集"
+										onChange={(e) => onTitleChange(e.target.value)}
+										onBlur={onFinishEditing}
+										onKeyDown={onKeyDown}
+										className="w-full bg-transparent border-b border-primary outline-none text-foreground text-sm font-medium px-0 py-0.5 focus-visible:ring-0"
+									/>
+									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
+								</div>
 							</div>
 						) : (
 							// 表示モード
 							<button
 								type="button"
-								className="w-full text-left flex flex-col gap-0.5 bg-transparent border-none outline-none cursor-pointer rounded p-0.5 -m-0.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+								className="w-full text-left flex items-center gap-1.5 bg-transparent border-none outline-none cursor-pointer rounded p-0.5 -m-0.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
 								onClick={() => !isTrash && onSelect?.(page.id)}
 								onDoubleClick={() => !isTrash && onStartEditing(page)}
 							>
-								<span className="truncate font-medium text-foreground">{displayTitle}</span>
-								<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
+								{/* アイコン（表示モード） */}
+								{page.isFavorite ? (
+									<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
+								) : (
+									<FileText className="h-3.5 w-3.5 shrink-0" />
+								)}
+								<div className="flex-1 min-w-0 flex flex-col gap-0.5">
+									<span className="truncate font-medium text-foreground">{displayTitle}</span>
+									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
+								</div>
 							</button>
 						)}
 					</div>

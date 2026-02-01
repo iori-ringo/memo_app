@@ -119,7 +119,7 @@ export const AppSidebar = ({
 				</Button>
 			</div>
 
-			<div className="flex-1 overflow-y-auto">
+			<div className="flex-1 overflow-y-auto min-h-0">
 				<div className="px-4 py-2 space-y-1">
 					{/* お気に入り */}
 					{renderPageGroup('お気に入り', favoritePages, <Star className="h-3 w-3 fill-current" />)}

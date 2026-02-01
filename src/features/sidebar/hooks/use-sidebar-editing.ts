@@ -15,6 +15,10 @@ export const useSidebarEditing = ({ pages, onUpdatePage }: UseSidebarEditingProp
 	pagesRef.current = pages
 	const onUpdatePageRef = useRef(onUpdatePage)
 	onUpdatePageRef.current = onUpdatePage
+	const editingPageIdRef = useRef(editingPageId)
+	editingPageIdRef.current = editingPageId
+	const editingTitleRef = useRef(editingTitle)
+	editingTitleRef.current = editingTitle
 
 	const handleStartEditing = useCallback((page: NotePage) => {
 		setEditingPageId(page.id)
@@ -22,21 +26,18 @@ export const useSidebarEditing = ({ pages, onUpdatePage }: UseSidebarEditingProp
 	}, [])
 
 	const handleFinishEditing = useCallback(() => {
-		setEditingPageId((currentEditingPageId) => {
-			if (currentEditingPageId && onUpdatePageRef.current) {
-				const page = pagesRef.current.find((p) => p.id === currentEditingPageId)
-				// editingTitle は closure で参照（setEditingTitle と同期的に呼ばれるため安全）
-				setEditingTitle((currentTitle) => {
-					if (page && page.title !== currentTitle) {
-						onUpdatePageRef.current?.(currentEditingPageId, { title: currentTitle })
-					}
-					return ''
-				})
-			} else {
-				setEditingTitle('')
+		const currentEditingPageId = editingPageIdRef.current
+		const currentTitle = editingTitleRef.current
+
+		if (currentEditingPageId && onUpdatePageRef.current) {
+			const page = pagesRef.current.find((p) => p.id === currentEditingPageId)
+			if (page && page.title !== currentTitle) {
+				onUpdatePageRef.current(currentEditingPageId, { title: currentTitle })
 			}
-			return null
-		})
+		}
+
+		setEditingPageId(null)
+		setEditingTitle('')
 	}, [])
 
 	const handleKeyDown = useCallback(

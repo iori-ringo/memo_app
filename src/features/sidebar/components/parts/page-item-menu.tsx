@@ -66,7 +66,7 @@ type MenuItemsProps = {
 export const PageContextMenuItems = ({ actions }: MenuItemsProps) => (
 	<>
 		{actions.map((action) => (
-			<ContextMenuItem key={action.label} onClick={action.onClick} variant={action.variant}>
+			<ContextMenuItem key={action.label} onSelect={action.onClick} variant={action.variant}>
 				<action.icon className="mr-2 h-4 w-4" />
 				{action.label}
 			</ContextMenuItem>
