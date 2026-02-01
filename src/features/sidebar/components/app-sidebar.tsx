@@ -7,7 +7,13 @@
 'use client'
 
 import { Plus, Star } from 'lucide-react'
-import { useSidebarLogic } from '@/features/sidebar/hooks/use-sidebar-logic'
+import { useMemo } from 'react'
+import {
+	useSidebarEditing,
+	useSidebarGrouping,
+	useSidebarSearch,
+	useSidebarShortcuts,
+} from '@/features/sidebar/hooks'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import type { NotePage } from '@/types/note'
@@ -38,35 +44,55 @@ export const AppSidebar = ({
 	onPermanentDeletePage,
 	className,
 }: AppSidebarProps) => {
+	// キーボードショートカット（Cmd+M で新規ページ作成）
+	useSidebarShortcuts({ onAddPage })
+
+	// 検索フィルタリング
+	const { searchQuery, setSearchQuery, filteredPages } = useSidebarSearch(pages)
+
+	// ページのグループ化（お気に入り、日付別、削除済み）
+	const { activePages, deletedPages, favoritePages, groupedPages } =
+		useSidebarGrouping(filteredPages)
+
+	// ページタイトル編集
 	const {
-		searchQuery,
-		setSearchQuery,
 		editingPageId,
 		editingTitle,
 		setEditingTitle,
 		handleStartEditing,
 		handleFinishEditing,
 		handleKeyDown,
-		activePagesFiltered,
-		deletedPages,
-		favoritePages,
-		groupedPages,
-	} = useSidebarLogic({ pages, onAddPage, onUpdatePage })
+	} = useSidebarEditing({ pages, onUpdatePage })
 
-	// ページアイテム共通の props
-	const pageItemProps = {
-		activePageId,
-		editingPageId,
-		editingTitle,
-		onSelect: onSelectPage,
-		onStartEditing: handleStartEditing,
-		onTitleChange: setEditingTitle,
-		onFinishEditing: handleFinishEditing,
-		onKeyDown: handleKeyDown,
-		onDelete: onDeletePage,
-		onRestore: onRestorePage,
-		onPermanentDelete: onPermanentDeletePage,
-	}
+	// ページアイテム共通の props（useMemo でメモ化）
+	const pageItemProps = useMemo(
+		() => ({
+			activePageId,
+			editingPageId,
+			editingTitle,
+			onSelect: onSelectPage,
+			onStartEditing: handleStartEditing,
+			onTitleChange: setEditingTitle,
+			onFinishEditing: handleFinishEditing,
+			onKeyDown: handleKeyDown,
+			onDelete: onDeletePage,
+			onRestore: onRestorePage,
+			onPermanentDelete: onPermanentDeletePage,
+		}),
+		[
+			activePageId,
+			editingPageId,
+			editingTitle,
+			onSelectPage,
+			handleStartEditing,
+			setEditingTitle,
+			handleFinishEditing,
+			handleKeyDown,
+			onDeletePage,
+			onRestorePage,
+			onPermanentDeletePage,
+		]
+	)
 
 	// ページグループをレンダリング
 	const renderPageGroup = (label: string, pageList: NotePage[], icon?: React.ReactNode) => {
@@ -126,7 +152,7 @@ export const AppSidebar = ({
 						onPermanentDelete={onPermanentDeletePage}
 					/>
 
-					{activePagesFiltered.length === 0 && deletedPages.length === 0 && (
+					{activePages.length === 0 && deletedPages.length === 0 && (
 						<div className="text-center py-8 text-muted-foreground text-sm">ページがありません</div>
 					)}
 				</div>

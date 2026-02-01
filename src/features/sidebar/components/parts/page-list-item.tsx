@@ -3,22 +3,24 @@
  *
  * ページリストの個別アイテムを表示。
  * お気に入りアイコン、タイトル、更新日時、ドロップダウンメニューを含む。
+ * 右クリックでもコンテキストメニューを表示可能。
  */
 'use client'
 
 import { format, isToday } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { FileText, MoreHorizontal, Pencil, RotateCcw, Star, Trash2 } from 'lucide-react'
+import { FileText, MoreHorizontal, Star } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '@/shared/shadcn/context-menu'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/shared/shadcn/dropdown-menu'
 import type { NotePage } from '@/types/note'
+import { getPageMenuActions, PageContextMenuItems, PageDropdownMenuItems } from './page-item-menu'
 
 type PageListItemProps = {
 	page: NotePage
@@ -72,94 +74,84 @@ export const PageListItem = ({
 	// タイトル表示（空なら「無題のページ」）
 	const displayTitle = page.title?.trim() || '無題のページ'
 
+	// メニューアクション（共通定義）
+	const menuActions = getPageMenuActions(
+		page,
+		{ onStartEditing, onDelete, onRestore, onPermanentDelete },
+		isTrash
+	)
+
 	return (
-		<div
-			className={cn(
-				'group flex items-center gap-1.5 py-1 rounded-md text-sm transition-colors',
-				isActive ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50 text-muted-foreground'
-			)}
-		>
-			{/* アイコン */}
-			{page.isFavorite ? (
-				<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
-			) : (
-				<FileText className="h-3.5 w-3.5 shrink-0" />
-			)}
-
-			{/* コンテンツエリア */}
-			<div className="flex-1 min-w-0">
-				{isEditing ? (
-					// 編集モード
-					<div className="flex flex-col gap-0.5">
-						<input
-							ref={inputRef}
-							type="text"
-							value={editingTitle}
-							aria-label="ページ名の編集"
-							onChange={(e) => onTitleChange(e.target.value)}
-							onBlur={onFinishEditing}
-							onKeyDown={onKeyDown}
-							className="w-full bg-transparent border-b border-primary outline-none text-foreground text-sm font-medium px-0 py-0.5 focus-visible:ring-0"
-						/>
-						<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
-					</div>
-				) : (
-					// 表示モード
-					<button
-						type="button"
-						className="w-full text-left flex flex-col gap-0.5 bg-transparent border-none outline-none cursor-pointer rounded p-0.5 -m-0.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-						onClick={() => !isTrash && onSelect?.(page.id)}
-						onDoubleClick={() => !isTrash && onStartEditing(page)}
-					>
-						<span className="truncate font-medium text-foreground">{displayTitle}</span>
-						<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
-					</button>
-				)}
-			</div>
-
-			{/* ドロップダウンメニュー */}
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						variant="ghost"
-						size="icon"
-						className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-					>
-						<MoreHorizontal className="h-3.5 w-3.5" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent side="bottom" align="end" collisionPadding={8}>
-					{isTrash ? (
-						<>
-							<DropdownMenuItem onClick={() => onRestore?.(page.id)}>
-								<RotateCcw className="mr-2 h-4 w-4" />
-								復元
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => onPermanentDelete?.(page.id)}
-								className="text-red-600 focus:text-red-600"
-							>
-								<Trash2 className="mr-2 h-4 w-4" />
-								完全に削除
-							</DropdownMenuItem>
-						</>
-					) : (
-						<>
-							<DropdownMenuItem onClick={() => onStartEditing(page)}>
-								<Pencil className="mr-2 h-4 w-4" />
-								名前を変更
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => onDelete?.(page.id)}
-								className="text-red-600 focus:text-red-600"
-							>
-								<Trash2 className="mr-2 h-4 w-4" />
-								削除
-							</DropdownMenuItem>
-						</>
+		<ContextMenu>
+			<ContextMenuTrigger asChild>
+				<div
+					className={cn(
+						'group flex items-center gap-1.5 py-1 rounded-md text-sm transition-colors',
+						isActive
+							? 'bg-accent text-accent-foreground'
+							: 'hover:bg-accent/50 text-muted-foreground'
 					)}
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</div>
+				>
+					{/* アイコン */}
+					{page.isFavorite ? (
+						<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
+					) : (
+						<FileText className="h-3.5 w-3.5 shrink-0" />
+					)}
+
+					{/* コンテンツエリア */}
+					<div className="flex-1 min-w-0">
+						{isEditing ? (
+							// 編集モード
+							<div className="flex flex-col gap-0.5">
+								<input
+									ref={inputRef}
+									type="text"
+									value={editingTitle}
+									aria-label="ページ名の編集"
+									onChange={(e) => onTitleChange(e.target.value)}
+									onBlur={onFinishEditing}
+									onKeyDown={onKeyDown}
+									className="w-full bg-transparent border-b border-primary outline-none text-foreground text-sm font-medium px-0 py-0.5 focus-visible:ring-0"
+								/>
+								<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
+							</div>
+						) : (
+							// 表示モード
+							<button
+								type="button"
+								className="w-full text-left flex flex-col gap-0.5 bg-transparent border-none outline-none cursor-pointer rounded p-0.5 -m-0.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+								onClick={() => !isTrash && onSelect?.(page.id)}
+								onDoubleClick={() => !isTrash && onStartEditing(page)}
+							>
+								<span className="truncate font-medium text-foreground">{displayTitle}</span>
+								<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
+							</button>
+						)}
+					</div>
+
+					{/* ドロップダウンメニュー（...ボタン） */}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+							>
+								<MoreHorizontal className="h-3.5 w-3.5" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent side="bottom" align="end" collisionPadding={8}>
+							<PageDropdownMenuItems actions={menuActions} />
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			</ContextMenuTrigger>
+
+			{/* 右クリックメニュー */}
+			<ContextMenuContent>
+				<PageContextMenuItems actions={menuActions} />
+			</ContextMenuContent>
+		</ContextMenu>
 	)
 }

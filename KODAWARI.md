@@ -153,6 +153,141 @@ Desktop（固定サイドバー）とMobile（Sheet/ドロワー）で異なるU
 - **`components/desktop-sidebar.tsx`**: Desktop用サイドバーラッパー
 - **`components/mobile-drawer.tsx`**: Mobile用ドロワーラッパー
 - **`components/parts/`**: ページリスト、ゴミ箱、設定などの個別パーツ
+- **`components/parts/page-item-menu.tsx`**: ContextMenu/DropdownMenu 共通のメニュー項目定義
+
+**こだわりポイント: notebookパターンに倣ったhooks分割**
+
+サイドバーのロジックは当初 `use-sidebar-logic.ts`（111行）に集約されていましたが、notebook の hooks 分割パターンに倣い、責務ごとに4つのカスタムフックに分離しました。
+
+| フック | 責務 | 適用したベストプラクティス |
+|--------|------|---------------------------|
+| `use-sidebar-search.ts` | 検索フィルタリング | `useMemo` でメモ化 |
+| `use-sidebar-grouping.ts` | 日付グループ化・お気に入り分離 | `useMemo` + `js-combine-iterations` |
+| `use-sidebar-editing.ts` | ページタイトル編集状態 | `useCallback` + `useRef` Latest Value |
+| `use-sidebar-shortcuts.ts` | Cmd+M ショートカット | `useRef` Latest Value Pattern |
+
+**メリット**:
+- **単一責務**: 各フックが1つの関心事のみを扱い、テストやデバッグが容易に
+- **再利用性**: 検索やグループ化のロジックを他のコンポーネントでも再利用可能
+- **パフォーマンス**: 不要な再計算・再レンダリングを防止
+
+**こだわりポイント: 複数イテレーションの統合 (`js-combine-iterations`)**
+
+`use-sidebar-grouping.ts` では、ページの分類処理を最適化しました。
+
+**Before（4回イテレーション）:**
+```typescript
+const activePages = pages.filter((p) => !p.deletedAt)        // 1回目
+const deletedPages = pages.filter((p) => p.deletedAt)        // 2回目
+const favoritePages = activePages.filter((p) => p.isFavorite) // 3回目
+const nonFavoritePages = activePages.filter((p) => !p.isFavorite) // 4回目
+```
+
+**After（1回イテレーション）:**
+```typescript
+const activePages: NotePage[] = []
+const deletedPages: NotePage[] = []
+const favoritePages: NotePage[] = []
+
+for (const page of pages) {
+  if (page.deletedAt) {
+    deletedPages.push(page)
+    continue
+  }
+  activePages.push(page)
+  if (page.isFavorite) {
+    favoritePages.push(page)
+    continue
+  }
+  // 日付グループ化...
+}
+```
+
+**メリット**: 配列を1回走査するだけで全ての分類が完了し、O(4n) → O(n) に改善。
+
+**こだわりポイント: メニュー項目の共通化（DRY原則）**
+
+`page-list-item.tsx` では、DropdownMenu（...ボタン）と ContextMenu（右クリック）で同じメニュー項目を表示しますが、当初は同じ定義が2回書かれていました。
+
+**Before（重複コード）:**
+```tsx
+// ContextMenu用
+const menuItems = isTrash ? (
+  <>
+    <ContextMenuItem onClick={() => onRestore?.(page.id)}>復元</ContextMenuItem>
+    <ContextMenuItem onClick={() => onPermanentDelete?.(page.id)}>完全に削除</ContextMenuItem>
+  </>
+) : (...)
+
+// DropdownMenu用（ほぼ同じ内容を再定義）
+const dropdownMenuItems = isTrash ? (
+  <>
+    <DropdownMenuItem onClick={() => onRestore?.(page.id)}>復元</DropdownMenuItem>
+    <DropdownMenuItem onClick={() => onPermanentDelete?.(page.id)}>完全に削除</DropdownMenuItem>
+  </>
+) : (...)
+```
+
+**After（共通化）:**
+```typescript
+// page-item-menu.tsx
+type PageMenuAction = {
+  icon: LucideIcon
+  label: string
+  onClick: () => void
+  variant?: 'default' | 'destructive'
+}
+
+// アクション定義を共通化
+export const getPageMenuActions = (page, handlers, isTrash): PageMenuAction[] => {
+  if (isTrash) {
+    return [
+      { icon: RotateCcw, label: '復元', onClick: () => handlers.onRestore?.(page.id) },
+      { icon: Trash2, label: '完全に削除', onClick: () => handlers.onPermanentDelete?.(page.id), variant: 'destructive' }
+    ]
+  }
+  return [...]
+}
+
+// 各メニューコンポーネントは actions を受け取ってレンダリング
+export const PageContextMenuItems = ({ actions }) => (...)
+export const PageDropdownMenuItems = ({ actions }) => (...)
+```
+
+**メリット**:
+- **DRY原則**: メニュー項目の定義が1箇所に集約され、変更時の修正漏れを防止
+- **一貫性**: ContextMenu と DropdownMenu で必ず同じ項目が表示される
+- **拡張性**: 新しいメニュー項目の追加が容易
+
+**こだわりポイント: 安定したコールバック参照 (`useCallback` + `useRef`)**
+
+`use-sidebar-editing.ts` では、編集関連のハンドラーが毎レンダーで再生成されないよう最適化しました。
+
+```typescript
+// useRef Latest Value Pattern: コールバック内で最新値を参照
+const pagesRef = useRef(pages)
+pagesRef.current = pages
+const onUpdatePageRef = useRef(onUpdatePage)
+onUpdatePageRef.current = onUpdatePage
+
+// 安定したコールバック（依存配列が空）
+const handleStartEditing = useCallback((page: NotePage) => {
+  setEditingPageId(page.id)
+  setEditingTitle(page.title)
+}, [])
+
+const handleFinishEditing = useCallback(() => {
+  setEditingPageId((currentEditingPageId) => {
+    // ref経由で最新のpages/onUpdatePageを参照
+    const page = pagesRef.current.find((p) => p.id === currentEditingPageId)
+    // ...
+  })
+}, [])
+```
+
+**メリット**:
+- **安定した参照**: `handleStartEditing` 等が再生成されないため、子コンポーネントの不要な再レンダリングを防止
+- **Stale Closure防止**: `useRef` 経由で常に最新の `pages` と `onUpdatePage` を参照
 
 **こだわりポイント: インライン編集のベストプラクティス適用**
 
