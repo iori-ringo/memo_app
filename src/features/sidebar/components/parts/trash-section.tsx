@@ -7,8 +7,8 @@
 
 import { ChevronDown, ChevronRight, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
 import type { NotePage } from '@/types/note'
-import { PageListItem } from './page-list-item'
 
 type TrashSectionProps = {
 	deletedPages: NotePage[]
@@ -44,7 +44,7 @@ export const TrashSection = ({
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="w-full flex items-center gap-2 text-xs font-semibold text-muted-foreground px-2 mb-2 hover:text-foreground transition-colors"
+				className="w-full flex items-center gap-2 text-xs font-semibold text-muted-foreground mb-2 hover:text-foreground transition-colors"
 			>
 				{isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
 				<Trash2 className="h-3 w-3" />

@@ -153,6 +153,165 @@ Desktop（固定サイドバー）とMobile（Sheet/ドロワー）で異なるU
 - **`components/desktop-sidebar.tsx`**: Desktop用サイドバーラッパー
 - **`components/mobile-drawer.tsx`**: Mobile用ドロワーラッパー
 - **`components/parts/`**: ページリスト、ゴミ箱、設定などの個別パーツ
+- **`components/parts/page-item-menu.tsx`**: ContextMenu/DropdownMenu 共通のメニュー項目定義
+
+**こだわりポイント: notebookパターンに倣ったhooks分割**
+
+サイドバーのロジックは当初 `use-sidebar-logic.ts`（111行）に集約されていましたが、notebook の hooks 分割パターンに倣い、責務ごとに4つのカスタムフックに分離しました。
+
+| フック | 責務 | 適用したベストプラクティス |
+|--------|------|---------------------------|
+| `use-sidebar-search.ts` | 検索フィルタリング | `useMemo` でメモ化 |
+| `use-sidebar-grouping.ts` | 日付グループ化・お気に入り分離 | `useMemo` + `js-combine-iterations` |
+| `use-sidebar-editing.ts` | ページタイトル編集状態 | `useCallback` + `useRef` Latest Value |
+| `use-sidebar-shortcuts.ts` | Cmd+M ショートカット | `useRef` Latest Value Pattern |
+
+**メリット**:
+- **単一責務**: 各フックが1つの関心事のみを扱い、テストやデバッグが容易に
+- **再利用性**: 検索やグループ化のロジックを他のコンポーネントでも再利用可能
+- **パフォーマンス**: 不要な再計算・再レンダリングを防止
+
+**こだわりポイント: 複数イテレーションの統合 (`js-combine-iterations`)**
+
+`use-sidebar-grouping.ts` では、ページの分類処理を最適化しました。
+
+**Before（4回イテレーション）:**
+```typescript
+const activePages = pages.filter((p) => !p.deletedAt)        // 1回目
+const deletedPages = pages.filter((p) => p.deletedAt)        // 2回目
+const favoritePages = activePages.filter((p) => p.isFavorite) // 3回目
+const nonFavoritePages = activePages.filter((p) => !p.isFavorite) // 4回目
+```
+
+**After（1回イテレーション）:**
+```typescript
+const activePages: NotePage[] = []
+const deletedPages: NotePage[] = []
+const favoritePages: NotePage[] = []
+
+for (const page of pages) {
+  if (page.deletedAt) {
+    deletedPages.push(page)
+    continue
+  }
+  activePages.push(page)
+  if (page.isFavorite) {
+    favoritePages.push(page)
+    continue
+  }
+  // 日付グループ化...
+}
+```
+
+**メリット**: 配列を1回走査するだけで全ての分類が完了し、O(4n) → O(n) に改善。
+
+**こだわりポイント: メニュー項目の共通化（DRY原則）**
+
+`page-list-item.tsx` では、DropdownMenu（...ボタン）と ContextMenu（右クリック）で同じメニュー項目を表示しますが、当初は同じ定義が2回書かれていました。
+
+**Before（重複コード）:**
+```tsx
+// ContextMenu用
+const menuItems = isTrash ? (
+  <>
+    <ContextMenuItem onClick={() => onRestore?.(page.id)}>復元</ContextMenuItem>
+    <ContextMenuItem onClick={() => onPermanentDelete?.(page.id)}>完全に削除</ContextMenuItem>
+  </>
+) : (...)
+
+// DropdownMenu用（ほぼ同じ内容を再定義）
+const dropdownMenuItems = isTrash ? (
+  <>
+    <DropdownMenuItem onClick={() => onRestore?.(page.id)}>復元</DropdownMenuItem>
+    <DropdownMenuItem onClick={() => onPermanentDelete?.(page.id)}>完全に削除</DropdownMenuItem>
+  </>
+) : (...)
+```
+
+**After（共通化）:**
+```typescript
+// page-item-menu.tsx
+type PageMenuAction = {
+  icon: LucideIcon
+  label: string
+  onClick: () => void
+  variant?: 'default' | 'destructive'
+}
+
+// アクション定義を共通化
+export const getPageMenuActions = (page, handlers, isTrash): PageMenuAction[] => {
+  if (isTrash) {
+    return [
+      { icon: RotateCcw, label: '復元', onClick: () => handlers.onRestore?.(page.id) },
+      { icon: Trash2, label: '完全に削除', onClick: () => handlers.onPermanentDelete?.(page.id), variant: 'destructive' }
+    ]
+  }
+  return [...]
+}
+
+// 各メニューコンポーネントは actions を受け取ってレンダリング
+export const PageContextMenuItems = ({ actions }) => (...)
+export const PageDropdownMenuItems = ({ actions }) => (...)
+```
+
+**メリット**:
+- **DRY原則**: メニュー項目の定義が1箇所に集約され、変更時の修正漏れを防止
+- **一貫性**: ContextMenu と DropdownMenu で必ず同じ項目が表示される
+- **拡張性**: 新しいメニュー項目の追加が容易
+
+**こだわりポイント: 安定したコールバック参照 (`useCallback` + `useRef`)**
+
+`use-sidebar-editing.ts` では、編集関連のハンドラーが毎レンダーで再生成されないよう最適化しました。
+
+```typescript
+// useRef Latest Value Pattern: コールバック内で最新値を参照
+const pagesRef = useRef(pages)
+pagesRef.current = pages
+const onUpdatePageRef = useRef(onUpdatePage)
+onUpdatePageRef.current = onUpdatePage
+
+// 安定したコールバック（依存配列が空）
+const handleStartEditing = useCallback((page: NotePage) => {
+  setEditingPageId(page.id)
+  setEditingTitle(page.title)
+}, [])
+
+const handleFinishEditing = useCallback(() => {
+  setEditingPageId((currentEditingPageId) => {
+    // ref経由で最新のpages/onUpdatePageを参照
+    const page = pagesRef.current.find((p) => p.id === currentEditingPageId)
+    // ...
+  })
+}, [])
+```
+
+**メリット**:
+- **安定した参照**: `handleStartEditing` 等が再生成されないため、子コンポーネントの不要な再レンダリングを防止
+- **Stale Closure防止**: `useRef` 経由で常に最新の `pages` と `onUpdatePage` を参照
+
+**こだわりポイント: インライン編集のベストプラクティス適用**
+
+`PageListItem` コンポーネント（`components/parts/page-list-item.tsx`）では、ページタイトルのインライン編集機能を実装しています。PatternFly、Atlassian Design、Cloudscape などの主要デザインシステムのガイドラインを参考に、以下のパターンを採用しました。
+
+1. **レイアウトの安定化**: 編集/表示モードで DOM 構造を大きく変えず、`flex-1 min-w-0` のシンプルな flex 構造で幅を制御。編集時もコンテナの高さが変わらないよう `border-b` のみ使用し、レイアウトジャンプを防止。
+
+2. **確実なフォーカス管理**: `autoFocus` 属性ではなく `useEffect` + `useRef` でフォーカスを制御。編集開始時にテキスト全選択も実行し、即座に入力可能な状態に。
+
+3. **blur 自動保存パターン**: 短いテキスト編集では blur で自動保存が UX のベストプラクティス。Escape キーでキャンセル、Enter キーで確定のキーボード操作にも対応。
+
+4. **ドロップダウン位置の明示的指定**: ScrollArea 内での配置を考慮し、`side="bottom"` `align="end"` `collisionPadding={8}` を明示指定。Radix UI の Portal と組み合わせ、親の overflow に影響されない正確な位置計算を実現。
+
+```typescript
+// フォーカス管理: autoFocus より確実な useEffect パターン
+const inputRef = useRef<HTMLInputElement>(null)
+
+useEffect(() => {
+  if (isEditing && inputRef.current) {
+    inputRef.current.focus()
+    inputRef.current.select() // 全選択で即編集可能に
+  }
+}, [isEditing])
+```
 
 **こだわりポイント: レスポンシブ対応のコンポーネント分離**
 
@@ -160,6 +319,41 @@ Desktop（固定サイドバー）とMobile（Sheet/ドロワー）で異なるU
 - 各コンポーネントの責務が明確に
 - 将来的なプラットフォーム固有の最適化が容易に
 - テストやスタイル変更の影響範囲を限定
+
+**こだわりポイント: ScrollAreaの排除とパディング一元管理**
+
+サイドバー内の要素（検索欄、ボタン、ページリスト）の横幅を統一するため、以下のリファクタリングを実施しました。
+
+**課題**: shadcn/radix の `ScrollArea` はスクロールバー用のスペース（約10px）をViewport横に確保するため、ScrollArea内外で要素の幅がずれる問題がありました。
+
+**解決策**:
+1. `ScrollArea` を通常の `div` + `overflow-y-auto` に置き換え（オーバーレイスクロールバー化）
+2. 固定要素（ボタン）をスクロール領域の外に配置
+3. 親コンテナで `px-4` を一元管理し、子コンポーネントの個別パディングを削除
+
+```tsx
+// Before: ScrollArea内外で幅がずれる
+<SidebarHeader className="p-4" />      {/* 16px */}
+<ScrollArea>
+  <div className="p-2">                 {/* 8px + スクロールバー分ずれる */}
+    <Button className="mx-2" />         {/* 個別調整が必要 */}
+    <PageListItem className="px-2" />   {/* 個別調整が必要 */}
+  </div>
+</ScrollArea>
+
+// After: 親で一元管理
+<SidebarHeader className="p-4" />       {/* 16px */}
+<div className="p-4 pt-3">              {/* 16px - ボタンは外 */}
+  <Button className="w-full" />
+</div>
+<div className="overflow-y-auto">
+  <div className="px-4 py-2">           {/* 16px - 統一 */}
+    <PageListItem />                    {/* パディング不要 */}
+  </div>
+</div>
+```
+
+**学び**: `ScrollArea` はスクロールバーのカスタムスタイリングが必要な場合に有効ですが、他要素との幅統一が求められる場面では通常の `overflow-y-auto` の方がシンプルに解決できます。
 
 ### 型の Single Source of Truth (SSoT)
 
