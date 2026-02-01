@@ -11,6 +11,11 @@ import { format, isToday } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { FileText, MoreHorizontal, Star } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import {
+	getPageMenuActions,
+	PageContextMenuItems,
+	PageDropdownMenuItems,
+} from '@/features/sidebar/components/parts/page-item-menu'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '@/shared/shadcn/context-menu'
@@ -20,7 +25,6 @@ import {
 	DropdownMenuTrigger,
 } from '@/shared/shadcn/dropdown-menu'
 import type { NotePage } from '@/types/note'
-import { getPageMenuActions, PageContextMenuItems, PageDropdownMenuItems } from './page-item-menu'
 
 type PageListItemProps = {
 	page: NotePage

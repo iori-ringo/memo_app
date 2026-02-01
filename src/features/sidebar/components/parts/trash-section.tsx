@@ -7,8 +7,8 @@
 
 import { ChevronDown, ChevronRight, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
 import type { NotePage } from '@/types/note'
-import { PageListItem } from './page-list-item'
 
 type TrashSectionProps = {
 	deletedPages: NotePage[]

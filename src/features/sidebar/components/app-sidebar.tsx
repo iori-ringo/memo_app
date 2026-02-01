@@ -8,18 +8,16 @@
 
 import { Plus, Star } from 'lucide-react'
 import { useMemo } from 'react'
-import {
-	useSidebarEditing,
-	useSidebarGrouping,
-	useSidebarSearch,
-	useSidebarShortcuts,
-} from '@/features/sidebar/hooks'
+import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
+import { SidebarHeader } from '@/features/sidebar/components/parts/sidebar-header'
+import { TrashSection } from '@/features/sidebar/components/parts/trash-section'
+import { useSidebarEditing } from '@/features/sidebar/hooks/use-sidebar-editing'
+import { useSidebarGrouping } from '@/features/sidebar/hooks/use-sidebar-grouping'
+import { useSidebarSearch } from '@/features/sidebar/hooks/use-sidebar-search'
+import { useSidebarShortcuts } from '@/features/sidebar/hooks/use-sidebar-shortcuts'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import type { NotePage } from '@/types/note'
-import { PageListItem } from './parts/page-list-item'
-import { SidebarHeader } from './parts/sidebar-header'
-import { TrashSection } from './parts/trash-section'
 
 type AppSidebarProps = {
 	pages: NotePage[]
