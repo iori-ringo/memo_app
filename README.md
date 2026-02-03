@@ -68,7 +68,8 @@ memo_app/
 │   │   │   └── hooks/       # カスタムフック
 │   │   ├── notes/         # ノート管理
 │   │   └── sidebar/       # サイドバー
-│   │       └── components/  # Desktop/Mobile 対応
+│   │       ├── components/  # Desktop/Mobile 対応
+│   │       └── hooks/       # 編集・検索・グループ化・ショートカット
 │   ├── shared/            # 共有コンポーネント
 │   ├── lib/               # ユーティリティ
 │   └── types/             # 型定義
@@ -77,6 +78,10 @@ memo_app/
 ```
 
 > 📚 詳細なアーキテクチャは [src/ARCHITECTURE.md](./src/ARCHITECTURE.md) を参照
+>
+> 📖 設計思想・こだわりは [KODAWARI.md](./KODAWARI.md) を参照
+>
+> 🤖 Claude Code 開発者向け情報は [CLAUDE.md](./CLAUDE.md) を参照
 
 ## ショートカットキー
 
