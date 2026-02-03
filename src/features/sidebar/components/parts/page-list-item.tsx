@@ -116,7 +116,7 @@ export const PageListItem = ({
 										onChange={(e) => onTitleChange(e.target.value)}
 										onBlur={onFinishEditing}
 										onKeyDown={onKeyDown}
-										className="w-full bg-transparent border-b border-primary outline-none text-foreground text-sm font-medium px-0 py-0.5 focus-visible:ring-0"
+										className="w-full rounded-md border border-input bg-background dark:bg-white dark:text-zinc-950 px-2 py-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring"
 									/>
 									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
 								</div>
