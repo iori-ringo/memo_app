@@ -535,17 +535,22 @@ export function isValidNotePage(page: unknown): page is NotePage {
 外部サイトへの遷移をブロックし、許可されたオリジンのみ許可しています。
 
 ```typescript
-// 外部遷移をブロック
+// 外部遷移をブロック（開発: localhost、本番: file:// のみ許可）
 mainWindow.webContents.on('will-navigate', (event, url) => {
-  if (!ALLOWED_ORIGINS.some((origin) => url.startsWith(origin))) {
+  const isAllowed = isDev ? url.startsWith('http://localhost:3000') : url.startsWith('file://')
+  if (!isAllowed) {
     event.preventDefault()
   }
 })
 
 // 外部リンクは https/mailto のみ許可
+const ALLOWED_EXTERNAL_SCHEMES = ['https:', 'mailto:']
 mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-  const allowedSchemes = ['https:', 'mailto:']
-  // ...
+  const { protocol } = new URL(url)
+  if (ALLOWED_EXTERNAL_SCHEMES.includes(protocol)) {
+    shell.openExternal(url)
+  }
+  return { action: 'deny' }
 })
 ```
 

@@ -44,3 +44,7 @@ next-env.d.ts
 /dist/
 electron/dist/
 src/dist/
+
+# Development docs
+src/ARCHITECTURE.md
+electron/ABOUTBACKEND.md
