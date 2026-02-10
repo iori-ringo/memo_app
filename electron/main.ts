@@ -1,6 +1,6 @@
 /**
- * Electron Main Process Entry Point
- * Orchestrates app initialization and lifecycle management
+ * Electron メインプロセスのエントリーポイント
+ * アプリ起動〜終了までの流れを管理する
  */
 
 import { registerAiHandlers } from '@electron/handlers/ai-handlers'
@@ -9,21 +9,21 @@ import { initLogger, log } from '@electron/utils/logger'
 import { createWindow } from '@electron/window/main-window'
 import { app, BrowserWindow } from 'electron'
 
-// Initialize logger first
+// 他の処理より先にロガーを準備（以降のログ出力を確実にするため）
 initLogger()
 
-// App lifecycle handlers
+// アプリの準備が完了したら起動処理を開始
 app.whenReady().then(() => {
 	log.info('App starting...')
 
-	// Register IPC handlers before creating window
+	// レンダラー（React側）からの通信を受け取れるよう、先に IPC ハンドラーを登録
 	registerDataHandlers()
 	registerAiHandlers()
 
-	// Create the main window
+	// アプリのメインウィンドウを表示
 	createWindow()
 
-	// macOS: Re-create window when dock icon is clicked
+	// macOS では Dock アイコンをクリックしたとき、ウィンドウがなければ再作成する
 	app.on('activate', () => {
 		if (BrowserWindow.getAllWindows().length === 0) {
 			createWindow()
@@ -31,7 +31,7 @@ app.whenReady().then(() => {
 	})
 })
 
-// Quit when all windows are closed (except on macOS)
+// 全ウィンドウを閉じたらアプリ終了（macOS はウィンドウを閉じてもアプリは残す慣習）
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit()

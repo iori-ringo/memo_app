@@ -13,17 +13,14 @@ export type NoteContent = string // TipTap からの HTML 文字列
 export type NotePage = {
 	id: string
 	notebookId: string
-	title: string // Keep title as metadata, but also have it as an object?
-	// The plan says "Title area". Let's keep a main title field for the sidebar list,
-	// but the visual title on the page might be an object or a specific field.
-	// Let's keep `title` for the list.
+	title: string // サイドバーのリスト表示用のタイトル
 	tags: string[]
 	createdAt: number
 	updatedAt: number
 	isFavorite?: boolean
-	deletedAt?: number // For Trash functionality
+	deletedAt?: number // ゴミ箱機能用
 
-	// New Canvas Data
+	// キャンバスデータ
 	objects: CanvasObject[]
 	strokes: Stroke[]
 	connections: Connection[]
@@ -50,7 +47,7 @@ export type AppState = {
 	activePageId: string | null
 }
 
-// --- Electron / App Configuration Types (Shared) ---
+// --- Electron / アプリケーション設定の型（共有） ---
 
 export type AppConfig = {
 	theme?: 'light' | 'dark' | 'system'

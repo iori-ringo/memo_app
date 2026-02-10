@@ -1,6 +1,6 @@
 /**
- * Application Menu
- * Defines the native macOS menu structure
+ * アプリケーションメニュー
+ * macOSネイティブメニューの構成を定義する
  */
 
 import { IPC_CHANNELS } from '@electron/ipc/types'
@@ -8,7 +8,7 @@ import { getMainWindow } from '@electron/window/main-window'
 import { app, Menu } from 'electron'
 
 /**
- * Creates and sets the application menu
+ * アプリケーションメニューを生成・設定する
  */
 export function createMenu(): void {
 	const template: Electron.MenuItemConstructorOptions[] = [

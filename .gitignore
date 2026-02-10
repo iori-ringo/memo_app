@@ -48,3 +48,4 @@ src/dist/
 # Development docs
 src/ARCHITECTURE.md
 electron/ABOUTBACKEND.md
+electron/FRAMEWORK-COMPARISON.md

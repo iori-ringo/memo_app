@@ -1,6 +1,6 @@
 /**
- * Data IPC Handlers
- * Handles pages and config load/save operations
+ * データ関連のIPCハンドラー
+ * ページデータと設定の読み込み・保存操作を処理する
  */
 
 import { type AppConfig, IPC_CHANNELS, type NotePage } from '@electron/ipc/types'
@@ -11,11 +11,11 @@ import { isValidAppConfig, isValidPages } from '@electron/utils/validators'
 import { ipcMain } from 'electron'
 
 /**
- * Registers all data-related IPC handlers
- * Call this once during app initialization
+ * データ関連の全IPCハンドラーを登録する
+ * アプリ初期化時に一度だけ呼び出す
  */
 export function registerDataHandlers(): void {
-	// Load pages handler
+	// ページデータの読み込み
 	ipcMain.handle(IPC_CHANNELS.LOAD_PAGES, async (): Promise<NotePage[] | null> => {
 		try {
 			const pages = pagesStore.get('pages')
@@ -27,7 +27,7 @@ export function registerDataHandlers(): void {
 		}
 	})
 
-	// Save pages handler
+	// ページデータの保存
 	ipcMain.handle(IPC_CHANNELS.SAVE_PAGES, async (_event, pages: unknown): Promise<boolean> => {
 		if (!isValidPages(pages)) {
 			log.warn('Invalid pages format received', { type: typeof pages })
@@ -43,7 +43,7 @@ export function registerDataHandlers(): void {
 		}
 	})
 
-	// Load config handler
+	// アプリ設定の読み込み
 	ipcMain.handle(IPC_CHANNELS.LOAD_CONFIG, async (): Promise<AppConfig> => {
 		try {
 			const config = configStore.get('config')
@@ -55,7 +55,7 @@ export function registerDataHandlers(): void {
 		}
 	})
 
-	// Save config handler
+	// アプリ設定の保存（既存設定とマージ）
 	ipcMain.handle(IPC_CHANNELS.SAVE_CONFIG, async (_event, config: unknown): Promise<boolean> => {
 		if (!isValidAppConfig(config)) {
 			log.warn('Invalid config format received', { type: typeof config })
