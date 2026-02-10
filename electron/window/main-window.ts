@@ -1,31 +1,31 @@
 /**
- * Main Window Manager
- * Creates and manages the main application window
+ * メインウィンドウ管理
+ * アプリケーションのメインウィンドウを生成・管理する
  */
 import * as path from 'node:path'
 import { createMenu } from '@electron/window/menu'
 import { app, BrowserWindow, shell } from 'electron'
 
-/** Default window dimensions */
+/** ウィンドウのデフォルトサイズ */
 const DEFAULT_WIDTH = 1280
 const DEFAULT_HEIGHT = 800
 
-/** Allowed URL schemes for external links */
+/** 外部リンクで許可するURLスキーム */
 const ALLOWED_EXTERNAL_SCHEMES = ['https:', 'mailto:']
 
-/** Main window instance */
+/** メインウィンドウのインスタンス */
 let mainWindow: BrowserWindow | null = null
 
 /**
- * Returns the main window instance
- * @returns The main BrowserWindow or null if not created
+ * メインウィンドウのインスタンスを返す
+ * @returns メインウィンドウ、未作成の場合はnull
  */
 export function getMainWindow(): BrowserWindow | null {
 	return mainWindow
 }
 
 /**
- * Creates the main application window
+ * メインウィンドウを生成する
  */
 export function createWindow(): void {
 	const isDev = !app.isPackaged
@@ -34,7 +34,7 @@ export function createWindow(): void {
 		width: DEFAULT_WIDTH,
 		height: DEFAULT_HEIGHT,
 		webPreferences: {
-			// Use app.getAppPath() for reliable path resolution in both dev and production
+			// 開発・本番の両環境で確実にパスを解決するためapp.getAppPath()を使用
 			preload: path.join(app.getAppPath(), 'electron/dist/preload.js'),
 			contextIsolation: true,
 			nodeIntegration: false,
@@ -49,8 +49,8 @@ export function createWindow(): void {
 		mainWindow.loadFile(path.join(app.getAppPath(), 'out/index.html'))
 	}
 
-	// Block navigation to external URLs (security)
-	// Development: allow localhost, Production: allow file:// protocol
+	// 外部URLへのナビゲーションをブロック（セキュリティ対策）
+	// 開発環境: localhostを許可、本番環境: file://プロトコルを許可
 	mainWindow.webContents.on('will-navigate', (event, url) => {
 		const isAllowed = isDev ? url.startsWith('http://localhost:3000') : url.startsWith('file://')
 		if (!isAllowed) {
@@ -58,7 +58,7 @@ export function createWindow(): void {
 		}
 	})
 
-	// Open external links in browser with restricted schemes
+	// 許可されたスキームの外部リンクをブラウザで開く
 	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
 		try {
 			const { protocol } = new URL(url)
@@ -66,12 +66,12 @@ export function createWindow(): void {
 				shell.openExternal(url)
 			}
 		} catch {
-			// Invalid URL - ignore
+			// 不正なURLは無視
 		}
 		return { action: 'deny' }
 	})
 
-	// Clean up window reference when closed
+	// ウィンドウ閉鎖時に参照をクリーンアップ
 	mainWindow.on('closed', () => {
 		mainWindow = null
 	})

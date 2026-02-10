@@ -1,13 +1,13 @@
 /**
- * Validation Helpers for IPC Data
- * Type guards for validating data received from renderer process
+ * IPCデータのバリデーションヘルパー
+ * レンダラープロセスから受け取ったデータを検証する型ガード関数群
  */
 import type { AppConfig, NotePage } from '@electron/ipc/types'
 
 /**
- * Validates if the given object is a valid NotePage
- * @param page - Unknown object to validate
- * @returns True if the object is a valid NotePage
+ * 与えられたオブジェクトが有効なNotePageかを検証する
+ * @param page - 検証対象の不明な値
+ * @returns 有効なNotePageの場合true
  */
 export function isValidNotePage(page: unknown): page is NotePage {
 	if (typeof page !== 'object' || page === null) return false
@@ -26,18 +26,18 @@ export function isValidNotePage(page: unknown): page is NotePage {
 }
 
 /**
- * Validates if the given array contains valid NotePages
- * @param pages - Unknown array to validate
- * @returns True if all elements are valid NotePages
+ * 与えられた配列の全要素が有効なNotePageかを検証する
+ * @param pages - 検証対象の不明な値
+ * @returns 全要素が有効なNotePageの場合true
  */
 export function isValidPages(pages: unknown): pages is NotePage[] {
 	return Array.isArray(pages) && pages.every(isValidNotePage)
 }
 
 /**
- * Validates if the given object is a valid AppConfig
- * @param config - Unknown object to validate
- * @returns True if the object is a valid AppConfig
+ * 与えられたオブジェクトが有効なAppConfigかを検証する
+ * @param config - 検証対象の不明な値
+ * @returns 有効なAppConfigの場合true
  */
 export function isValidAppConfig(config: unknown): config is AppConfig {
 	if (typeof config !== 'object' || config === null) return false

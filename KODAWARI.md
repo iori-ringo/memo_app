@@ -375,6 +375,27 @@ Electron と Next.js (Web) で型を共有する際、単純に `.ts` ファイ�
 | `electron/ipc/types.ts` | `src/types` から import。IPC チャンネル定義のみ保持 |
 | `src/types/electron.d.ts` | グローバル Window 型拡張 |
 
+**こだわりポイント: `electron.d.ts` によるグローバル型拡張**
+
+`src/types/electron.d.ts` は `declare global` を使用して、ブラウザ標準の `Window` インターフェースを拡張し、`window.electronAPI` の型を定義しています。
+
+```typescript
+declare global {
+  interface Window {
+    electronAPI?: ElectronAPI  // オプショナル（?）で両環境対応
+  }
+}
+```
+
+**なぜオプショナル（`?`）なのか:**
+
+| 環境 | `window.electronAPI` の値 |
+|------|--------------------------|
+| Electron | `ElectronAPI` オブジェクト（preload.ts で注入） |
+| ブラウザ | `undefined`（存在しない） |
+
+このファイルは `.d.ts`（宣言ファイル）であるため、`tsconfig.json` の `include` に含まれていれば自動的に TypeScript コンパイラに読み込まれます。フロントエンドのコードでは明示的な `import` なしで `window.electronAPI.loadPages()` などの型補完が効くようになり、開発体験が向上します。
+
 ---
 
 ## 🎨 キャンバスベースのUI

@@ -1,46 +1,46 @@
 /**
- * Platform Event Adapter
- * Abstracts Electron-specific event listeners for Web compatibility
+ * プラットフォームイベントアダプター
+ * Electron固有のイベントリスナーをWeb環境でも動作するように抽象化
  *
- * This adapter allows the application to run in both:
- * - Electron: Uses native IPC events
- * - Web Browser: Falls back to no-op (or keyboard shortcuts in future)
+ * このアダプターにより、以下の両方の環境でアプリケーションが動作します:
+ * - Electron: ネイティブIPCイベントを使用
+ * - Webブラウザ: 何もしない関数を返す（将来的にキーボードショートカットの追加が可能）
  */
 
 type CleanupFn = () => void
 
 /**
- * Platform-agnostic event handlers
- * Automatically detects Electron environment and provides appropriate implementation
+ * プラットフォームに依存しないイベントハンドラー
+ * Electron環境を自動検出し、適切な実装を提供します
  */
 export const platformEvents = {
 	/**
-	 * Subscribe to "New Page" event
-	 * Electron: Triggered from menu (Cmd+M)
-	 * Web: No-op (could add keyboard shortcut listener in future)
+	 * 新規ページ作成イベントのリスナーを登録
+	 * Electron: メニューから発火（Cmd+M）
+	 * Web: 何もしない（将来的にキーボードショートカットの追加が可能）
 	 */
 	onNewPage: (callback: () => void): CleanupFn => {
 		if (typeof window !== 'undefined' && window.electronAPI) {
 			return window.electronAPI.onNewPage(callback)
 		}
-		// Web: no-op for now
+		// Web環境では何もしない
 		return () => {
-			/* no-op cleanup */
+			/* クリーンアップ不要 */
 		}
 	},
 
 	/**
-	 * Subscribe to "Toggle Dark Mode" event
-	 * Electron: Triggered from menu
-	 * Web: No-op (theme toggle handled by UI button)
+	 * ダークモード切り替えイベントのリスナーを登録
+	 * Electron: メニューから発火
+	 * Web: 何もしない（テーマ切り替えはUIボタンで処理）
 	 */
 	onToggleDark: (callback: () => void): CleanupFn => {
 		if (typeof window !== 'undefined' && window.electronAPI) {
 			return window.electronAPI.onToggleDark(callback)
 		}
-		// Web: no-op for now
+		// Web環境では何もしない
 		return () => {
-			/* no-op cleanup */
+			/* クリーンアップ不要 */
 		}
 	},
 }

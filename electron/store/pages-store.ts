@@ -1,17 +1,17 @@
 /**
- * Pages Store
- * Manages persistent storage for NotePage data using electron-store
+ * ページストア
+ * electron-storeを使用してNotePageデータを永続化する
  */
 
 import type { NotePage } from '@electron/ipc/types'
 import Store from 'electron-store'
 
-/** Schema for the pages store */
+/** ページストアのスキーマ定義 */
 type PagesStoreSchema = {
 	pages: NotePage[]
 }
 
-/** Pages store instance with type-safe schema */
+/** 型安全なスキーマを持つページストアのインスタンス */
 export const pagesStore = new Store<PagesStoreSchema>({
 	name: 'pages-store',
 	defaults: {

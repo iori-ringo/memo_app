@@ -1,11 +1,11 @@
 /**
- * IPC Types for Electron Main/Renderer communication
+ * Electronメインプロセスとレンダラープロセス間のIPC型定義
  *
- * Note: Core domain types (NotePage, CanvasObject, etc.) are imported from
- * src/types/note.ts to maintain a Single Source of Truth for types.
+ * コアドメイン型（NotePage, CanvasObjectなど）はsrc/types/note.tsから
+ * インポートし、型の単一情報源（SSoT）を維持する
  */
 
-// Re-export core types from shared location
+// 共有ディレクトリからコア型を再エクスポート
 export type {
 	AppConfig,
 	CanvasObject,
