@@ -9,7 +9,7 @@
 import { Plus, Star } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
-import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
+import { PageListItem, type PageListItemProps } from '@/features/sidebar/components/parts/page-list-item'
 import { SidebarHeader } from '@/features/sidebar/components/parts/sidebar-header'
 import { TrashSection } from '@/features/sidebar/components/parts/trash-section'
 import { useSidebarEditing } from '@/features/sidebar/hooks/use-sidebar-editing'
@@ -28,7 +28,7 @@ type PageGroupProps = {
 	label: string
 	pages: NotePage[]
 	icon?: ReactNode
-	pageItemProps: Record<string, unknown>
+	pageItemProps: Omit<PageListItemProps, 'page'>
 }
 
 const PageGroup = ({ label, pages, icon, pageItemProps }: PageGroupProps) => {
