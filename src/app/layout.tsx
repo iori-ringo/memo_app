@@ -21,13 +21,13 @@ export const metadata: Metadata = {
 	},
 }
 
-export default function RootLayout({
+const RootLayout = ({
 	children,
 }: Readonly<{
 	children: React.ReactNode
-}>) {
+}>) => {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="ja" suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<ThemeProvider
 					attribute="class"
@@ -41,3 +41,5 @@ export default function RootLayout({
 		</html>
 	)
 }
+
+export default RootLayout

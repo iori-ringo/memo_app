@@ -112,7 +112,6 @@
 }
 
 /* Tiptap Task List Styles */
-/* Tiptap Task List Styles */
 ul[data-type="taskList"] {
   list-style: none;
   padding: 0;
@@ -179,7 +178,6 @@ ul[data-type="taskList"] li input[type="checkbox"] {
   line-height: 1.4;
 }
 
-/* Ensure paragraphs inside list items don't add extra spacing */
 /* Ensure paragraphs inside list items don't add extra spacing */
 .ProseMirror li p {
   margin-bottom: 0;
