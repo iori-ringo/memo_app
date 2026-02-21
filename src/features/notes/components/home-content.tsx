@@ -29,7 +29,7 @@ export const HomeContent = () => {
 	const { pages, activePageId, activePage, isHydrated, addPage, updatePage, setActivePageId } =
 		useNotes()
 
-	const { cleanupOldTrash, softDeletePage, restorePage, permanentDeletePage } = useTrash()
+	const { softDeletePage, restorePage, permanentDeletePage } = useTrash()
 
 	// confirm() を UI 側で処理する暫定ラッパー（TODO: AlertDialog に置換）
 	const handlePermanentDeletePage = useCallback(
@@ -47,14 +47,6 @@ export const HomeContent = () => {
 	useEffect(() => {
 		latestRef.current = { addPage, setTheme, resolvedTheme }
 	}, [addPage, setTheme, resolvedTheme])
-
-	// 起動時にゴミ箱の自動クリーンアップ（初回のみ実行）
-	// cleanupOldTrash は Zustand アクション（安定参照）なので ref 不要
-	useEffect(() => {
-		if (isHydrated) {
-			cleanupOldTrash()
-		}
-	}, [isHydrated, cleanupOldTrash])
 
 	// Platform event listeners (Electron menu events, etc.)
 	// リスナーは初回のみ登録、ref経由で最新値を参照

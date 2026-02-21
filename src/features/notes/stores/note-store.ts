@@ -79,6 +79,9 @@ export const useNoteStore = create<NoteState & NoteActions>()(
 					isHydrated: true,
 				})
 			}
+
+			// 起動時にゴミ箱の自動クリーンアップ
+			get().cleanupOldTrash()
 		},
 
 		addPage: () => {
