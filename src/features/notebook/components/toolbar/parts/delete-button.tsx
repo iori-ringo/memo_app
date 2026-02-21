@@ -8,7 +8,7 @@
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/shared/shadcn/button'
 
-interface DeleteButtonProps {
+type DeleteButtonProps = {
 	hasSelection: boolean
 	onDelete: () => void
 }

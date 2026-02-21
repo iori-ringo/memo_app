@@ -12,7 +12,7 @@ export type SectionType = 'title' | 'fact' | 'abstraction' | 'diversion'
  * キャンバス上のテキストブロック
  * 位置、サイズ、スタイル情報を持つ
  */
-export interface CanvasObject {
+export type CanvasObject = {
 	id: string
 	type: 'text'
 	section: SectionType
@@ -35,7 +35,7 @@ export interface CanvasObject {
  * 手書きストローク
  * ポイントの配列とスタイル情報を持つ
  */
-export interface Stroke {
+export type Stroke = {
 	id: string
 	points: { x: number; y: number; pressure?: number }[]
 	color: string
@@ -46,7 +46,7 @@ export interface Stroke {
 /**
  * オブジェクト間の接続線
  */
-export interface Connection {
+export type Connection = {
 	id: string
 	fromObjectId: string
 	toObjectId: string

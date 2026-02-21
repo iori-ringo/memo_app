@@ -27,10 +27,10 @@ export function createMenu(): void {
 			],
 		},
 		{
-			label: 'File',
+			label: 'ファイル',
 			submenu: [
 				{
-					label: 'New Page',
+					label: '新規ページ',
 					accelerator: 'CmdOrCtrl+M',
 					click: () => getMainWindow()?.webContents.send(IPC_CHANNELS.NEW_PAGE),
 				},
@@ -39,7 +39,7 @@ export function createMenu(): void {
 			],
 		},
 		{
-			label: 'Edit',
+			label: '編集',
 			submenu: [
 				{ role: 'undo' },
 				{ role: 'redo' },
@@ -51,7 +51,7 @@ export function createMenu(): void {
 			],
 		},
 		{
-			label: 'View',
+			label: '表示',
 			submenu: [
 				{ role: 'reload' },
 				{ role: 'forceReload' },
@@ -63,7 +63,7 @@ export function createMenu(): void {
 				{ type: 'separator' },
 				{ role: 'togglefullscreen' },
 				{
-					label: 'Toggle Dark Mode',
+					label: 'ダークモード切替',
 					click: () => getMainWindow()?.webContents.send(IPC_CHANNELS.TOGGLE_DARK),
 				},
 			],

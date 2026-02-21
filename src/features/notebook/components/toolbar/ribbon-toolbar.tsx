@@ -21,7 +21,7 @@ import { TextAlignTools } from '@/features/notebook/components/toolbar/parts/tex
 import { TextFormattingTools } from '@/features/notebook/components/toolbar/parts/text-formatting-tools'
 import { Separator } from '@/shared/shadcn/separator'
 
-interface RibbonToolbarProps {
+type RibbonToolbarProps = {
 	editor: Editor | null
 	isConnectMode: boolean
 	isPenMode: boolean

@@ -5,13 +5,9 @@ type UseSidebarShortcutsProps = {
 }
 
 export const useSidebarShortcuts = ({ onAddPage }: UseSidebarShortcutsProps) => {
-	// useRef Latest Value Pattern: イベントリスナーを1度だけ登録し、
-	// コールバックの最新値を ref 経由で参照
+	// useRef Latest Value Pattern: ref経由で最新値を参照（use-sidebar-editing と同一パターン）
 	const onAddPageRef = useRef(onAddPage)
-
-	useEffect(() => {
-		onAddPageRef.current = onAddPage
-	}, [onAddPage])
+	onAddPageRef.current = onAddPage
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {

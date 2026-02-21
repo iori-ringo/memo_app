@@ -29,7 +29,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { FontSize } from '@/features/notebook/extensions/font-size'
 import { cn } from '@/lib/utils'
 
-interface RichTextEditorProps {
+type RichTextEditorProps = {
 	content: string
 	onChange: (content: string) => void
 	placeholder?: string

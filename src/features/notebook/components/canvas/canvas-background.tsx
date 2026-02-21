@@ -30,6 +30,18 @@ type CanvasBackgroundProps = {
 	isPenMode?: boolean
 }
 
+// 静的JSXの抽出（rendering-hoist-jsx）- propsに依存しないため再作成不要
+const notebookLinesPattern = (
+	<div
+		className="absolute inset-0 pointer-events-none opacity-10 dark:opacity-5"
+		style={{
+			backgroundImage: 'linear-gradient(#000 1px, transparent 1px)',
+			backgroundSize: '100% 2rem',
+			marginTop: '2rem',
+		}}
+	/>
+)
+
 export const CanvasBackground = ({
 	className,
 	children,
@@ -96,27 +108,34 @@ export const CanvasBackground = ({
 			)}
 		>
 			{/* Notebook Lines Pattern */}
-			<div
-				className="absolute inset-0 pointer-events-none opacity-10 dark:opacity-5"
-				style={{
-					backgroundImage: 'linear-gradient(#000 1px, transparent 1px)',
-					backgroundSize: '100% 2rem', // 32px line height
-					marginTop: '2rem',
-				}}
-			/>
+			{notebookLinesPattern}
 
 			{/* Section Boundaries */}
 			{/* Center divider - separates left and right pages */}
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: draggable boundary element, mouse-only interaction is intentional */}
+			{/* biome-ignore lint/a11y/useSemanticElements: カスタムドラッグハンドルのためhrでは代替不可 */}
 			<div
+				role="separator"
+				aria-orientation="vertical"
+				aria-valuenow={Math.round(centerPosition)}
+				aria-valuemin={30}
+				aria-valuemax={70}
+				aria-label="左右ページ境界"
+				tabIndex={0}
 				className={`${boundaryClassName} top-0 bottom-0 w-1`}
 				style={{ left: `${centerPosition}%` }}
 				onMouseDown={handleMouseDown('center')}
 			/>
 
 			{/* Left page horizontal line - Title bottom */}
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: draggable boundary element, mouse-only interaction is intentional */}
+			{/* biome-ignore lint/a11y/useSemanticElements: カスタムドラッグハンドルのためhrでは代替不可 */}
 			<div
+				role="separator"
+				aria-orientation="horizontal"
+				aria-valuenow={Math.round(titleHeight)}
+				aria-valuemin={5}
+				aria-valuemax={30}
+				aria-label="タイトル境界"
+				tabIndex={0}
 				className={`${horizontalBoundaryClassName} left-0 h-1`}
 				style={{
 					top: `${titleHeight}%`,
@@ -126,8 +145,15 @@ export const CanvasBackground = ({
 			/>
 
 			{/* Right page vertical line - Abstraction/Diversion separator */}
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: draggable boundary element, mouse-only interaction is intentional */}
+			{/* biome-ignore lint/a11y/useSemanticElements: カスタムドラッグハンドルのためhrでは代替不可 */}
 			<div
+				role="separator"
+				aria-orientation="vertical"
+				aria-valuenow={Math.round(diversionPosition)}
+				aria-valuemin={55}
+				aria-valuemax={95}
+				aria-label="抽象化・転用境界"
+				tabIndex={0}
 				className={`${boundaryClassName} top-0 bottom-0 w-1`}
 				style={{ left: `${diversionPosition}%` }}
 				onMouseDown={handleMouseDown('diversion')}

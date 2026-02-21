@@ -7,8 +7,12 @@
 'use client'
 
 import { Plus, Star } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useMemo } from 'react'
-import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
+import {
+	PageListItem,
+	type PageListItemProps,
+} from '@/features/sidebar/components/parts/page-list-item'
 import { SidebarHeader } from '@/features/sidebar/components/parts/sidebar-header'
 import { TrashSection } from '@/features/sidebar/components/parts/trash-section'
 import { useSidebarEditing } from '@/features/sidebar/hooks/use-sidebar-editing'
@@ -18,6 +22,32 @@ import { useSidebarShortcuts } from '@/features/sidebar/hooks/use-sidebar-shortc
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import type { NotePage } from '@/types/note'
+
+// 静的JSXの抽出（rendering-hoist-jsx）
+const favoriteIcon = <Star className="h-3 w-3 fill-current" />
+
+// ページグループコンポーネント（rendering-inline-functions）
+type PageGroupProps = {
+	label: string
+	pages: NotePage[]
+	icon?: ReactNode
+	pageItemProps: Omit<PageListItemProps, 'page'>
+}
+
+const PageGroup = ({ label, pages, icon, pageItemProps }: PageGroupProps) => {
+	if (pages.length === 0) return null
+	return (
+		<div className="mb-4">
+			<div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-2">
+				{icon}
+				{label}
+			</div>
+			{pages.map((page) => (
+				<PageListItem key={page.id} page={page} {...pageItemProps} />
+			))}
+		</div>
+	)
+}
 
 type AppSidebarProps = {
 	pages: NotePage[]
@@ -92,22 +122,6 @@ export const AppSidebar = ({
 		]
 	)
 
-	// ページグループをレンダリング
-	const renderPageGroup = (label: string, pageList: NotePage[], icon?: React.ReactNode) => {
-		if (pageList.length === 0) return null
-		return (
-			<div className="mb-4">
-				<div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-2">
-					{icon}
-					{label}
-				</div>
-				{pageList.map((page) => (
-					<PageListItem key={page.id} page={page} {...pageItemProps} />
-				))}
-			</div>
-		)
-	}
-
 	return (
 		<div className={cn('flex flex-col h-full border-r bg-muted/30', className)}>
 			<SidebarHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
@@ -122,19 +136,24 @@ export const AppSidebar = ({
 			<div className="flex-1 overflow-y-auto min-h-0">
 				<div className="px-4 py-2 space-y-1">
 					{/* お気に入り */}
-					{renderPageGroup('お気に入り', favoritePages, <Star className="h-3 w-3 fill-current" />)}
+					<PageGroup
+						label="お気に入り"
+						pages={favoritePages}
+						icon={favoriteIcon}
+						pageItemProps={pageItemProps}
+					/>
 
 					{/* 今日 */}
-					{renderPageGroup('今日', groupedPages.today)}
+					<PageGroup label="今日" pages={groupedPages.today} pageItemProps={pageItemProps} />
 
 					{/* 昨日 */}
-					{renderPageGroup('昨日', groupedPages.yesterday)}
+					<PageGroup label="昨日" pages={groupedPages.yesterday} pageItemProps={pageItemProps} />
 
 					{/* 今週 */}
-					{renderPageGroup('今週', groupedPages.thisWeek)}
+					<PageGroup label="今週" pages={groupedPages.thisWeek} pageItemProps={pageItemProps} />
 
 					{/* それ以前 */}
-					{renderPageGroup('それ以前', groupedPages.older)}
+					<PageGroup label="それ以前" pages={groupedPages.older} pageItemProps={pageItemProps} />
 
 					{/* ゴミ箱 */}
 					<TrashSection

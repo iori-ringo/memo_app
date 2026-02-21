@@ -24,7 +24,7 @@
 'use client'
 
 import { Star } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { HandwritingLayer } from '@/features/notebook/components/blocks/handwriting-layer'
 import { TextBlock } from '@/features/notebook/components/blocks/text-block'
 import { CanvasBackground } from '@/features/notebook/components/canvas/canvas-background'
@@ -102,6 +102,48 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 		handleAddBlock,
 		mousePositionRef,
 	})
+
+	// モードトグルコールバックの安定化（rerender-functional-setstate）
+	// functional setStateで最新の状態を参照し、依存配列を空にして関数の再作成を防止
+	const handleTogglePenMode = useCallback(() => {
+		setIsPenMode((prev) => {
+			if (!prev) {
+				// ペンモードON時は他のモードをOFF
+				setIsConnectMode(false)
+				setIsObjectEraserMode(false)
+				setConnectSourceId(null)
+			}
+			return !prev
+		})
+	}, [])
+
+	const handleToggleConnectMode = useCallback(() => {
+		setIsConnectMode((prev) => {
+			if (!prev) {
+				// 接続モードON時は他のモードをOFF
+				setIsPenMode(false)
+				setIsObjectEraserMode(false)
+				setSelectedObjectId(null)
+				setConnectSourceId(null)
+			} else {
+				// 接続モードOFF時はソースをリセット
+				setConnectSourceId(null)
+			}
+			return !prev
+		})
+	}, [setSelectedObjectId])
+
+	const handleToggleObjectEraserMode = useCallback(() => {
+		setIsObjectEraserMode((prev) => {
+			if (!prev) {
+				// 消しゴムモードON時は他のモードをOFF
+				setIsPenMode(false)
+				setIsConnectMode(false)
+				setConnectSourceId(null)
+			}
+			return !prev
+		})
+	}, [])
 
 	const handleDeleteSelection = () => {
 		if (selectedObjectId) {
@@ -181,36 +223,11 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 						<RibbonToolbar
 							editor={activeEditor}
 							isPenMode={isPenMode}
-							onTogglePenMode={() => {
-								setIsPenMode(!isPenMode)
-								if (!isPenMode) {
-									setIsConnectMode(false)
-									setIsObjectEraserMode(false)
-									setConnectSourceId(null)
-								}
-							}}
+							onTogglePenMode={handleTogglePenMode}
 							isConnectMode={isConnectMode}
-							onToggleConnectMode={() => {
-								setIsConnectMode(!isConnectMode)
-								if (!isConnectMode) {
-									setIsPenMode(false)
-									setIsObjectEraserMode(false)
-									setSelectedObjectId(null)
-									setConnectSourceId(null)
-								} else {
-									// Turning off connect mode
-									setConnectSourceId(null)
-								}
-							}}
+							onToggleConnectMode={handleToggleConnectMode}
 							isObjectEraserMode={isObjectEraserMode}
-							onToggleObjectEraserMode={() => {
-								setIsObjectEraserMode(!isObjectEraserMode)
-								if (!isObjectEraserMode) {
-									setIsPenMode(false)
-									setIsConnectMode(false)
-									setConnectSourceId(null)
-								}
-							}}
+							onToggleObjectEraserMode={handleToggleObjectEraserMode}
 							hasSelection={!!selectedObjectId || !!selectedConnectionId}
 							onDelete={handleDeleteSelection}
 						/>
@@ -219,7 +236,6 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 			</div>
 
 			{/* Canvas Area */}
-			{/* biome-ignore lint/a11y/useKeyWithClickEvents: This is a drawing canvas that uses mouse/pointer interactions, not keyboard */}
 			<div
 				ref={containerRef}
 				role="application"
@@ -229,6 +245,14 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 				}`}
 				onDoubleClick={handleAddBlock}
 				onClick={handleBackgroundClick}
+				onKeyDown={(e) => {
+					// キーボードショートカットは useCanvasShortcuts で処理
+					// Enter/Spaceでダブルクリック相当の操作（新規ブロック追加）
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault()
+						handleAddBlock(e as unknown as React.MouseEvent)
+					}
+				}}
 				onMouseMove={handleMouseMove}
 			>
 				{/* Background Layer (Lines & Sections) */}

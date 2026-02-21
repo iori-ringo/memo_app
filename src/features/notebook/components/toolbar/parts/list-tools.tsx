@@ -10,7 +10,7 @@ import { List, ListOrdered, Square } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 
-interface ListToolsProps {
+type ListToolsProps = {
 	editor: Editor | null
 }
 
