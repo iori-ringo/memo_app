@@ -236,7 +236,6 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 			</div>
 
 			{/* Canvas Area */}
-			{/* biome-ignore lint/a11y/useKeyWithClickEvents: This is a drawing canvas that uses mouse/pointer interactions, not keyboard */}
 			<div
 				ref={containerRef}
 				role="application"
@@ -246,6 +245,14 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 				}`}
 				onDoubleClick={handleAddBlock}
 				onClick={handleBackgroundClick}
+				onKeyDown={(e) => {
+					// キーボードショートカットは useCanvasShortcuts で処理
+					// Enter/Spaceでダブルクリック相当の操作（新規ブロック追加）
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault()
+						handleAddBlock(e as unknown as React.MouseEvent)
+					}
+				}}
 				onMouseMove={handleMouseMove}
 			>
 				{/* Background Layer (Lines & Sections) */}
