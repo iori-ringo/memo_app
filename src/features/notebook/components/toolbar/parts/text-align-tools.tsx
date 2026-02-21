@@ -10,7 +10,7 @@ import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 
-interface TextAlignToolsProps {
+type TextAlignToolsProps = {
 	editor: Editor | null
 }
 

@@ -8,7 +8,7 @@
 import type { Editor } from '@tiptap/react'
 import { cn } from '@/lib/utils'
 
-interface ColorToolsProps {
+type ColorToolsProps = {
 	editor: Editor | null
 }
 

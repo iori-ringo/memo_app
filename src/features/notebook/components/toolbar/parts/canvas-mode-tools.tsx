@@ -8,7 +8,7 @@
 import { Eraser, Link2, Pen } from 'lucide-react'
 import { Button } from '@/shared/shadcn/button'
 
-interface CanvasModeToolsProps {
+type CanvasModeToolsProps = {
 	isConnectMode: boolean
 	isPenMode: boolean
 	isObjectEraserMode: boolean

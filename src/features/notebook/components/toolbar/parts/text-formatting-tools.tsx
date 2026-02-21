@@ -16,7 +16,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/shared/shadcn/dropdown-menu'
 
-interface TextFormattingToolsProps {
+type TextFormattingToolsProps = {
 	editor: Editor | null
 }
 
