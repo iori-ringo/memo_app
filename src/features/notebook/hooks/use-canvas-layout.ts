@@ -11,11 +11,16 @@ export const useCanvasLayout = (
 	const [diversionPosition, setDiversionPosition] = useState(DEFAULT_LAYOUT.DIVERSION_POSITION)
 
 	// Load layout from page data
+	// プリミティブ値に分解して不要なeffect再実行を防止（rerender-dependencies）
+	const layoutTitleHeight = page.layout?.titleHeight
+	const layoutCenterPosition = page.layout?.centerPosition
+	const layoutDiversionPosition = page.layout?.diversionPosition
+
 	useEffect(() => {
-		setTitleHeight(page.layout?.titleHeight ?? DEFAULT_LAYOUT.TITLE_HEIGHT)
-		setCenterPosition(page.layout?.centerPosition ?? DEFAULT_LAYOUT.CENTER_POSITION)
-		setDiversionPosition(page.layout?.diversionPosition ?? DEFAULT_LAYOUT.DIVERSION_POSITION)
-	}, [page.layout])
+		setTitleHeight(layoutTitleHeight ?? DEFAULT_LAYOUT.TITLE_HEIGHT)
+		setCenterPosition(layoutCenterPosition ?? DEFAULT_LAYOUT.CENTER_POSITION)
+		setDiversionPosition(layoutDiversionPosition ?? DEFAULT_LAYOUT.DIVERSION_POSITION)
+	}, [layoutTitleHeight, layoutCenterPosition, layoutDiversionPosition])
 
 	const handleBoundaryChange = (boundary: 'title' | 'center' | 'diversion', value: number) => {
 		const newLayout = {

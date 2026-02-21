@@ -30,6 +30,18 @@ type CanvasBackgroundProps = {
 	isPenMode?: boolean
 }
 
+// 静的JSXの抽出（rendering-hoist-jsx）- propsに依存しないため再作成不要
+const notebookLinesPattern = (
+	<div
+		className="absolute inset-0 pointer-events-none opacity-10 dark:opacity-5"
+		style={{
+			backgroundImage: 'linear-gradient(#000 1px, transparent 1px)',
+			backgroundSize: '100% 2rem',
+			marginTop: '2rem',
+		}}
+	/>
+)
+
 export const CanvasBackground = ({
 	className,
 	children,
@@ -96,14 +108,7 @@ export const CanvasBackground = ({
 			)}
 		>
 			{/* Notebook Lines Pattern */}
-			<div
-				className="absolute inset-0 pointer-events-none opacity-10 dark:opacity-5"
-				style={{
-					backgroundImage: 'linear-gradient(#000 1px, transparent 1px)',
-					backgroundSize: '100% 2rem', // 32px line height
-					marginTop: '2rem',
-				}}
-			/>
+			{notebookLinesPattern}
 
 			{/* Section Boundaries */}
 			{/* Center divider - separates left and right pages */}
