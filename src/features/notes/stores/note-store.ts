@@ -1,8 +1,9 @@
 /**
- * note-store.ts - ノートデータのグローバル状態管理
+ * note-store.ts - ノートデータのグローバル状態管理（SSoT）
  *
- * Zustand を使用したノートの CRUD 操作と永続化。
- * Electron 環境では IPC 経由、Web 環境では localStorage を使用。
+ * Zustand + subscribeWithSelector で状態管理。
+ * persist ミドルウェアは使用せず、note-storage.ts の Platform Adapter 経由で永続化。
+ * subscribe による自動保存で手動 saveNotes() の散在を解消。
  *
  * @usage
  * ```tsx
@@ -11,82 +12,154 @@
  * ```
  */
 
+import { v4 as uuidv4 } from 'uuid'
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import { subscribeWithSelector } from 'zustand/middleware'
+
+import { loadNotes, saveConfig, saveNotes } from '@/features/notes/services/note-storage'
 import type { NotePage } from '@/types/note'
 
-interface NoteState {
-	/** 全ページデータ */
-	pages: NotePage[]
-	/** 現在選択中のページID */
-	activePageId: string | null
+const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000
 
-	// アクション
-	setPages: (pages: NotePage[]) => void
-	addPage: (page: NotePage) => void
+const INITIAL_PAGE: NotePage = {
+	id: '1',
+	notebookId: 'default',
+	title: 'メモの魔力 - 実践ノート',
+	tags: ['Guide'],
+	createdAt: Date.now(),
+	updatedAt: Date.now(),
+	objects: [],
+	strokes: [],
+	connections: [],
+}
+
+type NoteState = {
+	pages: NotePage[]
+	activePageId: string | null
+	isHydrated: boolean
+}
+
+type NoteActions = {
+	hydrate: () => Promise<void>
+	addPage: () => void
 	updatePage: (id: string, updates: Partial<NotePage>) => void
-	deletePage: (id: string) => void
+	softDeletePage: (id: string) => void
+	restorePage: (id: string) => void
+	permanentDeletePage: (id: string) => void
+	cleanupOldTrash: () => void
 	setActivePageId: (id: string | null) => void
 }
 
-/**
- * ストアのバージョン
- * データ構造が変更された場合はインクリメントし、migrate で対応
- */
-const STORE_VERSION = 1
+export const useNoteStore = create<NoteState & NoteActions>()(
+	subscribeWithSelector((set, get) => ({
+		pages: [],
+		activePageId: null,
+		isHydrated: false,
 
-export const useNoteStore = create<NoteState>()(
-	persist(
-		(set) => ({
-			pages: [],
-			activePageId: null,
+		hydrate: async () => {
+			// StrictMode での二重実行を防止
+			if (get().isHydrated) return
 
-			setPages: (pages) => set({ pages }),
+			const { pages: savedPages, config } = await loadNotes()
 
-			addPage: (page) =>
-				set((state) => ({
-					pages: [page, ...state.pages],
-				})),
+			if (savedPages.length > 0) {
+				const lastActiveId = config?.lastActivePageId
+				const targetPage = savedPages.find((p) => p.id === lastActiveId && !p.deletedAt)
+				set({
+					pages: savedPages,
+					activePageId: targetPage
+						? targetPage.id
+						: (savedPages.find((p) => !p.deletedAt)?.id ?? null),
+					isHydrated: true,
+				})
+			} else {
+				set({
+					pages: [INITIAL_PAGE],
+					activePageId: INITIAL_PAGE.id,
+					isHydrated: true,
+				})
+			}
+		},
 
-			updatePage: (id, updates) =>
-				set((state) => ({
-					pages: state.pages.map((p) =>
-						p.id === id ? { ...p, ...updates, updatedAt: Date.now() } : p
-					),
-				})),
+		addPage: () => {
+			const newPage: NotePage = {
+				id: uuidv4(),
+				notebookId: 'default',
+				title: '',
+				tags: [],
+				createdAt: Date.now(),
+				updatedAt: Date.now(),
+				objects: [],
+				strokes: [],
+				connections: [],
+			}
+			set((state) => ({
+				pages: [newPage, ...state.pages],
+				activePageId: newPage.id,
+			}))
+		},
 
-			deletePage: (id) =>
-				set((state) => ({
-					pages: state.pages.filter((p) => p.id !== id),
-				})),
+		updatePage: (id, updates) =>
+			set((state) => ({
+				pages: state.pages.map((p) =>
+					p.id === id ? { ...p, ...updates, updatedAt: Date.now() } : p
+				),
+			})),
 
-			setActivePageId: (id) => set({ activePageId: id }),
-		}),
-		{
-			name: 'memo-app-notes',
-			version: STORE_VERSION,
-			storage: createJSONStorage(() => localStorage),
-
-			/**
-			 * マイグレーション関数
-			 * 将来のバージョンアップ時にデータ構造を変換
-			 */
-			migrate: (persistedState, version) => {
-				// バージョン0（初期）からバージョン1への移行
-				if (version === 0) {
-					// 必要に応じてデータ変換を実施
-				}
-				return persistedState as NoteState
-			},
-
-			/**
-			 * 永続化するデータを選択
-			 * アクション関数は除外される
-			 */
-			partialize: (state) => ({
-				pages: state.pages,
-				activePageId: state.activePageId,
+		softDeletePage: (id) =>
+			set((state) => {
+				const pages = state.pages.map((p) =>
+					p.id === id ? { ...p, deletedAt: Date.now(), updatedAt: Date.now() } : p
+				)
+				// 削除したページがアクティブなら別のページに切り替え
+				const activePageId =
+					state.activePageId === id
+						? (pages.find((p) => p.id !== id && !p.deletedAt)?.id ?? null)
+						: state.activePageId
+				return { pages, activePageId }
 			}),
+
+		restorePage: (id) =>
+			set((state) => ({
+				pages: state.pages.map((p) =>
+					p.id === id ? { ...p, deletedAt: undefined, updatedAt: Date.now() } : p
+				),
+			})),
+
+		permanentDeletePage: (id) =>
+			set((state) => {
+				const pages = state.pages.filter((p) => p.id !== id)
+				const activePageId = state.activePageId === id ? null : state.activePageId
+				return { pages, activePageId }
+			}),
+
+		cleanupOldTrash: () => {
+			const twoWeeksAgo = Date.now() - TWO_WEEKS_MS
+			set((state) => ({
+				pages: state.pages.filter((p) => !p.deletedAt || p.deletedAt >= twoWeeksAgo),
+			}))
+		},
+
+		setActivePageId: (id) => set({ activePageId: id }),
+	}))
+)
+
+// 自動保存: pages が変更されたら保存
+useNoteStore.subscribe(
+	(state) => state.pages,
+	(pages) => {
+		if (useNoteStore.getState().isHydrated && pages.length > 0) {
+			saveNotes(pages)
 		}
-	)
+	}
+)
+
+// 自動保存: activePageId が変更されたら設定を保存
+useNoteStore.subscribe(
+	(state) => state.activePageId,
+	(activePageId) => {
+		if (useNoteStore.getState().isHydrated && activePageId) {
+			saveConfig({ lastActivePageId: activePageId })
+		}
+	}
 )

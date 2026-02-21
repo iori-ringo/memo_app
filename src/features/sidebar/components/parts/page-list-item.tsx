@@ -85,6 +85,13 @@ export const PageListItem = ({
 		isTrash
 	)
 
+	// アイコン（お気に入り or デフォルト）- 編集/表示モード共通
+	const pageIcon = page.isFavorite ? (
+		<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
+	) : (
+		<FileText className="h-3.5 w-3.5 shrink-0" />
+	)
+
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger asChild>
@@ -101,12 +108,7 @@ export const PageListItem = ({
 						{isEditing ? (
 							// 編集モード
 							<div className="flex items-center gap-1.5 w-full">
-								{/* アイコン（編集モード） */}
-								{page.isFavorite ? (
-									<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
-								) : (
-									<FileText className="h-3.5 w-3.5 shrink-0" />
-								)}
+								{pageIcon}
 								<div className="flex-1 min-w-0 flex flex-col gap-0.5">
 									<input
 										ref={inputRef}
@@ -116,7 +118,7 @@ export const PageListItem = ({
 										onChange={(e) => onTitleChange(e.target.value)}
 										onBlur={onFinishEditing}
 										onKeyDown={onKeyDown}
-										className="w-full rounded-md border border-input bg-background dark:bg-white dark:text-zinc-950 px-2 py-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring"
+										className="flex-1 min-w-0 bg-transparent border-b border-primary rounded-none px-1 text-foreground text-sm outline-none"
 									/>
 									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
 								</div>
@@ -129,12 +131,7 @@ export const PageListItem = ({
 								onClick={() => !isTrash && onSelect?.(page.id)}
 								onDoubleClick={() => !isTrash && onStartEditing(page)}
 							>
-								{/* アイコン（表示モード） */}
-								{page.isFavorite ? (
-									<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
-								) : (
-									<FileText className="h-3.5 w-3.5 shrink-0" />
-								)}
+								{pageIcon}
 								<div className="flex-1 min-w-0 flex flex-col gap-0.5">
 									<span className="truncate font-medium text-foreground">{displayTitle}</span>
 									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>

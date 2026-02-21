@@ -1,9 +1,4 @@
-import type { NotePage } from '@/types/note'
-
-interface AppConfig {
-	theme?: 'light' | 'dark' | 'system'
-	lastActivePageId?: string
-}
+import type { AppConfig, NotePage } from '@/types/note'
 
 const STORAGE_KEYS = {
 	PAGES: 'magic-notebook-pages',

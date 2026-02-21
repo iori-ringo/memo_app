@@ -7,6 +7,7 @@
 'use client'
 
 import { Plus, Star } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
 import { SidebarHeader } from '@/features/sidebar/components/parts/sidebar-header'
@@ -18,6 +19,9 @@ import { useSidebarShortcuts } from '@/features/sidebar/hooks/use-sidebar-shortc
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import type { NotePage } from '@/types/note'
+
+// 静的JSXの抽出（rendering-hoist-jsx）
+const favoriteIcon = <Star className="h-3 w-3 fill-current" />
 
 type AppSidebarProps = {
 	pages: NotePage[]
@@ -93,7 +97,7 @@ export const AppSidebar = ({
 	)
 
 	// ページグループをレンダリング
-	const renderPageGroup = (label: string, pageList: NotePage[], icon?: React.ReactNode) => {
+	const renderPageGroup = (label: string, pageList: NotePage[], icon?: ReactNode) => {
 		if (pageList.length === 0) return null
 		return (
 			<div className="mb-4">
@@ -122,7 +126,7 @@ export const AppSidebar = ({
 			<div className="flex-1 overflow-y-auto min-h-0">
 				<div className="px-4 py-2 space-y-1">
 					{/* お気に入り */}
-					{renderPageGroup('お気に入り', favoritePages, <Star className="h-3 w-3 fill-current" />)}
+					{renderPageGroup('お気に入り', favoritePages, favoriteIcon)}
 
 					{/* 今日 */}
 					{renderPageGroup('今日', groupedPages.today)}

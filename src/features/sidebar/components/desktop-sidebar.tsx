@@ -9,9 +9,9 @@ type DesktopSidebarProps = {
 	onSelectPage: (id: string | null) => void
 	onAddPage: () => void
 	onUpdatePage?: (id: string, updates: Partial<NotePage>) => void
-	onDeletePage: (id: string) => Promise<void>
-	onRestorePage: (id: string) => Promise<void>
-	onPermanentDeletePage: (id: string) => Promise<void>
+	onDeletePage: (id: string) => void
+	onRestorePage: (id: string) => void
+	onPermanentDeletePage: (id: string) => void
 }
 
 export const DesktopSidebar = ({
