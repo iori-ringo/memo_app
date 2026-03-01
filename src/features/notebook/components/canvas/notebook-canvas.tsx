@@ -7,13 +7,10 @@
  * 1. CanvasBackground - 背景線とセクション区切り
  * 2. TextBlock - ドラッグ可能なテキストブロック
  * 3. ConnectionLayer - オブジェクト間の接続線
- * 4. HandwritingLayer - 手書き入力レイヤー
  *
  * @modes
  * - 通常モード: テキストブロックの編集
- * - ペンモード (P): 手書き入力
  * - 接続モード (C): ブロック間接続の作成
- * - 消しゴムモード (Shift+E): オブジェクト削除
  *
  * @dependencies
  * - hooks/use-canvas-layout: レイアウト管理
@@ -25,7 +22,6 @@
 
 import { Star } from 'lucide-react'
 import { useCallback, useRef, useState } from 'react'
-import { HandwritingLayer } from '@/features/notebook/components/blocks/handwriting-layer'
 import { TextBlock } from '@/features/notebook/components/blocks/text-block'
 import { CanvasBackground } from '@/features/notebook/components/canvas/canvas-background'
 import { ConnectionLayer } from '@/features/notebook/components/canvas/connection-layer'
@@ -43,9 +39,7 @@ type NotebookCanvasProps = {
 }
 
 export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
-	const [isPenMode, setIsPenMode] = useState(false)
 	const [isConnectMode, setIsConnectMode] = useState(false)
-	const [isObjectEraserMode, setIsObjectEraserMode] = useState(false)
 	const [connectSourceId, setConnectSourceId] = useState<string | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const mousePositionRef = useRef<{ x: number; y: number }>({ x: 100, y: 100 })
@@ -82,70 +76,38 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 		handleUpdateObject,
 		handleDeleteObject,
 		handleDeleteConnection,
-		handleUpdateStrokes,
 		toggleFavorite,
 	} = useCanvasOperations(page, onUpdate, containerRef as React.RefObject<HTMLDivElement>)
+
+	// モードトグルコールバックの安定化（rerender-functional-setstate）
+	// functional setStateで最新の状態を参照し、依存配列を空にして関数の再作成を防止
+	// useCanvasShortcutsより先に定義（ショートカットからも同じ関数を使うため）
+	const handleToggleConnectMode = useCallback(() => {
+		setConnectSourceId(null)
+		setIsConnectMode((prev) => {
+			if (!prev) {
+				// 接続モードON時は選択もリセット
+				setSelectedObjectId(null)
+			}
+			return !prev
+		})
+	}, [setSelectedObjectId])
 
 	useCanvasShortcuts({
 		selectedObjectId,
 		selectedConnectionId,
-		isPenMode,
 		isConnectMode,
 		activeEditor,
 		handleDeleteObject,
 		handleDeleteConnection,
-		setIsPenMode,
-		setIsConnectMode,
-		setIsObjectEraserMode,
+		toggleConnectMode: handleToggleConnectMode,
 		setSelectedObjectId,
 		setSelectedConnectionId,
 		handleAddBlock,
 		mousePositionRef,
 	})
 
-	// モードトグルコールバックの安定化（rerender-functional-setstate）
-	// functional setStateで最新の状態を参照し、依存配列を空にして関数の再作成を防止
-	const handleTogglePenMode = useCallback(() => {
-		setIsPenMode((prev) => {
-			if (!prev) {
-				// ペンモードON時は他のモードをOFF
-				setIsConnectMode(false)
-				setIsObjectEraserMode(false)
-				setConnectSourceId(null)
-			}
-			return !prev
-		})
-	}, [])
-
-	const handleToggleConnectMode = useCallback(() => {
-		setIsConnectMode((prev) => {
-			if (!prev) {
-				// 接続モードON時は他のモードをOFF
-				setIsPenMode(false)
-				setIsObjectEraserMode(false)
-				setSelectedObjectId(null)
-				setConnectSourceId(null)
-			} else {
-				// 接続モードOFF時はソースをリセット
-				setConnectSourceId(null)
-			}
-			return !prev
-		})
-	}, [setSelectedObjectId])
-
-	const handleToggleObjectEraserMode = useCallback(() => {
-		setIsObjectEraserMode((prev) => {
-			if (!prev) {
-				// 消しゴムモードON時は他のモードをOFF
-				setIsPenMode(false)
-				setIsConnectMode(false)
-				setConnectSourceId(null)
-			}
-			return !prev
-		})
-	}, [])
-
-	const handleDeleteSelection = () => {
+	const handleDeleteSelection = useCallback(() => {
 		if (selectedObjectId) {
 			handleDeleteObject(selectedObjectId)
 			setSelectedObjectId(null)
@@ -154,48 +116,66 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 			handleDeleteConnection(selectedConnectionId)
 			setSelectedConnectionId(null)
 		}
-	}
+	}, [
+		selectedObjectId,
+		selectedConnectionId,
+		handleDeleteObject,
+		handleDeleteConnection,
+		setSelectedObjectId,
+		setSelectedConnectionId,
+	])
 
-	const onBlockClick = (id: string) => {
-		if (isConnectMode) {
-			if (!connectSourceId) {
-				setConnectSourceId(id)
-				setSelectedObjectId(id) // Visual feedback
-			} else {
-				if (connectSourceId !== id) {
-					// Check for existing connection
-					const existingConnection = page.connections.find(
-						(conn) =>
-							(conn.fromObjectId === connectSourceId && conn.toObjectId === id) ||
-							(conn.fromObjectId === id && conn.toObjectId === connectSourceId)
-					)
-
-					if (!existingConnection) {
-						// Create connection
-						const newConnection = {
-							id: crypto.randomUUID(),
-							fromObjectId: connectSourceId,
-							toObjectId: id,
-							type: 'arrow' as const,
-							style: 'solid' as const,
-						}
-						onUpdate(page.id, {
-							connections: [...page.connections, newConnection],
-						})
-					}
-
-					setConnectSourceId(null)
-					setSelectedObjectId(null)
+	const onBlockClick = useCallback(
+		(id: string) => {
+			if (isConnectMode) {
+				if (!connectSourceId) {
+					setConnectSourceId(id)
+					setSelectedObjectId(id) // Visual feedback
 				} else {
-					// Clicked same object, cancel selection
-					setConnectSourceId(null)
-					setSelectedObjectId(null)
+					if (connectSourceId !== id) {
+						// Check for existing connection
+						const existingConnection = page.connections.find(
+							(conn) =>
+								(conn.fromObjectId === connectSourceId && conn.toObjectId === id) ||
+								(conn.fromObjectId === id && conn.toObjectId === connectSourceId)
+						)
+
+						if (!existingConnection) {
+							// Create connection
+							const newConnection = {
+								id: crypto.randomUUID(),
+								fromObjectId: connectSourceId,
+								toObjectId: id,
+								type: 'arrow' as const,
+								style: 'solid' as const,
+							}
+							onUpdate(page.id, {
+								connections: [...page.connections, newConnection],
+							})
+						}
+
+						setConnectSourceId(null)
+						setSelectedObjectId(null)
+					} else {
+						// Clicked same object, cancel selection
+						setConnectSourceId(null)
+						setSelectedObjectId(null)
+					}
 				}
+			} else {
+				handleBlockClick(id)
 			}
-		} else {
-			handleBlockClick(id)
-		}
-	}
+		},
+		[
+			isConnectMode,
+			connectSourceId,
+			page.connections,
+			page.id,
+			onUpdate,
+			setSelectedObjectId,
+			handleBlockClick,
+		]
+	)
 
 	return (
 		<div className="flex flex-col h-full relative bg-stone-50 dark:bg-stone-900 overflow-hidden">
@@ -222,12 +202,8 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 					<div className="flex items-center gap-2">
 						<RibbonToolbar
 							editor={activeEditor}
-							isPenMode={isPenMode}
-							onTogglePenMode={handleTogglePenMode}
 							isConnectMode={isConnectMode}
 							onToggleConnectMode={handleToggleConnectMode}
-							isObjectEraserMode={isObjectEraserMode}
-							onToggleObjectEraserMode={handleToggleObjectEraserMode}
 							hasSelection={!!selectedObjectId || !!selectedConnectionId}
 							onDelete={handleDeleteSelection}
 						/>
@@ -240,9 +216,7 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 				ref={containerRef}
 				role="application"
 				aria-label="ノートキャンバス"
-				className={`flex-1 relative overflow-hidden ${
-					isPenMode ? 'cursor-crosshair' : 'cursor-default'
-				}`}
+				className="flex-1 relative overflow-hidden cursor-default"
 				onDoubleClick={handleAddBlock}
 				onClick={handleBackgroundClick}
 				onKeyDown={(e) => {
@@ -261,7 +235,6 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 					centerPosition={centerPosition}
 					diversionPosition={diversionPosition}
 					onBoundaryChange={handleBoundaryChange}
-					isPenMode={isPenMode}
 				/>
 
 				{/* Content Layer (Text Blocks) */}
@@ -271,11 +244,9 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 							key={obj.id}
 							object={obj}
 							onUpdate={handleUpdateObject}
-							onDelete={handleDeleteObject}
 							isSelected={selectedObjectId === obj.id}
 							onSelect={onBlockClick}
 							onEditorReady={handleEditorReady}
-							isPenMode={isPenMode}
 						/>
 					))}
 				</div>
@@ -287,17 +258,6 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 					onDelete={handleDeleteConnection}
 					selectedConnectionId={selectedConnectionId}
 					onSelect={handleConnectionClick}
-				/>
-
-				{/* Handwriting Layer */}
-				<HandwritingLayer
-					strokes={page.strokes}
-					onUpdate={handleUpdateStrokes}
-					isPenMode={isPenMode}
-					isObjectEraserMode={isObjectEraserMode}
-					color="#000000"
-					width={3}
-					isHighlighter={false}
 				/>
 			</div>
 		</div>

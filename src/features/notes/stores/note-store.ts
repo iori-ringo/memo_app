@@ -29,7 +29,6 @@ const INITIAL_PAGE: NotePage = {
 	createdAt: Date.now(),
 	updatedAt: Date.now(),
 	objects: [],
-	strokes: [],
 	connections: [],
 }
 
@@ -93,7 +92,6 @@ export const useNoteStore = create<NoteState & NoteActions>()(
 				createdAt: Date.now(),
 				updatedAt: Date.now(),
 				objects: [],
-				strokes: [],
 				connections: [],
 			}
 			set((state) => ({

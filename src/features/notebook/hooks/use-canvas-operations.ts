@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { DEFAULT_OBJECT_SIZE, SECTION_TYPES } from '@/features/notebook/constants'
-import type { CanvasObject, NotePage, SectionType, Stroke } from '@/types/note'
+import type { CanvasObject, NotePage, SectionType } from '@/types/note'
 
 export const useCanvasOperations = (
 	page: NotePage,
@@ -92,13 +92,6 @@ export const useCanvasOperations = (
 		[page.connections, page.id, onUpdate]
 	)
 
-	const handleUpdateStrokes = useCallback(
-		(newStrokes: Stroke[]) => {
-			onUpdate(page.id, { strokes: newStrokes })
-		},
-		[page.id, onUpdate]
-	)
-
 	const toggleFavorite = useCallback(() => {
 		onUpdate(page.id, { isFavorite: !page.isFavorite })
 	}, [page.id, page.isFavorite, onUpdate])
@@ -108,7 +101,6 @@ export const useCanvasOperations = (
 		handleUpdateObject,
 		handleDeleteObject,
 		handleDeleteConnection,
-		handleUpdateStrokes,
 		toggleFavorite,
 	}
 }

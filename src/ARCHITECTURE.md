@@ -36,7 +36,6 @@ electron/
 ├── main.ts                # メインプロセス（エントリーポイント）
 ├── preload.ts             # プリロードスクリプト（contextBridge）
 ├── handlers/              # IPCハンドラ
-│   ├── ai-handlers.ts     # Gemini API連携（抽象化・転用・要約生成）
 │   └── data-handlers.ts   # ページ・設定の永続化
 ├── ipc/                   # IPC関連
 │   └── types.ts           # IPCチャンネル名定数と型の再エクスポート
@@ -81,7 +80,7 @@ features/* → shared/ → lib/ → types/
 | `shared/` | `types/` | ✅ |
 
 > **既知の例外**: `types/note.d.ts` が `features/notebook/types.ts` から
-> キャンバス関連型（CanvasObject, Stroke 等）を再エクスポートしている。
+> キャンバス関連型（CanvasObject, Connection 等）を再エクスポートしている。
 > これは型定義の Single Source of Truth を notebook 側に集約するための意図的な設計。
 
 ### 禁止される依存方向

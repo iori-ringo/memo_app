@@ -7,7 +7,7 @@
  * - TextAlignTools: 左揃え、中央揃え、右揃え
  * - ColorTools: テキスト色選択
  * - ListTools: 箇条書き、番号付き、チェックボックス
- * - CanvasModeTools: 接続/ペン/消しゴムモード
+ * - CanvasModeTools: 接続モード
  * - DeleteButton: 削除機能
  */
 'use client'
@@ -24,24 +24,16 @@ import { Separator } from '@/shared/shadcn/separator'
 type RibbonToolbarProps = {
 	editor: Editor | null
 	isConnectMode: boolean
-	isPenMode: boolean
-	isObjectEraserMode: boolean
 	hasSelection: boolean
 	onToggleConnectMode: () => void
-	onTogglePenMode: () => void
-	onToggleObjectEraserMode: () => void
 	onDelete: () => void
 }
 
 export const RibbonToolbar = ({
 	editor,
 	isConnectMode,
-	isPenMode,
-	isObjectEraserMode,
 	hasSelection,
 	onToggleConnectMode,
-	onTogglePenMode,
-	onToggleObjectEraserMode,
 	onDelete,
 }: RibbonToolbarProps) => {
 	return (
@@ -67,14 +59,7 @@ export const RibbonToolbar = ({
 			<Separator orientation="vertical" className="h-6" />
 
 			{/* キャンバスモード */}
-			<CanvasModeTools
-				isConnectMode={isConnectMode}
-				isPenMode={isPenMode}
-				isObjectEraserMode={isObjectEraserMode}
-				onToggleConnectMode={onToggleConnectMode}
-				onTogglePenMode={onTogglePenMode}
-				onToggleObjectEraserMode={onToggleObjectEraserMode}
-			/>
+			<CanvasModeTools isConnectMode={isConnectMode} onToggleConnectMode={onToggleConnectMode} />
 
 			<Separator orientation="vertical" className="h-6" />
 

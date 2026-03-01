@@ -14,8 +14,6 @@
  * - クリック: 選択
  * - ドラッグ: 移動（drag-handle クラスを持つ要素から）
  * - リサイズ: 四隅のハンドルをドラッグ
- * - ペンモード時: 操作無効（pointer-events: none）
- *
  * @config
  * - HANDLE_SIZE_PX: リサイズハンドルのサイズ
  * - HANDLE_OFFSET_PX: ハンドルの位置オフセット
@@ -38,11 +36,9 @@ import 'react-resizable/css/styles.css'
 type TextBlockProps = {
 	object: CanvasObject
 	onUpdate: (id: string, updates: Partial<CanvasObject>) => void
-	onDelete?: (id: string) => void
 	isSelected?: boolean
 	onSelect?: (id: string) => void
 	onEditorReady?: (objectId: string, editor: Editor) => void
-	isPenMode?: boolean
 }
 
 // -----------------------------------------------------------------------------
@@ -93,15 +89,7 @@ const ResizeHandle = ({
 )
 
 export const TextBlock = memo(
-	({
-		object,
-		onUpdate,
-		onDelete: _onDelete,
-		isSelected,
-		onSelect,
-		onEditorReady,
-		isPenMode,
-	}: TextBlockProps) => {
+	({ object, onUpdate, isSelected, onSelect, onEditorReady }: TextBlockProps) => {
 		const [currentSize, setCurrentSize] = useState({
 			width: object.width,
 			height: object.height,
@@ -166,23 +154,21 @@ export const TextBlock = memo(
 
 		const handleClick = useCallback(
 			(e: React.MouseEvent) => {
-				if (!isPenMode) {
-					e.stopPropagation()
-					onSelect?.(object.id)
-				}
+				e.stopPropagation()
+				onSelect?.(object.id)
 			},
-			[isPenMode, object.id, onSelect]
+			[object.id, onSelect]
 		)
 
 		const handleKeyDown = useCallback(
 			(e: React.KeyboardEvent) => {
-				if (!isPenMode && (e.key === 'Enter' || e.key === ' ')) {
+				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault()
 					e.stopPropagation()
 					onSelect?.(object.id)
 				}
 			},
-			[isPenMode, object.id, onSelect]
+			[object.id, onSelect]
 		)
 
 		return (
@@ -193,7 +179,6 @@ export const TextBlock = memo(
 				onStop={handleDragStop}
 				handle=".drag-handle"
 				bounds="parent"
-				disabled={isPenMode}
 				cancel=".react-resizable-handle"
 			>
 				{/* 
@@ -205,7 +190,7 @@ export const TextBlock = memo(
 					ref={nodeRef}
 					className="absolute group"
 					style={{
-						pointerEvents: isPenMode ? 'none' : 'auto',
+						pointerEvents: 'auto',
 						// Add padding so hover area includes the resize handles
 						padding: '10px',
 						margin: '-10px',
@@ -237,7 +222,8 @@ export const TextBlock = memo(
 							}}
 							onClick={handleClick}
 							onKeyDown={handleKeyDown}
-							tabIndex={isPenMode ? -1 : 0}
+							// biome-ignore lint/a11y/noNoninteractiveTabindex: キーボードナビゲーションに必要
+							tabIndex={0}
 							aria-label="Text block"
 						>
 							{/* ドラッグハンドル - 上部 */}

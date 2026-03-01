@@ -15,7 +15,6 @@
 - **デスクトップ**: Electron 39
 - **スタイリング**: Tailwind CSS v4 / Shadcn UI
 - **エディタ**: Tiptap（リッチテキスト）
-- **AI統合**: Google Gemini API
 - **データ永続化**: electron-store
 
 ---
@@ -52,7 +51,6 @@ src/
   - `connection-layer.tsx`: ブロック間の接続線（矢印）描画
 - **`components/blocks/`**: キャンバス上のオブジェクト
   - `text-block.tsx`: ドラッグ・リサイズ可能なテキストボックスコンテナ
-  - `handwriting-layer.tsx`: 手書きストローク描画レイヤー
 - **`components/toolbar/`**: 操作ツール
   - `ribbon-toolbar.tsx`: コンテキストに応じた操作パネル（MacライクなリボンUI）
 
@@ -438,25 +436,6 @@ className={cn(
 )}
 ```
 
-### パフォーマンスを意識した手書き描画
-
-手書きレイヤー（`features/notebook/components/blocks/handwriting-layer.tsx`）では、Reactの宣言的なデータフローと、Canvas APIの命令的な描画処理を組み合わせています。
-
-**こだわりポイント:**
-- **Canvas API vs SVG**: 多数のストロークを扱う際のパフォーマンス（DOM要素数の爆発を防ぐ）と、ペンの追従性（リアルタイム描画）を重視し、SVGではなくCanvas要素への直接描画を採用しました。
-- **命令的アプローチの採用**: Reactの状態管理から一時的に離れ、`useEffect` 内で Context2D API を直接操作することで、VDOMのオーバーヘッドを回避し、ネイティブに近い書き心地を実現しています。
-
-```typescript
-// パフォーマンス重視の命令的描画処理
-useEffect(() => {
-  const ctx = canvas.getContext('2d')
-  // Reactのレンダリングサイクルを待たずに直接描画
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  // ...
-}, [strokes])
-```
-
 ---
 
 ## ✏️ リッチテキストエディタ
@@ -478,32 +457,6 @@ useEffect(() => {
   variant="canvas"  // または "sidebar"
   // ...
 />
-```
-
----
-
-## 🤖 AI統合（Gemini API）
-
-ノートの内容をAIが分析し、「抽象化」と「転用」を自動生成する機能を実装しています。
-
-### IPC経由のセキュアなAPI呼び出し
-
-レンダラー側から直接APIを呼び出すのではなく、メインプロセスで処理しています。
-
-```
-[Renderer] → IPC → [Main Process] → Gemini API → [Main Process] → IPC → [Renderer]
-```
-
-### モック対応
-
-API Keyが設定されていない開発環境でも動作するよう、モックレスポンスを用意しています。
-
-```typescript
-const MOCK_RESPONSES = {
-  abstraction: 'これは抽象化のサンプルテキストです...',
-  diversion: 'これは転用のサンプルテキストです...',
-  summary: 'これは要約のサンプルテキストです...',
-} as const
 ```
 
 ---
@@ -545,7 +498,6 @@ export function isValidNotePage(page: unknown): page is NotePage {
   return (
     typeof p.id === 'string' &&
     Array.isArray(p.objects) &&
-    Array.isArray(p.strokes) &&
     Array.isArray(p.connections)
   )
 }
@@ -655,5 +607,4 @@ Supabase は公式で MCP サーバーを提供しており、AIエージェン�
 
 ### その他の展望
 
-- 手書き入力の改善
 - 複数ノートブック対応の強化

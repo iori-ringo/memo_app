@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
 	title: 'Magic Memo',
-	description: 'Canvas-based note-taking app with AI-powered abstraction',
+	description: 'Canvas-based note-taking app',
 	icons: {
 		icon: '/favicon.png',
 	},

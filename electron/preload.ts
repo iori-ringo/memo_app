@@ -18,10 +18,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		ipcRenderer.on(IPC_CHANNELS.TOGGLE_DARK, subscription)
 		return () => ipcRenderer.removeListener(IPC_CHANNELS.TOGGLE_DARK, subscription)
 	},
-	generateAbstraction: (fact: string): Promise<string> =>
-		ipcRenderer.invoke(IPC_CHANNELS.GENERATE_ABSTRACTION, fact),
-	generateDiversion: (fact: string, abstraction: string): Promise<string> =>
-		ipcRenderer.invoke(IPC_CHANNELS.GENERATE_DIVERSION, fact, abstraction),
-	generateSummary: (content: string): Promise<string> =>
-		ipcRenderer.invoke(IPC_CHANNELS.GENERATE_SUMMARY, content),
 })

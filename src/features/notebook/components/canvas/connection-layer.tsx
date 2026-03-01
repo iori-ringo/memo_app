@@ -29,7 +29,6 @@ type ConnectionLayerProps = {
 	selectedConnectionId?: string | null
 	onSelect?: (connectionId: string) => void
 	onDelete?: (connectionId: string) => void
-	isPenMode?: boolean
 }
 
 type Point = { x: number; y: number }
@@ -93,13 +92,7 @@ const getIntersection = (p1: Point, p2: Point, rect: Rect): Point => {
 }
 
 export const ConnectionLayer = memo(
-	({
-		connections,
-		objects,
-		selectedConnectionId,
-		onSelect,
-		isPenMode = false,
-	}: ConnectionLayerProps) => {
+	({ connections, objects, selectedConnectionId, onSelect }: ConnectionLayerProps) => {
 		const handleClick = (e: MouseEvent, connectionId: string) => {
 			e.stopPropagation()
 			onSelect?.(connectionId)
@@ -183,8 +176,8 @@ export const ConnectionLayer = memo(
 								y2={end.y}
 								stroke="transparent"
 								strokeWidth="20"
-								className={isPenMode ? '' : 'cursor-pointer'}
-								style={{ pointerEvents: isPenMode ? 'none' : 'stroke' }}
+								className="cursor-pointer"
+								style={{ pointerEvents: 'stroke' }}
 								onClick={(e) => handleClick(e, conn.id)}
 							/>
 						</g>

@@ -27,7 +27,6 @@ type CanvasBackgroundProps = {
 	centerPosition?: number
 	diversionPosition?: number
 	onBoundaryChange?: (boundary: 'title' | 'center' | 'diversion', value: number) => void
-	isPenMode?: boolean
 }
 
 // 静的JSXの抽出（rendering-hoist-jsx）- propsに依存しないため再作成不要
@@ -42,6 +41,12 @@ const notebookLinesPattern = (
 	/>
 )
 
+// isPenMode削除後に完全静的となったため、モジュールスコープに抽出（レンダリングごとの再生成を防止）
+const BOUNDARY_CLASS =
+	'absolute bg-stone-500 dark:bg-stone-400 hover:bg-primary dark:hover:bg-primary z-15 pointer-events-auto cursor-col-resize'
+const HORIZONTAL_BOUNDARY_CLASS =
+	'absolute bg-stone-400 dark:bg-stone-600 hover:bg-primary dark:hover:bg-primary z-15 pointer-events-auto cursor-row-resize'
+
 export const CanvasBackground = ({
 	className,
 	children,
@@ -49,7 +54,6 @@ export const CanvasBackground = ({
 	centerPosition = 50,
 	diversionPosition = 75,
 	onBoundaryChange,
-	isPenMode = false,
 }: CanvasBackgroundProps) => {
 	const [isDragging, setIsDragging] = useState<string | null>(null)
 
@@ -97,9 +101,6 @@ export const CanvasBackground = ({
 		}
 	}, [isDragging, onBoundaryChange])
 
-	const boundaryClassName = `absolute bg-stone-500 dark:bg-stone-400 hover:bg-primary dark:hover:bg-primary z-15 ${isPenMode ? 'pointer-events-none' : 'pointer-events-auto cursor-col-resize'}`
-	const horizontalBoundaryClassName = `absolute bg-stone-400 dark:bg-stone-600 hover:bg-primary dark:hover:bg-primary z-15 ${isPenMode ? 'pointer-events-none' : 'pointer-events-auto cursor-row-resize'}`
-
 	return (
 		<div
 			className={cn(
@@ -121,7 +122,7 @@ export const CanvasBackground = ({
 				aria-valuemax={70}
 				aria-label="左右ページ境界"
 				tabIndex={0}
-				className={`${boundaryClassName} top-0 bottom-0 w-1`}
+				className={`${BOUNDARY_CLASS} top-0 bottom-0 w-1`}
 				style={{ left: `${centerPosition}%` }}
 				onMouseDown={handleMouseDown('center')}
 			/>
@@ -136,7 +137,7 @@ export const CanvasBackground = ({
 				aria-valuemax={30}
 				aria-label="タイトル境界"
 				tabIndex={0}
-				className={`${horizontalBoundaryClassName} left-0 h-1`}
+				className={`${HORIZONTAL_BOUNDARY_CLASS} left-0 h-1`}
 				style={{
 					top: `${titleHeight}%`,
 					right: `${100 - centerPosition}%`,
@@ -154,7 +155,7 @@ export const CanvasBackground = ({
 				aria-valuemax={95}
 				aria-label="抽象化・転用境界"
 				tabIndex={0}
-				className={`${boundaryClassName} top-0 bottom-0 w-1`}
+				className={`${BOUNDARY_CLASS} top-0 bottom-0 w-1`}
 				style={{ left: `${diversionPosition}%` }}
 				onMouseDown={handleMouseDown('diversion')}
 			/>

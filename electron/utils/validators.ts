@@ -20,7 +20,6 @@ export function isValidNotePage(page: unknown): page is NotePage {
 		typeof p.createdAt === 'number' &&
 		typeof p.updatedAt === 'number' &&
 		Array.isArray(p.objects) &&
-		Array.isArray(p.strokes) &&
 		Array.isArray(p.connections)
 	)
 }

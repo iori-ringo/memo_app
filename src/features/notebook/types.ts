@@ -1,7 +1,7 @@
 /**
  * notebook 機能固有の型定義
  *
- * キャンバス上のオブジェクト、手書きストローク、接続線に関する型を定義。
+ * キャンバス上のオブジェクト、接続線に関する型を定義。
  * グローバル型（NotePage等）との後方互換性のため、note.d.ts から再エクスポートされる。
  */
 
@@ -29,18 +29,6 @@ export type CanvasObject = {
 		bold?: boolean
 		italic?: boolean
 	}
-}
-
-/**
- * 手書きストローク
- * ポイントの配列とスタイル情報を持つ
- */
-export type Stroke = {
-	id: string
-	points: { x: number; y: number; pressure?: number }[]
-	color: string
-	width: number
-	isHighlighter: boolean
 }
 
 /**
