@@ -1,3 +1,12 @@
+/**
+ * ストレージアダプター（Adapter パターン）
+ *
+ * プラットフォームごとに異なる保存先を抽象化し、
+ * 呼び出し側（note-store.ts）が保存先を意識せずに動けるようにする。
+ *
+ * - Electron環境: IPC経由で electron-store（ファイルシステム）に保存
+ * - Web環境: localStorage に保存
+ */
 import type { AppConfig, NotePage } from '@/types/note'
 
 const STORAGE_KEYS = {

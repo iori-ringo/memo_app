@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "drawio-architecture": {
+      "source": "teachingai/full-stack-skills",
+      "sourceType": "github",
+      "computedHash": "91ad433c65d12b6c4bbbb7d587dff115274f4a162d399986721a667cc9eddac2"
+    },
     "react-doctor": {
       "source": "millionco/react-doctor",
       "sourceType": "github",
