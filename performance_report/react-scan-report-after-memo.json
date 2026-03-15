@@ -1,0 +1,4292 @@
+{
+  "meta": {
+    "url": "http://10.18.45.110:3000/",
+    "title": "Magic Memo - ノート",
+    "startTime": 1773553566345,
+    "endTime": 1773553622618,
+    "durationMs": 56273,
+    "commitCount": 42,
+    "totalRenders": 2240,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.0.0 Safari/537.36",
+    "timestamp": "2026-03-15T05:47:02.619Z"
+  },
+  "components": {
+    "dw": {
+      "name": "dw",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 2,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "ey": {
+      "name": "ey",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 2,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "ds": {
+      "name": "ds",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 2,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "ew": {
+      "name": "ew",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 2,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "r1": {
+      "name": "r1",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 2,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "rU": {
+      "name": "rU",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 2,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "rQ": {
+      "name": "rQ",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "rJ": {
+      "name": "rJ",
+      "totalRenders": 3,
+      "totalTime": 0,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 2,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "Root": {
+      "name": "Root",
+      "totalRenders": 22,
+      "totalTime": 60.80000001192093,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 13,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.76
+    },
+    "ServerRoot": {
+      "name": "ServerRoot",
+      "totalRenders": 22,
+      "totalTime": 60.80000001192093,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 13,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.76
+    },
+    "AppRouter": {
+      "name": "AppRouter",
+      "totalRenders": 22,
+      "totalTime": 60.60000002384186,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.75
+    },
+    "RootErrorBoundary": {
+      "name": "RootErrorBoundary",
+      "totalRenders": 22,
+      "totalTime": 60.60000002384186,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.75
+    },
+    "ErrorBoundary": {
+      "name": "ErrorBoundary",
+      "totalRenders": 44,
+      "totalTime": 119.90000003576279,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 2,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.73
+    },
+    "ErrorBoundaryHandler": {
+      "name": "ErrorBoundaryHandler",
+      "totalRenders": 44,
+      "totalTime": 119.80000004172325,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 2,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.72
+    },
+    "Router": {
+      "name": "Router",
+      "totalRenders": 22,
+      "totalTime": 60.50000002980232,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.75
+    },
+    "HistoryUpdater": {
+      "name": "HistoryUpdater",
+      "totalRenders": 22,
+      "totalTime": 0,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "RuntimeStyles": {
+      "name": "RuntimeStyles",
+      "totalRenders": 22,
+      "totalTime": 0,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "HotReload": {
+      "name": "HotReload",
+      "totalRenders": 22,
+      "totalTime": 60.20000001788139,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.74
+    },
+    "AppDevOverlayErrorBoundary": {
+      "name": "AppDevOverlayErrorBoundary",
+      "totalRenders": 22,
+      "totalTime": 60.10000002384186,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.73
+    },
+    "ReplaySsrOnlyErrors": {
+      "name": "ReplaySsrOnlyErrors",
+      "totalRenders": 22,
+      "totalTime": 0,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "DevRootHTTPAccessFallbackBoundary": {
+      "name": "DevRootHTTPAccessFallbackBoundary",
+      "totalRenders": 22,
+      "totalTime": 60.10000002384186,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.73
+    },
+    "HTTPAccessFallbackBoundary": {
+      "name": "HTTPAccessFallbackBoundary",
+      "totalRenders": 44,
+      "totalTime": 119.40000003576279,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 2,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "HTTPAccessFallbackErrorBoundary": {
+      "name": "HTTPAccessFallbackErrorBoundary",
+      "totalRenders": 44,
+      "totalTime": 119.30000004172325,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 2,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "RedirectBoundary": {
+      "name": "RedirectBoundary",
+      "totalRenders": 44,
+      "totalTime": 119.20000004768372,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 2,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "RedirectErrorBoundary": {
+      "name": "RedirectErrorBoundary",
+      "totalRenders": 44,
+      "totalTime": 119.20000004768372,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 2,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "Head": {
+      "name": "Head",
+      "totalRenders": 22,
+      "totalTime": 0.4000000059604645,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.4000000059604645,
+      "minRenderTime": 0.4000000059604645,
+      "unstableProps": [],
+      "avgRenderTime": 0.02
+    },
+    "__next_viewport_boundary__": {
+      "name": "__next_viewport_boundary__",
+      "totalRenders": 22,
+      "totalTime": 0,
+      "unnecessaryRenders": 15,
+      "phases": {
+        "mount": 7,
+        "update": 15,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "__next_metadata_boundary__": {
+      "name": "__next_metadata_boundary__",
+      "totalRenders": 22,
+      "totalTime": 6.000000089406967,
+      "unnecessaryRenders": 15,
+      "phases": {
+        "mount": 7,
+        "update": 15,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.4000000059604645,
+      "minRenderTime": 0.4000000059604645,
+      "unstableProps": [],
+      "avgRenderTime": 0.27
+    },
+    "__next_root_layout_boundary__": {
+      "name": "__next_root_layout_boundary__",
+      "totalRenders": 22,
+      "totalTime": 59.30000001192093,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.7
+    },
+    "SegmentViewNode": {
+      "name": "SegmentViewNode",
+      "totalRenders": 110,
+      "totalTime": 121.89999988675117,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 68,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 1.11
+    },
+    "SegmentTrieNode": {
+      "name": "SegmentTrieNode",
+      "totalRenders": 110,
+      "totalTime": 0,
+      "unnecessaryRenders": 42,
+      "phases": {
+        "mount": 68,
+        "update": 42,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "ThemeProvider": {
+      "name": "ThemeProvider",
+      "totalRenders": 22,
+      "totalTime": 60,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.73
+    },
+    "J": {
+      "name": "J",
+      "totalRenders": 22,
+      "totalTime": 60,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.73
+    },
+    "V": {
+      "name": "V",
+      "totalRenders": 22,
+      "totalTime": 60,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.73
+    },
+    "Anonymous": {
+      "name": "Anonymous",
+      "totalRenders": 22,
+      "totalTime": 0.19999998807907104,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.09999999403953552,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.01
+    },
+    "OuterLayoutRouter": {
+      "name": "OuterLayoutRouter",
+      "totalRenders": 22,
+      "totalTime": 59.70000001788139,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "SegmentStateProvider": {
+      "name": "SegmentStateProvider",
+      "totalRenders": 22,
+      "totalTime": 59.599999994039536,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "RenderFromTemplateContext": {
+      "name": "RenderFromTemplateContext",
+      "totalRenders": 22,
+      "totalTime": 59.5,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.7
+    },
+    "ScrollAndFocusHandler": {
+      "name": "ScrollAndFocusHandler",
+      "totalRenders": 22,
+      "totalTime": 59.400000005960464,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.7
+    },
+    "InnerScrollAndFocusHandler": {
+      "name": "InnerScrollAndFocusHandler",
+      "totalRenders": 22,
+      "totalTime": 59.400000005960464,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.7
+    },
+    "LoadingBoundary": {
+      "name": "LoadingBoundary",
+      "totalRenders": 22,
+      "totalTime": 59.30000001192093,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.7
+    },
+    "InnerLayoutRouter": {
+      "name": "InnerLayoutRouter",
+      "totalRenders": 22,
+      "totalTime": 59.20000001788139,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.69
+    },
+    "HomeContent": {
+      "name": "HomeContent",
+      "totalRenders": 22,
+      "totalTime": 59.60000002384186,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.71
+    },
+    "__next_outlet_boundary__": {
+      "name": "__next_outlet_boundary__",
+      "totalRenders": 22,
+      "totalTime": 0.09999999403953552,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.09999999403953552,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "SegmentBoundaryTriggerNode": {
+      "name": "SegmentBoundaryTriggerNode",
+      "totalRenders": 22,
+      "totalTime": 0,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 22,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "SegmentViewStateNode": {
+      "name": "SegmentViewStateNode",
+      "totalRenders": 22,
+      "totalTime": 0,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "AppRouterAnnouncer": {
+      "name": "AppRouterAnnouncer",
+      "totalRenders": 22,
+      "totalTime": 0.30000001192092896,
+      "unnecessaryRenders": 21,
+      "phases": {
+        "mount": 1,
+        "update": 21,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.30000001192092896,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 0.01
+    },
+    "SidebarContainer": {
+      "name": "SidebarContainer",
+      "totalRenders": 21,
+      "totalTime": 21.700000017881393,
+      "unnecessaryRenders": 20,
+      "phases": {
+        "mount": 1,
+        "update": 20,
+        "nested-update": 0
+      },
+      "maxRenderTime": 5.800000011920929,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 1.03
+    },
+    "MobileDrawer": {
+      "name": "MobileDrawer",
+      "totalRenders": 1,
+      "totalTime": 3.899999976158142,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 3.899999976158142,
+      "minRenderTime": 3.899999976158142,
+      "unstableProps": [],
+      "avgRenderTime": 3.9
+    },
+    "Dialog": {
+      "name": "Dialog",
+      "totalRenders": 1,
+      "totalTime": 3.699999988079071,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 3.699999988079071,
+      "minRenderTime": 3.699999988079071,
+      "unstableProps": [],
+      "avgRenderTime": 3.7
+    },
+    "DialogProvider": {
+      "name": "DialogProvider",
+      "totalRenders": 1,
+      "totalTime": 3.5999999940395355,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 3.5999999940395355,
+      "minRenderTime": 3.5999999940395355,
+      "unstableProps": [],
+      "avgRenderTime": 3.6
+    },
+    "DialogPortal": {
+      "name": "DialogPortal",
+      "totalRenders": 1,
+      "totalTime": 0.3999999761581421,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.3999999761581421,
+      "minRenderTime": 0.3999999761581421,
+      "unstableProps": [],
+      "avgRenderTime": 0.4
+    },
+    "DialogPortalProvider": {
+      "name": "DialogPortalProvider",
+      "totalRenders": 1,
+      "totalTime": 0.19999998807907104,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 1,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.19999998807907104,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.2
+    },
+    "Presence": {
+      "name": "Presence",
+      "totalRenders": 47,
+      "totalTime": 0.19999998807907104,
+      "unnecessaryRenders": 38,
+      "phases": {
+        "mount": 9,
+        "update": 38,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.19999998807907104,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "LoadableComponent": {
+      "name": "LoadableComponent",
+      "totalRenders": 21,
+      "totalTime": 45.10000002384186,
+      "unnecessaryRenders": 14,
+      "phases": {
+        "mount": 4,
+        "update": 17,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.15
+    },
+    "DesktopSidebar": {
+      "name": "DesktopSidebar",
+      "totalRenders": 20,
+      "totalTime": 29.299999952316284,
+      "unnecessaryRenders": 11,
+      "phases": {
+        "mount": 1,
+        "update": 19,
+        "nested-update": 0
+      },
+      "maxRenderTime": 5.700000017881393,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 1.46
+    },
+    "AppSidebar": {
+      "name": "AppSidebar",
+      "totalRenders": 20,
+      "totalTime": 29.099999964237213,
+      "unnecessaryRenders": 11,
+      "phases": {
+        "mount": 1,
+        "update": 19,
+        "nested-update": 0
+      },
+      "maxRenderTime": 5.600000023841858,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 1.45
+    },
+    "SidebarHeader": {
+      "name": "SidebarHeader",
+      "totalRenders": 20,
+      "totalTime": 7.200000107288361,
+      "unnecessaryRenders": 16,
+      "phases": {
+        "mount": 1,
+        "update": 19,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.800000011920929,
+      "minRenderTime": 0.29999998211860657,
+      "unstableProps": [],
+      "avgRenderTime": 0.36
+    },
+    "PageGroup": {
+      "name": "PageGroup",
+      "totalRenders": 100,
+      "totalTime": 11.800000071525574,
+      "unnecessaryRenders": 40,
+      "phases": {
+        "mount": 5,
+        "update": 95,
+        "nested-update": 0
+      },
+      "maxRenderTime": 4.700000017881393,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.12
+    },
+    "PageListItem": {
+      "name": "PageListItem",
+      "totalRenders": 14,
+      "totalTime": 11.40000006556511,
+      "unnecessaryRenders": 11,
+      "phases": {
+        "mount": 2,
+        "update": 12,
+        "nested-update": 0
+      },
+      "maxRenderTime": 3.5000000298023224,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 0.81
+    },
+    "ContextMenu": {
+      "name": "ContextMenu",
+      "totalRenders": 28,
+      "totalTime": 18.900000125169754,
+      "unnecessaryRenders": 24,
+      "phases": {
+        "mount": 4,
+        "update": 24,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.600000023841858,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 0.68
+    },
+    "ContextMenuProvider": {
+      "name": "ContextMenuProvider",
+      "totalRenders": 14,
+      "totalTime": 9.200000047683716,
+      "unnecessaryRenders": 12,
+      "phases": {
+        "mount": 2,
+        "update": 12,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.5000000298023224,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 0.66
+    },
+    "Menu": {
+      "name": "Menu",
+      "totalRenders": 45,
+      "totalTime": 28.80000001192093,
+      "unnecessaryRenders": 33,
+      "phases": {
+        "mount": 7,
+        "update": 38,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.4000000059604645,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.64
+    },
+    "Popper": {
+      "name": "Popper",
+      "totalRenders": 45,
+      "totalTime": 28.099999994039536,
+      "unnecessaryRenders": 33,
+      "phases": {
+        "mount": 7,
+        "update": 38,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.4000000059604645,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.62
+    },
+    "PopperProvider": {
+      "name": "PopperProvider",
+      "totalRenders": 45,
+      "totalTime": 24.60000017285347,
+      "unnecessaryRenders": 3,
+      "phases": {
+        "mount": 7,
+        "update": 38,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.300000011920929,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.55
+    },
+    "MenuProvider": {
+      "name": "MenuProvider",
+      "totalRenders": 90,
+      "totalTime": 45.80000025033951,
+      "unnecessaryRenders": 66,
+      "phases": {
+        "mount": 14,
+        "update": 76,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.300000011920929,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.51
+    },
+    "ContextMenuTrigger": {
+      "name": "ContextMenuTrigger",
+      "totalRenders": 14,
+      "totalTime": 7.60000005364418,
+      "unnecessaryRenders": 12,
+      "phases": {
+        "mount": 2,
+        "update": 12,
+        "nested-update": 0
+      },
+      "maxRenderTime": 2.0999999940395355,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 0.54
+    },
+    "DropdownMenu": {
+      "name": "DropdownMenu",
+      "totalRenders": 31,
+      "totalTime": 18.200000017881393,
+      "unnecessaryRenders": 26,
+      "phases": {
+        "mount": 5,
+        "update": 26,
+        "nested-update": 0
+      },
+      "maxRenderTime": 1.300000011920929,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.59
+    },
+    "DropdownMenuProvider": {
+      "name": "DropdownMenuProvider",
+      "totalRenders": 31,
+      "totalTime": 19.900000005960464,
+      "unnecessaryRenders": 26,
+      "phases": {
+        "mount": 5,
+        "update": 26,
+        "nested-update": 0
+      },
+      "maxRenderTime": 1.2000000178813934,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.64
+    },
+    "DropdownMenuPortal": {
+      "name": "DropdownMenuPortal",
+      "totalRenders": 31,
+      "totalTime": 0.9000000059604645,
+      "unnecessaryRenders": 26,
+      "phases": {
+        "mount": 5,
+        "update": 26,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.20000001788139343,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.03
+    },
+    "MenuPortal": {
+      "name": "MenuPortal",
+      "totalRenders": 45,
+      "totalTime": 1,
+      "unnecessaryRenders": 30,
+      "phases": {
+        "mount": 7,
+        "update": 38,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.10000002384185791,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.02
+    },
+    "MenuPortalProvider": {
+      "name": "MenuPortalProvider",
+      "totalRenders": 45,
+      "totalTime": 0.20000001788139343,
+      "unnecessaryRenders": 30,
+      "phases": {
+        "mount": 7,
+        "update": 38,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.10000002384185791,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "ContextMenuContent": {
+      "name": "ContextMenuContent",
+      "totalRenders": 14,
+      "totalTime": 0.6000000238418579,
+      "unnecessaryRenders": 12,
+      "phases": {
+        "mount": 2,
+        "update": 12,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.20000001788139343,
+      "minRenderTime": 0.19999998807907104,
+      "unstableProps": [],
+      "avgRenderTime": 0.04
+    },
+    "ContextMenuPortal": {
+      "name": "ContextMenuPortal",
+      "totalRenders": 14,
+      "totalTime": 0.6000001132488251,
+      "unnecessaryRenders": 12,
+      "phases": {
+        "mount": 2,
+        "update": 12,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.10000002384185791,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.04
+    },
+    "TrashSection": {
+      "name": "TrashSection",
+      "totalRenders": 20,
+      "totalTime": 0,
+      "unnecessaryRenders": 8,
+      "phases": {
+        "mount": 1,
+        "update": 19,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0,
+      "minRenderTime": 0,
+      "unstableProps": [],
+      "avgRenderTime": 0
+    },
+    "BailoutToCSR": {
+      "name": "BailoutToCSR",
+      "totalRenders": 17,
+      "totalTime": 37.29999998211861,
+      "unnecessaryRenders": 16,
+      "phases": {
+        "mount": 1,
+        "update": 16,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.19
+    },
+    "MotionPageWrapper": {
+      "name": "MotionPageWrapper",
+      "totalRenders": 17,
+      "totalTime": 37.29999998211861,
+      "unnecessaryRenders": 13,
+      "phases": {
+        "mount": 1,
+        "update": 16,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 2.19
+    },
+    "LazyMotion": {
+      "name": "LazyMotion",
+      "totalRenders": 17,
+      "totalTime": 36.599999994039536,
+      "unnecessaryRenders": 16,
+      "phases": {
+        "mount": 1,
+        "update": 16,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.29999998211860657,
+      "unstableProps": [],
+      "avgRenderTime": 2.15
+    },
+    "AnimatePresence": {
+      "name": "AnimatePresence",
+      "totalRenders": 17,
+      "totalTime": 36.5,
+      "unnecessaryRenders": 16,
+      "phases": {
+        "mount": 1,
+        "update": 16,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.900000005960464,
+      "minRenderTime": 0.29999998211860657,
+      "unstableProps": [],
+      "avgRenderTime": 2.15
+    },
+    "PresenceChild": {
+      "name": "PresenceChild",
+      "totalRenders": 17,
+      "totalTime": 35.19999998807907,
+      "unnecessaryRenders": 11,
+      "phases": {
+        "mount": 3,
+        "update": 14,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.5,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 2.07
+    },
+    "NotebookCanvas": {
+      "name": "NotebookCanvas",
+      "totalRenders": 17,
+      "totalTime": 33.10000005364418,
+      "unnecessaryRenders": 14,
+      "phases": {
+        "mount": 3,
+        "update": 14,
+        "nested-update": 0
+      },
+      "maxRenderTime": 12.200000017881393,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 1.95
+    },
+    "_c": {
+      "name": "_c",
+      "totalRenders": 119,
+      "totalTime": 58,
+      "unnecessaryRenders": 98,
+      "phases": {
+        "mount": 21,
+        "update": 98,
+        "nested-update": 0
+      },
+      "maxRenderTime": 10.199999988079071,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.49
+    },
+    "CanvasBackground": {
+      "name": "CanvasBackground",
+      "totalRenders": 17,
+      "totalTime": 9.79999989271164,
+      "unnecessaryRenders": 4,
+      "phases": {
+        "mount": 13,
+        "update": 4,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.7999999821186066,
+      "minRenderTime": 0.30000001192092896,
+      "unstableProps": [],
+      "avgRenderTime": 0.58
+    },
+    "ConnectionLayer": {
+      "name": "ConnectionLayer",
+      "totalRenders": 17,
+      "totalTime": 3.5000001192092896,
+      "unnecessaryRenders": 4,
+      "phases": {
+        "mount": 13,
+        "update": 4,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.30000001192092896,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.21
+    },
+    "IconMark": {
+      "name": "IconMark",
+      "totalRenders": 15,
+      "totalTime": 1.4999999105930328,
+      "unnecessaryRenders": 0,
+      "phases": {
+        "mount": 15,
+        "update": 0,
+        "nested-update": 0
+      },
+      "maxRenderTime": 0.09999999403953552,
+      "minRenderTime": 0.09999999403953552,
+      "unstableProps": [],
+      "avgRenderTime": 0.1
+    }
+  },
+  "renderLog": [
+    {
+      "component": "AppSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SidebarHeader",
+      "phase": "update",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "TrashSection",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "LoadableComponent",
+      "phase": "update",
+      "time": 6.200000017881393,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "BailoutToCSR",
+      "phase": "update",
+      "time": 6.200000017881393,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "MotionPageWrapper",
+      "phase": "update",
+      "time": 6.200000017881393,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "LazyMotion",
+      "phase": "update",
+      "time": 6.200000017881393,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "AnimatePresence",
+      "phase": "update",
+      "time": 6.200000017881393,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PresenceChild",
+      "phase": "mount",
+      "time": 6.0999999940395355,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "NotebookCanvas",
+      "phase": "mount",
+      "time": 5.700000017881393,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 4.699999988079071,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 1.7000000178813934,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "DropdownMenu",
+      "phase": "mount",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "DropdownMenuProvider",
+      "phase": "mount",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "Menu",
+      "phase": "mount",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "Popper",
+      "phase": "mount",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "PopperProvider",
+      "phase": "mount",
+      "time": 0.5,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "mount",
+      "time": 0.5,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "mount",
+      "time": 0.5,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "DropdownMenuPortal",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "MenuPortal",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "MenuPortalProvider",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "Presence",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 0.699999988079071,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 0.800000011920929,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 0.29999998211860657,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "_c",
+      "phase": "mount",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "CanvasBackground",
+      "phase": "mount",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "ConnectionLayer",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "__next_outlet_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentBoundaryTriggerNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentViewStateNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "AppRouterAnnouncer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576982
+    },
+    {
+      "component": "Root",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ServerRoot",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "AppRouter",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RootErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "Router",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HistoryUpdater",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RuntimeStyles",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HotReload",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "AppDevOverlayErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ReplaySsrOnlyErrors",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "DevRootHTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "Head",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "__next_viewport_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "__next_metadata_boundary__",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "IconMark",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "__next_root_layout_boundary__",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ThemeProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "J",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "V",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "Anonymous",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "OuterLayoutRouter",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SegmentStateProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RenderFromTemplateContext",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "InnerScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "LoadingBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "InnerLayoutRouter",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "HomeContent",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SidebarContainer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "DesktopSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "AppSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "SidebarHeader",
+      "phase": "update",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "TrashSection",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "LoadableComponent",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "BailoutToCSR",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "MotionPageWrapper",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "LazyMotion",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "AnimatePresence",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PresenceChild",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "NotebookCanvas",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "DropdownMenu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "DropdownMenuProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "Menu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "Popper",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "PopperProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "DropdownMenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "MenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "MenuPortalProvider",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "Presence",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576983
+    },
+    {
+      "component": "CanvasBackground",
+      "phase": "mount",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "ConnectionLayer",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "__next_outlet_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentBoundaryTriggerNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentViewStateNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "AppRouterAnnouncer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553576984
+    },
+    {
+      "component": "Root",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ServerRoot",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "AppRouter",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RootErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Router",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HistoryUpdater",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RuntimeStyles",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HotReload",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "AppDevOverlayErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ReplaySsrOnlyErrors",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "DevRootHTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Head",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "__next_viewport_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "__next_metadata_boundary__",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "IconMark",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "__next_root_layout_boundary__",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ThemeProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "J",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "V",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Anonymous",
+      "phase": "update",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "OuterLayoutRouter",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentStateProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RenderFromTemplateContext",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "InnerScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "LoadingBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "InnerLayoutRouter",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "HomeContent",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SidebarContainer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "DesktopSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "AppSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SidebarHeader",
+      "phase": "update",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "TrashSection",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "LoadableComponent",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "BailoutToCSR",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "MotionPageWrapper",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "LazyMotion",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "AnimatePresence",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PresenceChild",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "NotebookCanvas",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "DropdownMenu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "DropdownMenuProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Menu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Popper",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "PopperProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "DropdownMenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "MenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "MenuPortalProvider",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Presence",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "CanvasBackground",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "ConnectionLayer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "__next_outlet_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentBoundaryTriggerNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentViewStateNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "AppRouterAnnouncer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579581
+    },
+    {
+      "component": "Root",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ServerRoot",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "AppRouter",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RootErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Router",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HistoryUpdater",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RuntimeStyles",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HotReload",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "AppDevOverlayErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ReplaySsrOnlyErrors",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "DevRootHTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Head",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "__next_viewport_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "__next_metadata_boundary__",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "IconMark",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "__next_root_layout_boundary__",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ThemeProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "J",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "V",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Anonymous",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "OuterLayoutRouter",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentStateProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RenderFromTemplateContext",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "InnerScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "LoadingBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "InnerLayoutRouter",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "HomeContent",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SidebarContainer",
+      "phase": "update",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "DesktopSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "AppSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SidebarHeader",
+      "phase": "update",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "TrashSection",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "LoadableComponent",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "BailoutToCSR",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "MotionPageWrapper",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "LazyMotion",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "AnimatePresence",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PresenceChild",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "NotebookCanvas",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "DropdownMenu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "DropdownMenuProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Menu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Popper",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "PopperProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "DropdownMenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "MenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "MenuPortalProvider",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Presence",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "CanvasBackground",
+      "phase": "update",
+      "time": 0.30000001192092896,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "ConnectionLayer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "__next_outlet_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentBoundaryTriggerNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentViewStateNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "AppRouterAnnouncer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553579582
+    },
+    {
+      "component": "Root",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ServerRoot",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "AppRouter",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RootErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Router",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HistoryUpdater",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RuntimeStyles",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HotReload",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "AppDevOverlayErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ReplaySsrOnlyErrors",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "DevRootHTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Head",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "__next_viewport_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "__next_metadata_boundary__",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "IconMark",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "__next_root_layout_boundary__",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ThemeProvider",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "J",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "V",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Anonymous",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "OuterLayoutRouter",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentStateProvider",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RenderFromTemplateContext",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "InnerScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "LoadingBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "InnerLayoutRouter",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "HomeContent",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SidebarContainer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "DesktopSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "AppSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SidebarHeader",
+      "phase": "update",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "TrashSection",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "LoadableComponent",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "BailoutToCSR",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "MotionPageWrapper",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "LazyMotion",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "AnimatePresence",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PresenceChild",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "NotebookCanvas",
+      "phase": "update",
+      "time": 0.5999999940395355,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "DropdownMenu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "DropdownMenuProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Menu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Popper",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "PopperProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "DropdownMenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "MenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "MenuPortalProvider",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Presence",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "CanvasBackground",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "ConnectionLayer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "__next_outlet_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentBoundaryTriggerNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentViewStateNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "AppRouterAnnouncer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580593
+    },
+    {
+      "component": "Root",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ServerRoot",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "AppRouter",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RootErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "Router",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HistoryUpdater",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RuntimeStyles",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HotReload",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "AppDevOverlayErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ReplaySsrOnlyErrors",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "DevRootHTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "Head",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "__next_viewport_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "__next_metadata_boundary__",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "IconMark",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "__next_root_layout_boundary__",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ThemeProvider",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "J",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "V",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "Anonymous",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "OuterLayoutRouter",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentStateProvider",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RenderFromTemplateContext",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "InnerScrollAndFocusHandler",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ErrorBoundaryHandler",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "LoadingBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HTTPAccessFallbackBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HTTPAccessFallbackErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RedirectBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "RedirectErrorBoundary",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "InnerLayoutRouter",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "HomeContent",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SidebarContainer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "DesktopSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "AppSidebar",
+      "phase": "update",
+      "time": 1.699999988079071,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SidebarHeader",
+      "phase": "update",
+      "time": 0.7000000178813934,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PageGroup",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "TrashSection",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "LoadableComponent",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "BailoutToCSR",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "MotionPageWrapper",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "LazyMotion",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "AnimatePresence",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PresenceChild",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "NotebookCanvas",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "DropdownMenu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "DropdownMenuProvider",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "Menu",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "Popper",
+      "phase": "update",
+      "time": 0.5,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "PopperProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "MenuProvider",
+      "phase": "update",
+      "time": 0.4000000059604645,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "DropdownMenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "MenuPortal",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "MenuPortalProvider",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "Presence",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "_c",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "CanvasBackground",
+      "phase": "update",
+      "time": 0.3999999761581421,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "ConnectionLayer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "__next_outlet_boundary__",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentBoundaryTriggerNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentViewStateNode",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0.09999999403953552,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentViewNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "SegmentTrieNode",
+      "phase": "mount",
+      "time": 0,
+      "timestamp": 1773553580594
+    },
+    {
+      "component": "AppRouterAnnouncer",
+      "phase": "update",
+      "time": 0,
+      "timestamp": 1773553580594
+    }
+  ]
+}
