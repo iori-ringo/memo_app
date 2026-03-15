@@ -7,15 +7,15 @@
 
 import { ChevronDown, ChevronRight, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import type { PageMeta } from '@/features/notes/stores/note-store'
 import { PageListItem } from '@/features/sidebar/components/parts/page-list-item'
-import type { NotePage } from '@/types/note'
 
 type TrashSectionProps = {
-	deletedPages: NotePage[]
+	deletedPages: PageMeta[]
 	activePageId: string | null
 	editingPageId: string | null
 	editingTitle: string
-	onStartEditing: (page: NotePage) => void
+	onStartEditing: (page: PageMeta) => void
 	onTitleChange: (value: string) => void
 	onFinishEditing: () => void
 	onKeyDown: (e: React.KeyboardEvent) => void

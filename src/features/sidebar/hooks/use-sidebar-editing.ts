@@ -1,9 +1,10 @@
 import { useCallback, useRef, useState } from 'react'
-import type { NotePage } from '@/types/note'
+
+import type { PageMeta } from '@/features/notes/stores/note-store'
 
 type UseSidebarEditingProps = {
-	pages: NotePage[]
-	onUpdatePage?: (id: string, updates: Partial<NotePage>) => void
+	pages: PageMeta[]
+	onUpdatePage?: (id: string, updates: Partial<PageMeta>) => void
 }
 
 export const useSidebarEditing = ({ pages, onUpdatePage }: UseSidebarEditingProps) => {
@@ -20,7 +21,7 @@ export const useSidebarEditing = ({ pages, onUpdatePage }: UseSidebarEditingProp
 	const editingTitleRef = useRef(editingTitle)
 	editingTitleRef.current = editingTitle
 
-	const handleStartEditing = useCallback((page: NotePage) => {
+	const handleStartEditing = useCallback((page: PageMeta) => {
 		setEditingPageId(page.id)
 		setEditingTitle(page.title)
 	}, [])

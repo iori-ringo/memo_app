@@ -2,13 +2,12 @@
 
 import dynamic from 'next/dynamic'
 import { useTheme } from 'next-themes'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
-import { useNotes } from '@/features/notes/hooks/use-notes'
-import { useTrash } from '@/features/notes/hooks/use-trash'
-import { DesktopSidebar } from '@/features/sidebar/components/desktop-sidebar'
-import { MobileDrawer } from '@/features/sidebar/components/mobile-drawer'
+import { selectActivePage, useNoteStore } from '@/features/notes/stores/note-store'
+import { SidebarContainer } from '@/features/sidebar/components/sidebar-container'
 import { getToggledTheme } from '@/lib/theme'
+import type { NotePage } from '@/types/note'
 
 // framer-motion の動的インポート（bundle-dynamic-imports）
 const MotionPageWrapper = dynamic(
@@ -26,21 +25,17 @@ const emptyState = (
 export const HomeContent = () => {
 	const { setTheme, resolvedTheme } = useTheme()
 
-	const { pages, activePageId, activePage, isHydrated, addPage, updatePage, setActivePageId } =
-		useNotes()
+	// キャンバス用: アクティブページのみ購読（サイドバーとは独立）
+	const activePage = useNoteStore(selectActivePage)
+	const isHydrated = useNoteStore((s) => s.isHydrated)
+	const hydrate = useNoteStore((s) => s.hydrate)
+	const addPage = useNoteStore((s) => s.addPage)
+	const updatePage = useNoteStore((s) => s.updatePage)
 
-	const { softDeletePage, restorePage, permanentDeletePage } = useTrash()
-
-	// confirm() を UI 側で処理する暫定ラッパー（TODO: AlertDialog に置換）
-	const handlePermanentDeletePage = useCallback(
-		(id: string) => {
-			if (!confirm('このページを完全に削除してもよろしいですか？この操作は取り消せません。')) {
-				return
-			}
-			permanentDeletePage(id)
-		},
-		[permanentDeletePage]
-	)
+	// 初回 hydration
+	useEffect(() => {
+		hydrate()
+	}, [hydrate])
 
 	// useLatest パターン: 最新の値を ref に保存（advanced-use-latest）
 	const latestRef = useRef({ addPage, setTheme, resolvedTheme })
@@ -87,42 +82,15 @@ export const HomeContent = () => {
 		}
 	}, []) // 依存配列を空に: リスナーは初回のみ登録
 
-	// サイドバー用の共通プロップス（rerender-memo）
-	const sidebarProps = useMemo(
-		() => ({
-			pages,
-			activePageId,
-			onSelectPage: setActivePageId,
-			onAddPage: addPage,
-			onUpdatePage: updatePage,
-			onDeletePage: softDeletePage,
-			onRestorePage: restorePage,
-			onPermanentDeletePage: handlePermanentDeletePage,
-		}),
-		[
-			pages,
-			activePageId,
-			setActivePageId,
-			addPage,
-			updatePage,
-			softDeletePage,
-			restorePage,
-			handlePermanentDeletePage,
-		]
-	)
-
 	if (!isHydrated) return null
 
 	return (
 		<div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-			{/* Desktop Sidebar */}
-			<DesktopSidebar {...sidebarProps} />
-
-			{/* Mobile Drawer */}
-			<MobileDrawer {...sidebarProps} />
+			{/* Sidebar - 独立してストアを購読。キャンバス操作で再レンダリングされない */}
+			<SidebarContainer />
 
 			{/* Main Content */}
-			<div className="flex-1 flex flex-col h-full overflow-hidden relative">
+			<main className="flex-1 flex flex-col h-full overflow-hidden relative">
 				{/* Mobile Header */}
 				<div className="md:hidden flex items-center p-4 border-b bg-background">
 					<span className="ml-4 font-semibold">Memo of Magic</span>
@@ -133,12 +101,12 @@ export const HomeContent = () => {
 					<div className="w-full max-w-7xl h-full min-h-[800px]">
 						<MotionPageWrapper
 							activePage={activePage}
-							onUpdate={updatePage}
+							onUpdate={updatePage as (id: string, updates: Partial<NotePage>) => void}
 							emptyState={emptyState}
 						/>
 					</div>
 				</div>
-			</div>
+			</main>
 		</div>
 	)
 }

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
-import type { NotePage } from '@/types/note'
 
-export const useSidebarSearch = (pages: NotePage[]) => {
+import type { PageMeta } from '@/features/notes/stores/note-store'
+
+export const useSidebarSearch = (pages: PageMeta[]) => {
 	const [searchQuery, setSearchQuery] = useState('')
 
 	const filteredPages = useMemo(() => {

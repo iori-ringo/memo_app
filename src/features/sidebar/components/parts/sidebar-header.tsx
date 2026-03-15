@@ -7,7 +7,6 @@
 
 import { Book, Search } from 'lucide-react'
 import { Input } from '@/shared/shadcn/input'
-import { ModeToggle } from '@/shared/ui/mode-toggle'
 
 type SidebarHeaderProps = {
 	searchQuery: string
@@ -22,7 +21,7 @@ export const SidebarHeader = ({ searchQuery, onSearchChange }: SidebarHeaderProp
 					<Book className="h-5 w-5 text-primary" />
 					<span>My Notebook</span>
 				</div>
-				<ModeToggle />
+				{/* <ModeToggle /> */}
 			</div>
 			<div className="relative">
 				<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
