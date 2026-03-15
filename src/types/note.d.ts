@@ -1,12 +1,12 @@
 /**
  * ノート関連のグローバル型定義
  *
- * キャンバス関連の型（CanvasObject, Stroke, Connection）は
+ * キャンバス関連の型（CanvasObject, Connection）は
  * features/notebook/types.ts で定義され、後方互換性のためここから再エクスポート。
  */
 
 // キャンバス関連の型を再エクスポート
-export type { CanvasObject, Connection, SectionType, Stroke } from '@/features/notebook/types'
+export type { CanvasObject, Connection, SectionType } from '@/features/notebook/types'
 
 export type NoteContent = string // TipTap からの HTML 文字列
 
@@ -22,7 +22,6 @@ export type NotePage = {
 
 	// キャンバスデータ
 	objects: CanvasObject[]
-	strokes: Stroke[]
 	connections: Connection[]
 
 	// レイアウト設定（セクション境界）
@@ -62,7 +61,4 @@ export type ElectronAPI = {
 	saveConfig: (config: AppConfig) => Promise<boolean>
 	onNewPage: (callback: () => void) => () => void
 	onToggleDark: (callback: () => void) => () => void
-	generateAbstraction: (fact: string) => Promise<string>
-	generateDiversion: (fact: string, abstraction: string) => Promise<string>
-	generateSummary: (content: string) => Promise<string>
 }

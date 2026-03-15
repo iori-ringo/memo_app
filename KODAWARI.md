@@ -15,7 +15,6 @@
 - **デスクトップ**: Electron 39
 - **スタイリング**: Tailwind CSS v4 / Shadcn UI
 - **エディタ**: Tiptap（リッチテキスト）
-- **AI統合**: Google Gemini API
 - **データ永続化**: electron-store
 
 ---
@@ -52,7 +51,6 @@ src/
   - `connection-layer.tsx`: ブロック間の接続線（矢印）描画
 - **`components/blocks/`**: キャンバス上のオブジェクト
   - `text-block.tsx`: ドラッグ・リサイズ可能なテキストボックスコンテナ
-  - `handwriting-layer.tsx`: 手書きストローク描画レイヤー
 - **`components/toolbar/`**: 操作ツール
   - `ribbon-toolbar.tsx`: コンテキストに応じた操作パネル（MacライクなリボンUI）
 
@@ -289,9 +287,175 @@ const handleFinishEditing = useCallback(() => {
 - **安定した参照**: `handleStartEditing` 等が再生成されないため、子コンポーネントの不要な再レンダリングを防止
 - **Stale Closure防止**: `useRef` 経由で常に最新の `pages` と `onUpdatePage` を参照
 
+### 🔥 開発で最も困難だったポイント: サイドバーインライン編集のレイアウトバグ
+
+サイドバーのページタイトルをダブルクリックでインライン編集する際、**レイアウトが崩れる（左にずれる、幅が変わる、ガタつく）** という問題が発生しました。
+原因は単一ではなく、HTML仕様違反・CSS Box Model・DOM構造の不一致・**shadcn/radix の `ScrollArea` ライブラリ内部の問題**・ボーダー幅の不統一という**5つの異なるレイヤーに跨る複合的な問題**であり、解決まで**4段階の反復修正**を要しました。
+
+#### なぜこれが最大の困難だったか
+
+1. **原因が多層的で「モグラたたき」状態に**: HTML仕様違反、CSSレイアウト、DOM構造の不一致、ライブラリ内部の問題、ボーダー幅の不統一という5つの異なるレイヤーの問題が同時に存在していた。1つ修正すると、それまで隠れていた別レイヤーの問題が表面化し、計4回の修正サイクルが必要だった
+2. **サードパーティライブラリの内部実装が原因**: 最も時間を要した Phase 3 では、自分のコードには一切問題がなく、**shadcn/radix の `ScrollArea` コンポーネントの内部実装**がスクロールバー用スペースを確保することでレイアウトが崩れていた。ライブラリの内部DOMを DevTools で展開して初めて気づけるレベルの問題であり、「自分のコードが正しいのになぜ崩れるのか」という盲点に長時間ハマった
+3. **視覚的な微細さで根本原因の特定が困難**: `border: 1px` の有無による1pxのズレ、`flex` 子要素の `min-width` デフォルト値の影響など、DevToolsで注意深く計測しないと気づけない差異が原因だった。エラーログやコンパイルエラーでは一切検知できない
+4. **再現条件が限定的**: テキストの長さ（「あ」のような1文字 vs 長いタイトル）、サイドバーの幅、スクロールバーの有無など、特定の組み合わせでのみ崩れが顕著になるため、「修正した」と思っても別の条件で再発した
+5. **テスト自動化が不可能**: CSSの`flex`レイアウトにおけるモード切り替え時の1pxのズレは、E2Eテストの `toBeVisible()` では検知できず、スクリーンショット差分テストも導入コストが高い。最終的に**人の目による地道なピクセルレベルの確認**が唯一の検証手段だった
+
+#### 修正前のコード（問題の状態）
+
+```tsx
+// 問題: <button> の中に <input> をネスト（HTML仕様違反）
+// 問題: 編集時と通常時でDOM構造が異なる（日付が消える、ボーダーがない等）
+<button
+  className="flex-1 flex flex-col gap-0.5 p-1 ..."
+  onClick={() => onSelect?.(page.id)}
+  onDoubleClick={() => onStartEditing(page)}
+>
+  <div className="flex items-center gap-2">
+    <FileText className="h-3.5 w-3.5" />
+    {isEditing ? (
+      // ❌ button内のinput = HTML仕様違反
+      // ❌ 日付が表示されない = 高さが変わる
+      // ❌ ボーダーが追加される = 1pxのシフト
+      <input
+        value={editingTitle}
+        className="border border-input rounded ..."
+      />
+    ) : (
+      <span className="truncate">{displayTitle}</span>
+    )}
+  </div>
+  {/* 通常時のみ日付を表示 → 編集時に高さが変わる */}
+  {!isEditing && (
+    <span className="text-[10px]">{dateDisplay}</span>
+  )}
+</button>
+```
+
+#### 問題の経緯と修正プロセス
+
+**Phase 1 — HTML仕様違反の発見と修正**
+
+| 項目 | 詳細 |
+|------|------|
+| **問題** | `<button>` 要素の中に `<input>` がネストされていた |
+| **技術的背景** | HTML Living Standard では `<button>` の Content Model が「Phrasing content, but no interactive content」と定義されており、`<input>` はインタラクティブ要素に該当するためネスト禁止。ブラウザはこの不正なHTMLを独自に解釈するため、Chrome/Safari/Firefox間でレンダリング結果が異なり得る |
+| **症状** | 編集モードに入ると、`<button>` の内部レイアウトアルゴリズムが `<input>` を正しく配置できず、テキストが左にずれる |
+| **修正方針** | 表示モード（`<button>`）と編集モード（`<div>` + `<input>`）を**条件分岐で完全に分離**し、インタラクティブ要素のネストを解消 |
+
+**Phase 2 — DOM構造の不一致による高さ変動**
+
+| 項目 | 詳細 |
+|------|------|
+| **問題** | Phase 1で構造を分離したが、編集モードのDOMには日付表示（`<span>{dateDisplay}</span>`）が含まれておらず、通常モードとの**高さ差**がガタツキの原因に |
+| **技術的背景** | Flexboxの `flex-col gap-0.5` 構造で、子要素の数が変わると自動的にコンテナの高さが変わる。日付行（`text-[10px]` = 約14px + gap 2px）分の高さ差が、リスト全体の位置ズレを引き起こした |
+| **症状** | ダブルクリックで編集モードに入ると、そのアイテムの高さが約16px縮み、下の全アイテムが上に跳ねる |
+| **修正方針** | 編集モード・通常モードの両方で `flex flex-col gap-0.5` + アイコン行 + 日付行 の**同一DOM構造を維持** |
+
+**Phase 3 — shadcn/radix の `ScrollArea` ライブラリ内部の問題（核心）**
+
+> この Phase が最も困難だった核心部分。**自分のコードではなく、使用しているUIライブラリ（shadcn/radix）の内部実装に起因する問題**であり、原因の特定に最も時間を要した。
+
+| 項目 | 詳細 |
+|------|------|
+| **問題** | shadcn/radix の `ScrollArea` コンポーネントが、**スクロールバー用のスペース（約10px）をViewport横に内部的に確保**しており、`ScrollArea` の内側と外側で要素の幅が一致しなかった |
+| **技術的背景** | `ScrollArea` の内部実装は `<ScrollAreaViewport>` というラッパーを生成し、スクロールバーを配置するために Viewport の横幅を親より約10px 狭くする。この「見えない幅の差」は DevTools で `ScrollArea` の内部DOMを展開して初めて気づける。自分のコードには一切問題がないため、原因の特定が極めて困難だった |
+| **症状** | サイドバー内の「新しいページ」ボタンやリストアイテムが右端に密着し、DOM切り替え（`<button>` → `<div>`）による微小な幅差分が増幅されてレイアウトシフトとして視認できた。`ScrollArea` の外側にある検索欄やヘッダーとは幅が揃わず、サイドバー全体の見た目が不統一だった |
+| **修正方針** | `ScrollArea` を完全に排除し、通常の `<div>` + `overflow-y-auto`（OSのオーバーレイスクロールバーを使用）に置き換え。さらに固定要素（ボタン）をスクロール領域の外に配置し、親コンテナで `px-4` を一元管理することで幅のずれを根本解消 |
+
+```tsx
+// Before: ScrollArea内外で幅がずれる（shadcn/radix の内部実装が原因）
+<SidebarHeader className="p-4" />      {/* 16px */}
+<ScrollArea>
+  {/* ↓ ScrollAreaViewport が内部で約10px分の幅を奪っている */}
+  <div className="p-2">                 {/* 8px + スクロールバー分ずれる */}
+    <Button className="mx-2" />         {/* 個別調整が必要 */}
+    <PageListItem className="px-2" />   {/* 個別調整が必要 */}
+  </div>
+</ScrollArea>
+
+// After: ScrollAreaを排除し、overflow-y-auto で統一
+<SidebarHeader className="p-4" />       {/* 16px */}
+<div className="p-4 pt-3">              {/* 16px - ボタンは外 */}
+  <Button className="w-full" />
+</div>
+<div className="flex-1 overflow-y-auto">
+  <div className="px-4 py-2">           {/* 16px - 統一 */}
+    <PageListItem />                    {/* パディング不要 */}
+  </div>
+</div>
+```
+
+**この Phase の学び**: 自分のコードに問題がない場合でも、**サードパーティライブラリの内部実装**がレイアウト崩れの原因となり得る。`ScrollArea` はスクロールバーのカスタムスタイリングに有効だが、他要素との幅統一が求められる場面では通常の `overflow-y-auto` の方がシンプルで安全。
+
+**Phase 4 — ボーダー幅のモード間不一致（最終解決）**
+
+| 項目 | 詳細 |
+|------|------|
+| **問題** | 編集モードでは `border border-input`（1px 実線ボーダー）が適用されているのに、通常モードではボーダーなし（0px）のため、切り替え時に**1pxのレイアウトシフト**が発生 |
+| **技術的背景** | CSSの Box Model では、`border` はコンテンツ領域の外側に加算される（`box-sizing: border-box` でも内側に含まれるが、隣接要素との相対位置に影響）。1pxのボーダーの有無は、`flex` 子要素が確保する `min-width` の計算値を変え、隣接テキストの折り返しや位置をずらす |
+| **症状** | 特に「あ」のような短いテキスト名で顕著。編集モードに切り替えた瞬間、1px分テキストの開始位置がずれる |
+| **修正方針** | 通常モードに `border border-transparent`（**1px 透明ボーダー**）を追加し、両モードでボーダーが占有するスペースを完全に統一 |
+
+#### 修正後のコード（最終形）
+
+```tsx
+// page-list-item.tsx - 最終的な構造
+<div className="flex-1 min-w-0">
+  {isEditing ? (
+    // 編集モード: <div> + <input>（button内にinputを入れない）
+    <div className="flex items-center gap-1.5 w-full">
+      {pageIcon}
+      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+        <input
+          ref={inputRef}
+          className="flex-1 min-w-0 bg-transparent border-b border-primary
+                     rounded-none px-1 text-foreground text-sm outline-none"
+          aria-label="ページ名の編集"
+          // ...handlers
+        />
+        {/* ✅ 編集時も日付を表示 → 高さを維持 */}
+        <span className="text-[10px] text-muted-foreground truncate">
+          {dateDisplay}
+        </span>
+      </div>
+    </div>
+  ) : (
+    // 表示モード: <button>（純粋なクリック要素）
+    <button
+      type="button"
+      className="w-full text-left flex items-center gap-1.5
+                 bg-transparent border-none outline-none ..."
+      onClick={() => onSelect?.(page.id)}
+      onDoubleClick={() => onStartEditing(page)}
+    >
+      {pageIcon}
+      {/* ✅ 編集モードと同一のDOM構造（flex-col gap-0.5） */}
+      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+        <span className="truncate font-medium">{displayTitle}</span>
+        <span className="text-[10px] text-muted-foreground truncate">
+          {dateDisplay}
+        </span>
+      </div>
+    </button>
+  )}
+</div>
+```
+
+#### 技術的な学び
+
+| 学び | 詳細 |
+|------|------|
+| **レイアウトシフト防止の原則** | モード切り替えUIでは、ボーダー・パディング・マージンなど Box Model に影響する**全てのCSS属性を両モードで一致**させる必要がある。1pxでもずれがあると、繰り返し操作で体感される |
+| **`border-transparent` パターン** | 非アクティブ時に透明ボーダーを置くことで、ボーダー表示/非表示切り替え時のレイアウトシフトを防止するテクニック。CSS Outlineのように「ボックスの外側に描画されるプロパティ」で代替する手法もあるが、`flex` 子要素においては `border-transparent` が最も安全 |
+| **HTML仕様準拠の重要性** | `<button>` 内の `<input>` はブラウザごとに異なる解釈がされ、レイアウト不具合の温床となる。仕様に準拠したマークアップが、CSSレイアウトの安定性の基盤 |
+| **Flexbox の `min-width: auto` の罠** | `flex` 子要素のデフォルト `min-width` は `auto`（コンテンツ幅）であり、長いテキストが親を押し広げる原因になる。`min-w-0` で明示的にリセットするのが Flexbox レイアウトの鉄則 |
+| **反復的デバッグの覚悟** | CSSレイアウトの問題は一度に全て見通せるものではない。1つ修正するたびに別レイヤーの問題が露呈するため、**粘り強い反復修正と、修正ごとの複数条件での検証**が不可欠 |
+
+> **面接向け一言**: この経験を通じて、「動くコード」と「安定したUI」の間には大きなギャップがあること、そしてフロントエンド開発では HTML仕様・CSS Box Model・ブラウザのレンダリング挙動という3つのレイヤーを横断的に理解しなければ、見た目の品質は担保できないことを深く学びました。
+
 **こだわりポイント: インライン編集のベストプラクティス適用**
 
-`PageListItem` コンポーネント（`components/parts/page-list-item.tsx`）では、ページタイトルのインライン編集機能を実装しています。PatternFly、Atlassian Design、Cloudscape などの主要デザインシステムのガイドラインを参考に、以下のパターンを採用しました。
+上記のバグ修正を経て、最終的に PatternFly、Atlassian Design、Cloudscape などの主要デザインシステムのガイドラインを参考に、以下のパターンを採用しました。
 
 1. **レイアウトの安定化**: 編集/表示モードで DOM 構造を大きく変えず、`flex-1 min-w-0` のシンプルな flex 構造で幅を制御。編集時もコンテナの高さが変わらないよう `border-b` のみ使用し、レイアウトジャンプを防止。
 
@@ -438,25 +602,6 @@ className={cn(
 )}
 ```
 
-### パフォーマンスを意識した手書き描画
-
-手書きレイヤー（`features/notebook/components/blocks/handwriting-layer.tsx`）では、Reactの宣言的なデータフローと、Canvas APIの命令的な描画処理を組み合わせています。
-
-**こだわりポイント:**
-- **Canvas API vs SVG**: 多数のストロークを扱う際のパフォーマンス（DOM要素数の爆発を防ぐ）と、ペンの追従性（リアルタイム描画）を重視し、SVGではなくCanvas要素への直接描画を採用しました。
-- **命令的アプローチの採用**: Reactの状態管理から一時的に離れ、`useEffect` 内で Context2D API を直接操作することで、VDOMのオーバーヘッドを回避し、ネイティブに近い書き心地を実現しています。
-
-```typescript
-// パフォーマンス重視の命令的描画処理
-useEffect(() => {
-  const ctx = canvas.getContext('2d')
-  // Reactのレンダリングサイクルを待たずに直接描画
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  // ...
-}, [strokes])
-```
-
 ---
 
 ## ✏️ リッチテキストエディタ
@@ -478,32 +623,6 @@ useEffect(() => {
   variant="canvas"  // または "sidebar"
   // ...
 />
-```
-
----
-
-## 🤖 AI統合（Gemini API）
-
-ノートの内容をAIが分析し、「抽象化」と「転用」を自動生成する機能を実装しています。
-
-### IPC経由のセキュアなAPI呼び出し
-
-レンダラー側から直接APIを呼び出すのではなく、メインプロセスで処理しています。
-
-```
-[Renderer] → IPC → [Main Process] → Gemini API → [Main Process] → IPC → [Renderer]
-```
-
-### モック対応
-
-API Keyが設定されていない開発環境でも動作するよう、モックレスポンスを用意しています。
-
-```typescript
-const MOCK_RESPONSES = {
-  abstraction: 'これは抽象化のサンプルテキストです...',
-  diversion: 'これは転用のサンプルテキストです...',
-  summary: 'これは要約のサンプルテキストです...',
-} as const
 ```
 
 ---
@@ -545,7 +664,6 @@ export function isValidNotePage(page: unknown): page is NotePage {
   return (
     typeof p.id === 'string' &&
     Array.isArray(p.objects) &&
-    Array.isArray(p.strokes) &&
     Array.isArray(p.connections)
   )
 }
@@ -655,5 +773,4 @@ Supabase は公式で MCP サーバーを提供しており、AIエージェン�
 
 ### その他の展望
 
-- 手書き入力の改善
 - 複数ノートブック対応の強化

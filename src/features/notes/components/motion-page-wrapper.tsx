@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 
 import { NotebookCanvas } from '@/features/notebook/components/canvas/notebook-canvas'
 import type { NotePage } from '@/types/note'
@@ -13,13 +13,19 @@ type MotionPageWrapperProps = {
 }
 
 export const MotionPageWrapper = ({ activePage, onUpdate, emptyState }: MotionPageWrapperProps) => {
+	// 初回レンダリング時はアニメーションをスキップ（LCP遅延防止）
+	const isFirstRender = useRef(true)
+	useEffect(() => {
+		isFirstRender.current = false
+	}, [])
+
 	return (
 		<LazyMotion features={domAnimation}>
 			<AnimatePresence mode="wait">
 				{activePage ? (
 					<m.div
 						key={activePage.id}
-						initial={{ opacity: 0, rotateY: 90, transformOrigin: 'left' }}
+						initial={isFirstRender.current ? false : { opacity: 0, rotateY: 90, transformOrigin: 'left' }}
 						animate={{ opacity: 1, rotateY: 0 }}
 						exit={{ opacity: 0, rotateY: -90, transformOrigin: 'right' }}
 						transition={{ duration: 0.4, ease: 'easeInOut' }}

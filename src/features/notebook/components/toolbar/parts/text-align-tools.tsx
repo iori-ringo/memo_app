@@ -7,6 +7,7 @@
 
 import type { Editor } from '@tiptap/react'
 import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react'
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 
@@ -14,7 +15,7 @@ type TextAlignToolsProps = {
 	editor: Editor | null
 }
 
-export const TextAlignTools = ({ editor }: TextAlignToolsProps) => {
+export const TextAlignTools = memo(({ editor }: TextAlignToolsProps) => {
 	return (
 		<div className="flex items-center gap-1">
 			<Button
@@ -49,4 +50,5 @@ export const TextAlignTools = ({ editor }: TextAlignToolsProps) => {
 			</Button>
 		</div>
 	)
-}
+})
+TextAlignTools.displayName = 'TextAlignTools'

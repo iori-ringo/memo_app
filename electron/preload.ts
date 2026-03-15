@@ -1,5 +1,24 @@
+/**
+ * Preload スクリプト
+ *
+ * sandbox: true 環境では require でカスタムモジュールを読み込めないため、
+ * IPCチャンネル名はここで直接定義する（ipc/types.ts と同期を保つこと）
+ *
+ * 注意: import type はコンパイル時に除去されるため sandbox でも安全に使用可能
+ */
 import { contextBridge, type IpcRendererEvent, ipcRenderer } from 'electron'
-import { type AppConfig, IPC_CHANNELS, type NotePage } from './ipc/types'
+
+import type { AppConfig, NotePage } from './ipc/types'
+
+// sandbox 環境では外部モジュールの require が制限されるため、定数をインライン定義
+const IPC_CHANNELS = {
+	LOAD_PAGES: 'load-pages',
+	SAVE_PAGES: 'save-pages',
+	LOAD_CONFIG: 'load-config',
+	SAVE_CONFIG: 'save-config',
+	NEW_PAGE: 'new-page',
+	TOGGLE_DARK: 'toggle-dark',
+} as const
 
 contextBridge.exposeInMainWorld('electronAPI', {
 	loadPages: (): Promise<NotePage[] | null> => ipcRenderer.invoke(IPC_CHANNELS.LOAD_PAGES),
@@ -18,10 +37,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		ipcRenderer.on(IPC_CHANNELS.TOGGLE_DARK, subscription)
 		return () => ipcRenderer.removeListener(IPC_CHANNELS.TOGGLE_DARK, subscription)
 	},
-	generateAbstraction: (fact: string): Promise<string> =>
-		ipcRenderer.invoke(IPC_CHANNELS.GENERATE_ABSTRACTION, fact),
-	generateDiversion: (fact: string, abstraction: string): Promise<string> =>
-		ipcRenderer.invoke(IPC_CHANNELS.GENERATE_DIVERSION, fact, abstraction),
-	generateSummary: (content: string): Promise<string> =>
-		ipcRenderer.invoke(IPC_CHANNELS.GENERATE_SUMMARY, content),
 })

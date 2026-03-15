@@ -1,20 +1,21 @@
 import { isThisWeek, isToday, isYesterday } from 'date-fns'
 import { useMemo } from 'react'
-import type { NotePage } from '@/types/note'
+
+import type { PageMeta } from '@/features/notes/stores/note-store'
 
 export type GroupedPages = {
-	today: NotePage[]
-	yesterday: NotePage[]
-	thisWeek: NotePage[]
-	older: NotePage[]
+	today: PageMeta[]
+	yesterday: PageMeta[]
+	thisWeek: PageMeta[]
+	older: PageMeta[]
 }
 
-export const useSidebarGrouping = (pages: NotePage[]) => {
+export const useSidebarGrouping = (pages: PageMeta[]) => {
 	return useMemo(() => {
 		// 1回のイテレーションで全ての分類を行う (js-combine-iterations)
-		const activePages: NotePage[] = []
-		const deletedPages: NotePage[] = []
-		const favoritePages: NotePage[] = []
+		const activePages: PageMeta[] = []
+		const deletedPages: PageMeta[] = []
+		const favoritePages: PageMeta[] = []
 		const groupedPages: GroupedPages = {
 			today: [],
 			yesterday: [],

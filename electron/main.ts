@@ -3,7 +3,6 @@
  * アプリ起動〜終了までの流れを管理する
  */
 
-import { registerAiHandlers } from '@electron/handlers/ai-handlers'
 import { registerDataHandlers } from '@electron/handlers/data-handlers'
 import { initLogger, log } from '@electron/utils/logger'
 import { createWindow } from '@electron/window/main-window'
@@ -18,7 +17,6 @@ app.whenReady().then(() => {
 
 	// レンダラー（React側）からの通信を受け取れるよう、先に IPC ハンドラーを登録
 	registerDataHandlers()
-	registerAiHandlers()
 
 	// アプリのメインウィンドウを表示
 	createWindow()

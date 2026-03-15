@@ -1,15 +1,23 @@
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { DEFAULT_OBJECT_SIZE, SECTION_TYPES } from '@/features/notebook/constants'
-import type { CanvasObject, NotePage, SectionType, Stroke } from '@/types/note'
+import type { CanvasObject, NotePage, SectionType } from '@/types/note'
 
 export const useCanvasOperations = (
 	page: NotePage,
 	onUpdate: (id: string, updates: Partial<NotePage>) => void,
 	containerRef?: React.RefObject<HTMLDivElement>
 ) => {
+	// useLatest パターン: ref 経由で最新値を参照し、コールバックの依存配列を空にして参照を安定化
+	// これにより TextBlock (memo) や ConnectionLayer (memo) に渡すコールバックが再作成されない
+	const pageRef = useRef(page)
+	pageRef.current = page
+	const onUpdateRef = useRef(onUpdate)
+	onUpdateRef.current = onUpdate
+
 	const handleAddBlock = useCallback(
 		(eOrX: React.MouseEvent | number, valY?: number) => {
+			const currentPage = pageRef.current
 			let x: number
 			let y: number
 			let totalHeight: number
@@ -34,9 +42,9 @@ export const useCanvasOperations = (
 			}
 
 			// Determine section based on Y position
-			const titleH = (totalHeight * (page.layout?.titleHeight ?? 10)) / 100
-			const centerH = (totalHeight * (page.layout?.centerPosition ?? 50)) / 100
-			const diversionH = (totalHeight * (page.layout?.diversionPosition ?? 75)) / 100
+			const titleH = (totalHeight * (currentPage.layout?.titleHeight ?? 10)) / 100
+			const centerH = (totalHeight * (currentPage.layout?.centerPosition ?? 50)) / 100
+			const diversionH = (totalHeight * (currentPage.layout?.diversionPosition ?? 75)) / 100
 
 			let section: SectionType = SECTION_TYPES.FACT
 			if (y < titleH) section = SECTION_TYPES.TITLE
@@ -55,60 +63,56 @@ export const useCanvasOperations = (
 				height: DEFAULT_OBJECT_SIZE.HEIGHT,
 			}
 
-			onUpdate(page.id, {
-				objects: [...page.objects, newObject],
+			onUpdateRef.current(currentPage.id, {
+				objects: [...currentPage.objects, newObject],
 			})
 		},
-		[page, onUpdate, containerRef]
+		[containerRef]
 	)
 
 	const handleUpdateObject = useCallback(
 		(objectId: string, updates: Partial<CanvasObject>) => {
-			const newObjects = page.objects.map((obj) =>
+			const currentPage = pageRef.current
+			const newObjects = currentPage.objects.map((obj) =>
 				obj.id === objectId ? { ...obj, ...updates } : obj
 			)
-			onUpdate(page.id, { objects: newObjects })
+			onUpdateRef.current(currentPage.id, { objects: newObjects })
 		},
-		[page.objects, page.id, onUpdate]
+		[]
 	)
 
 	const handleDeleteObject = useCallback(
 		(objectId: string) => {
-			const newObjects = page.objects.filter((obj) => obj.id !== objectId)
+			const currentPage = pageRef.current
+			const newObjects = currentPage.objects.filter((obj) => obj.id !== objectId)
 			// Also remove connections related to this object
-			const newConnections = page.connections.filter(
+			const newConnections = currentPage.connections.filter(
 				(conn) => conn.fromObjectId !== objectId && conn.toObjectId !== objectId
 			)
-			onUpdate(page.id, { objects: newObjects, connections: newConnections })
+			onUpdateRef.current(currentPage.id, { objects: newObjects, connections: newConnections })
 		},
-		[page.objects, page.connections, page.id, onUpdate]
+		[]
 	)
 
 	const handleDeleteConnection = useCallback(
 		(connectionId: string) => {
-			const newConnections = page.connections.filter((conn) => conn.id !== connectionId)
-			onUpdate(page.id, { connections: newConnections })
+			const currentPage = pageRef.current
+			const newConnections = currentPage.connections.filter((conn) => conn.id !== connectionId)
+			onUpdateRef.current(currentPage.id, { connections: newConnections })
 		},
-		[page.connections, page.id, onUpdate]
-	)
-
-	const handleUpdateStrokes = useCallback(
-		(newStrokes: Stroke[]) => {
-			onUpdate(page.id, { strokes: newStrokes })
-		},
-		[page.id, onUpdate]
+		[]
 	)
 
 	const toggleFavorite = useCallback(() => {
-		onUpdate(page.id, { isFavorite: !page.isFavorite })
-	}, [page.id, page.isFavorite, onUpdate])
+		const currentPage = pageRef.current
+		onUpdateRef.current(currentPage.id, { isFavorite: !currentPage.isFavorite })
+	}, [])
 
 	return {
 		handleAddBlock,
 		handleUpdateObject,
 		handleDeleteObject,
 		handleDeleteConnection,
-		handleUpdateStrokes,
 		toggleFavorite,
 	}
 }

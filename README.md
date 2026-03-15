@@ -8,7 +8,6 @@ macOS 向けのデスクトップメモアプリケーション。Electron + Nex
 - **デスクトップ**: Electron 39
 - **スタイリング**: Tailwind CSS 4 + shadcn/ui
 - **エディタ**: Tiptap (リッチテキスト)
-- **AI機能**: Google Gemini API
 - **リント/フォーマット**: Biome
 
 ## 開発環境のセットアップ
@@ -19,20 +18,14 @@ macOS 向けのデスクトップメモアプリケーション。Electron + Nex
 npm install
 ```
 
-### 2. 環境変数の設定
-
-`.env.local` ファイルを作成し、以下を設定:
-
-```bash
-cp .env.example .env.local
-# エディタで .env.local を開き、APIキーを設定
-```
-
-### 3. 開発サーバーの起動
+### 2. 開発サーバーの起動
 
 ```bash
 # Electron + Next.js 開発サーバー
 npm run electron:dev
+
+# ブラウザ上のNext.js 開発サーバー
+npm run build && npx serve out -l 3000
 ```
 
 ## コマンド一覧
@@ -98,8 +91,6 @@ memo_app/
 | コマンド | 機能 |
 |---------|-----|
 | `Cmd+N` | 新規テキストブロック追加 |
-| `Cmd+P` | ペンモード切替 |
-| `Cmd+E` | 消しゴムモード切替 |
 | `C` | コネクトモード切替 |
 
 ### エディタ操作（テキスト編集中）

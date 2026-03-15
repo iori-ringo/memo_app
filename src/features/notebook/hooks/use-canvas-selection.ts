@@ -1,10 +1,14 @@
 import type { Editor } from '@tiptap/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 export const useCanvasSelection = () => {
 	const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null)
 	const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null)
 	const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
+
+	// useLatest パターン: activeEditor の ref 経由参照でコールバックを安定化
+	const activeEditorRef = useRef(activeEditor)
+	activeEditorRef.current = activeEditor
 
 	const handleBlockClick = useCallback((id: string) => {
 		setSelectedObjectId(id)
@@ -16,22 +20,22 @@ export const useCanvasSelection = () => {
 			setSelectedConnectionId(connectionId)
 			setSelectedObjectId(null)
 			// Blur editor if active
-			if (activeEditor) {
-				activeEditor.commands.blur()
+			if (activeEditorRef.current) {
+				activeEditorRef.current.commands.blur()
 				setActiveEditor(null)
 			}
 		},
-		[activeEditor]
+		[]
 	)
 
 	const handleBackgroundClick = useCallback(() => {
 		setSelectedObjectId(null)
 		setSelectedConnectionId(null)
-		if (activeEditor) {
-			activeEditor.commands.blur()
+		if (activeEditorRef.current) {
+			activeEditorRef.current.commands.blur()
 			setActiveEditor(null)
 		}
-	}, [activeEditor])
+	}, [])
 
 	const handleEditorReady = useCallback((objectId: string, editor: Editor) => {
 		// When editor is focused, select the object

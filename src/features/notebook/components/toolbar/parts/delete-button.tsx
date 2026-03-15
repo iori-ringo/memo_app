@@ -6,6 +6,7 @@
 'use client'
 
 import { Trash2 } from 'lucide-react'
+import { memo } from 'react'
 import { Button } from '@/shared/shadcn/button'
 
 type DeleteButtonProps = {
@@ -13,7 +14,7 @@ type DeleteButtonProps = {
 	onDelete: () => void
 }
 
-export const DeleteButton = ({ hasSelection, onDelete }: DeleteButtonProps) => {
+export const DeleteButton = memo(({ hasSelection, onDelete }: DeleteButtonProps) => {
 	return (
 		<Button
 			variant="ghost"
@@ -27,4 +28,5 @@ export const DeleteButton = ({ hasSelection, onDelete }: DeleteButtonProps) => {
 			<span className="text-xs">削除</span>
 		</Button>
 	)
-}
+})
+DeleteButton.displayName = 'DeleteButton'

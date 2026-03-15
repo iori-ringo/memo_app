@@ -6,9 +6,9 @@
  */
 import type { LucideIcon } from 'lucide-react'
 import { Pencil, RotateCcw, Trash2 } from 'lucide-react'
+import type { PageMeta } from '@/features/notes/stores/note-store'
 import { ContextMenuItem } from '@/shared/shadcn/context-menu'
 import { DropdownMenuItem } from '@/shared/shadcn/dropdown-menu'
-import type { NotePage } from '@/types/note'
 
 type PageMenuAction = {
 	icon: LucideIcon
@@ -18,14 +18,14 @@ type PageMenuAction = {
 }
 
 type PageMenuHandlers = {
-	onStartEditing: (page: NotePage) => void
+	onStartEditing: (page: PageMeta) => void
 	onDelete?: (id: string) => void
 	onRestore?: (id: string) => void
 	onPermanentDelete?: (id: string) => void
 }
 
 export const getPageMenuActions = (
-	page: NotePage,
+	page: PageMeta,
 	handlers: PageMenuHandlers,
 	isTrash: boolean
 ): PageMenuAction[] => {

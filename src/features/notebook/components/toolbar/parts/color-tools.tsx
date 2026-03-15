@@ -6,6 +6,7 @@
 'use client'
 
 import type { Editor } from '@tiptap/react'
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 
 type ColorToolsProps = {
@@ -19,7 +20,7 @@ const COLORS = [
 	{ name: 'Yellow', value: '#eab308' },
 ]
 
-export const ColorTools = ({ editor }: ColorToolsProps) => {
+export const ColorTools = memo(({ editor }: ColorToolsProps) => {
 	return (
 		<div className="flex items-center gap-1">
 			{COLORS.map((color) => (
@@ -34,9 +35,11 @@ export const ColorTools = ({ editor }: ColorToolsProps) => {
 							'ring-2 ring-primary ring-offset-1'
 					)}
 					style={{ backgroundColor: color.value }}
+					aria-label={`テキスト色を${color.name}に変更`}
 					title={color.name}
 				/>
 			))}
 		</div>
 	)
-}
+})
+ColorTools.displayName = 'ColorTools'

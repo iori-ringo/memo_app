@@ -1,17 +1,17 @@
 'use client'
 
 import { Menu } from 'lucide-react'
+import type { PageMeta } from '@/features/notes/stores/note-store'
 import { AppSidebar } from '@/features/sidebar/components/app-sidebar'
 import { Button } from '@/shared/shadcn/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/shared/shadcn/sheet'
-import type { NotePage } from '@/types/note'
 
 type MobileDrawerProps = {
-	pages: NotePage[]
+	pages: PageMeta[]
 	activePageId: string | null
 	onSelectPage: (id: string | null) => void
 	onAddPage: () => void
-	onUpdatePage?: (id: string, updates: Partial<NotePage>) => void
+	onUpdatePage?: (id: string, updates: Partial<PageMeta>) => void
 	onDeletePage: (id: string) => void
 	onRestorePage: (id: string) => void
 	onPermanentDeletePage: (id: string) => void

@@ -8,7 +8,8 @@
 
 import { Plus, Star } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
+import type { PageMeta } from '@/features/notes/stores/note-store'
 import {
 	PageListItem,
 	type PageListItemProps,
@@ -21,7 +22,6 @@ import { useSidebarSearch } from '@/features/sidebar/hooks/use-sidebar-search'
 import { useSidebarShortcuts } from '@/features/sidebar/hooks/use-sidebar-shortcuts'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
-import type { NotePage } from '@/types/note'
 
 // 静的JSXの抽出（rendering-hoist-jsx）
 const favoriteIcon = <Star className="h-3 w-3 fill-current" />
@@ -29,12 +29,12 @@ const favoriteIcon = <Star className="h-3 w-3 fill-current" />
 // ページグループコンポーネント（rendering-inline-functions）
 type PageGroupProps = {
 	label: string
-	pages: NotePage[]
+	pages: PageMeta[]
 	icon?: ReactNode
 	pageItemProps: Omit<PageListItemProps, 'page'>
 }
 
-const PageGroup = ({ label, pages, icon, pageItemProps }: PageGroupProps) => {
+const PageGroup = memo(({ label, pages, icon, pageItemProps }: PageGroupProps) => {
 	if (pages.length === 0) return null
 	return (
 		<div className="mb-4">
@@ -47,14 +47,15 @@ const PageGroup = ({ label, pages, icon, pageItemProps }: PageGroupProps) => {
 			))}
 		</div>
 	)
-}
+})
+PageGroup.displayName = 'PageGroup'
 
 type AppSidebarProps = {
-	pages: NotePage[]
+	pages: PageMeta[]
 	activePageId: string | null
 	onSelectPage: (pageId: string) => void
 	onAddPage: () => void
-	onUpdatePage?: (id: string, updates: Partial<NotePage>) => void
+	onUpdatePage?: (id: string, updates: Partial<PageMeta>) => void
 	onDeletePage: (pageId: string) => void
 	onRestorePage?: (pageId: string) => void
 	onPermanentDeletePage?: (pageId: string) => void

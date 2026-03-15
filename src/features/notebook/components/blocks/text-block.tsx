@@ -14,8 +14,6 @@
  * - クリック: 選択
  * - ドラッグ: 移動（drag-handle クラスを持つ要素から）
  * - リサイズ: 四隅のハンドルをドラッグ
- * - ペンモード時: 操作無効（pointer-events: none）
- *
  * @config
  * - HANDLE_SIZE_PX: リサイズハンドルのサイズ
  * - HANDLE_OFFSET_PX: ハンドルの位置オフセット
@@ -24,25 +22,40 @@
 
 import type { Editor } from '@tiptap/react'
 import { GripVertical } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import type { DraggableData, DraggableEvent } from 'react-draggable'
 import Draggable from 'react-draggable'
 import type { ResizeCallbackData } from 'react-resizable'
 import { Resizable } from 'react-resizable'
-import { RichTextEditor } from '@/features/notebook/components/blocks/rich-text-editor'
+
+import { isElectron } from '@/lib/platform'
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
+
+// Web: TipTap (~512KiB) を初期バンドルから除外し、選択時にオンデマンド読み込み
+// Electron: ローカルファイルなのでネットワーク転送コストなし → 即座にprefetchしてキャッシュ
+const RichTextEditor = dynamic(
+	() =>
+		import('@/features/notebook/components/blocks/rich-text-editor').then((mod) => ({
+			default: mod.RichTextEditor,
+		})),
+	{ ssr: false }
+)
+
+// Electron環境ではモジュールを即座にprefetch（ディスク読み込みは数msで完了）
+if (isElectron()) {
+	import('@/features/notebook/components/blocks/rich-text-editor')
+}
 
 import 'react-resizable/css/styles.css'
 
 type TextBlockProps = {
 	object: CanvasObject
 	onUpdate: (id: string, updates: Partial<CanvasObject>) => void
-	onDelete?: (id: string) => void
 	isSelected?: boolean
 	onSelect?: (id: string) => void
 	onEditorReady?: (objectId: string, editor: Editor) => void
-	isPenMode?: boolean
 }
 
 // -----------------------------------------------------------------------------
@@ -93,15 +106,7 @@ const ResizeHandle = ({
 )
 
 export const TextBlock = memo(
-	({
-		object,
-		onUpdate,
-		onDelete: _onDelete,
-		isSelected,
-		onSelect,
-		onEditorReady,
-		isPenMode,
-	}: TextBlockProps) => {
+	({ object, onUpdate, isSelected, onSelect, onEditorReady }: TextBlockProps) => {
 		const [currentSize, setCurrentSize] = useState({
 			width: object.width,
 			height: object.height,
@@ -166,23 +171,21 @@ export const TextBlock = memo(
 
 		const handleClick = useCallback(
 			(e: React.MouseEvent) => {
-				if (!isPenMode) {
-					e.stopPropagation()
-					onSelect?.(object.id)
-				}
+				e.stopPropagation()
+				onSelect?.(object.id)
 			},
-			[isPenMode, object.id, onSelect]
+			[object.id, onSelect]
 		)
 
 		const handleKeyDown = useCallback(
 			(e: React.KeyboardEvent) => {
-				if (!isPenMode && (e.key === 'Enter' || e.key === ' ')) {
+				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault()
 					e.stopPropagation()
 					onSelect?.(object.id)
 				}
 			},
-			[isPenMode, object.id, onSelect]
+			[object.id, onSelect]
 		)
 
 		return (
@@ -193,7 +196,6 @@ export const TextBlock = memo(
 				onStop={handleDragStop}
 				handle=".drag-handle"
 				bounds="parent"
-				disabled={isPenMode}
 				cancel=".react-resizable-handle"
 			>
 				{/* 
@@ -205,7 +207,7 @@ export const TextBlock = memo(
 					ref={nodeRef}
 					className="absolute group"
 					style={{
-						pointerEvents: isPenMode ? 'none' : 'auto',
+						pointerEvents: 'auto',
 						// Add padding so hover area includes the resize handles
 						padding: '10px',
 						margin: '-10px',
@@ -237,7 +239,8 @@ export const TextBlock = memo(
 							}}
 							onClick={handleClick}
 							onKeyDown={handleKeyDown}
-							tabIndex={isPenMode ? -1 : 0}
+							// biome-ignore lint/a11y/noNoninteractiveTabindex: キーボードナビゲーションに必要
+							tabIndex={0}
 							aria-label="Text block"
 						>
 							{/* ドラッグハンドル - 上部 */}
@@ -260,14 +263,22 @@ export const TextBlock = memo(
 								<GripVertical className="w-3 h-3 text-muted-foreground" />
 							</div>
 
-							{/* コンテンツ */}
+							{/* コンテンツ: 選択時のみ TipTap をマウントし、非選択時は静的 HTML で軽量表示 */}
 							<div className="w-full h-full overflow-hidden p-2">
-								<RichTextEditor
-									content={object.content}
-									onChange={(content) => onUpdate(object.id, { content })}
-									className="h-full w-full focus:outline-none"
-									onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
-								/>
+								{isSelected ? (
+									<RichTextEditor
+										content={object.content}
+										onChange={(content) => onUpdate(object.id, { content })}
+										className="h-full w-full focus:outline-none"
+										onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
+									/>
+								) : (
+									<div
+										className="prose prose-sm dark:prose-invert max-w-none min-h-[100px] h-full w-full focus:outline-none"
+										// biome-ignore lint/security/noDangerouslySetInnerHtml: 非選択ブロックの静的HTML表示（ユーザー入力済みコンテンツの再描画）
+										dangerouslySetInnerHTML={{ __html: object.content || '<p></p>' }}
+									/>
+								)}
 							</div>
 						</section>
 					</Resizable>

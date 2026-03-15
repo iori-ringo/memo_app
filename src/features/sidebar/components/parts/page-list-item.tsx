@@ -10,12 +10,13 @@
 import { format, isToday } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { FileText, MoreHorizontal, Star } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import {
 	getPageMenuActions,
 	PageContextMenuItems,
 	PageDropdownMenuItems,
 } from '@/features/sidebar/components/parts/page-item-menu'
+import type { PageMeta } from '@/features/notes/stores/note-store'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '@/shared/shadcn/context-menu'
@@ -24,16 +25,15 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from '@/shared/shadcn/dropdown-menu'
-import type { NotePage } from '@/types/note'
 
 export type PageListItemProps = {
-	page: NotePage
+	page: PageMeta
 	activePageId: string | null
 	isTrash?: boolean
 	editingPageId: string | null
 	editingTitle: string
 	onSelect?: (id: string) => void
-	onStartEditing: (page: NotePage) => void
+	onStartEditing: (page: PageMeta) => void
 	onTitleChange: (value: string) => void
 	onFinishEditing: () => void
 	onKeyDown: (e: React.KeyboardEvent) => void
@@ -42,126 +42,135 @@ export type PageListItemProps = {
 	onPermanentDelete?: (id: string) => void
 }
 
-export const PageListItem = ({
-	page,
-	activePageId,
-	isTrash = false,
-	editingPageId,
-	editingTitle,
-	onSelect,
-	onStartEditing,
-	onTitleChange,
-	onFinishEditing,
-	onKeyDown,
-	onDelete,
-	onRestore,
-	onPermanentDelete,
-}: PageListItemProps) => {
-	const inputRef = useRef<HTMLInputElement>(null)
-	const isEditing = editingPageId === page.id
-	const isActive = activePageId === page.id && !isTrash
-
-	// 編集モード開始時にフォーカス
-	useEffect(() => {
-		if (isEditing && inputRef.current) {
-			inputRef.current.focus()
-			inputRef.current.select()
-		}
-	}, [isEditing])
-
-	// 日時フォーマット
-	const lastEdited = new Date(page.updatedAt)
-	const dateDisplay = isToday(lastEdited)
-		? format(lastEdited, 'HH:mm', { locale: ja })
-		: format(lastEdited, 'yyyy/MM/dd', { locale: ja })
-
-	// タイトル表示（空なら「無題のページ」）
-	const displayTitle = page.title?.trim() || '無題のページ'
-
-	// メニューアクション（共通定義）
-	const menuActions = getPageMenuActions(
+export const PageListItem = memo(
+	({
 		page,
-		{ onStartEditing, onDelete, onRestore, onPermanentDelete },
-		isTrash
-	)
+		activePageId,
+		isTrash = false,
+		editingPageId,
+		editingTitle,
+		onSelect,
+		onStartEditing,
+		onTitleChange,
+		onFinishEditing,
+		onKeyDown,
+		onDelete,
+		onRestore,
+		onPermanentDelete,
+	}: PageListItemProps) => {
+		const inputRef = useRef<HTMLInputElement>(null)
+		const isEditing = editingPageId === page.id
+		const isActive = activePageId === page.id && !isTrash
 
-	// アイコン（お気に入り or デフォルト）- 編集/表示モード共通
-	const pageIcon = page.isFavorite ? (
-		<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
-	) : (
-		<FileText className="h-3.5 w-3.5 shrink-0" />
-	)
+		// 編集モード開始時にフォーカス
+		useEffect(() => {
+			if (isEditing && inputRef.current) {
+				inputRef.current.focus()
+				inputRef.current.select()
+			}
+		}, [isEditing])
 
-	return (
-		<ContextMenu>
-			<ContextMenuTrigger asChild>
-				<div
-					className={cn(
-						'group flex items-center gap-1.5 py-1 rounded-md text-sm transition-colors',
-						isActive
-							? 'bg-accent text-accent-foreground'
-							: 'hover:bg-accent/50 text-muted-foreground'
-					)}
-				>
-					{/* コンテンツエリア */}
-					<div className="flex-1 min-w-0">
-						{isEditing ? (
-							// 編集モード
-							<div className="flex items-center gap-1.5 w-full">
-								{pageIcon}
-								<div className="flex-1 min-w-0 flex flex-col gap-0.5">
-									<input
-										ref={inputRef}
-										type="text"
-										value={editingTitle}
-										aria-label="ページ名の編集"
-										onChange={(e) => onTitleChange(e.target.value)}
-										onBlur={onFinishEditing}
-										onKeyDown={onKeyDown}
-										className="flex-1 min-w-0 bg-transparent border-b border-primary rounded-none px-1 text-foreground text-sm outline-none"
-									/>
-									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
-								</div>
-							</div>
-						) : (
-							// 表示モード
-							<button
-								type="button"
-								className="w-full text-left flex items-center gap-1.5 bg-transparent border-none outline-none cursor-pointer rounded p-0.5 -m-0.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-								onClick={() => !isTrash && onSelect?.(page.id)}
-								onDoubleClick={() => !isTrash && onStartEditing(page)}
-							>
-								{pageIcon}
-								<div className="flex-1 min-w-0 flex flex-col gap-0.5">
-									<span className="truncate font-medium text-foreground">{displayTitle}</span>
-									<span className="text-[10px] text-muted-foreground truncate">{dateDisplay}</span>
-								</div>
-							</button>
+		// 日時フォーマット
+		const lastEdited = new Date(page.updatedAt)
+		const dateDisplay = isToday(lastEdited)
+			? format(lastEdited, 'HH:mm', { locale: ja })
+			: format(lastEdited, 'yyyy/MM/dd', { locale: ja })
+
+		// タイトル表示（空なら「無題のページ」）
+		const displayTitle = page.title?.trim() || '無題のページ'
+
+		// メニューアクション（共通定義）
+		const menuActions = getPageMenuActions(
+			page,
+			{ onStartEditing, onDelete, onRestore, onPermanentDelete },
+			isTrash
+		)
+
+		// アイコン（お気に入り or デフォルト）- 編集/表示モード共通
+		const pageIcon = page.isFavorite ? (
+			<Star className="h-3.5 w-3.5 shrink-0 text-yellow-500 fill-yellow-500" />
+		) : (
+			<FileText className="h-3.5 w-3.5 shrink-0" />
+		)
+
+		return (
+			<ContextMenu>
+				<ContextMenuTrigger asChild>
+					<div
+						className={cn(
+							'group flex items-center gap-1.5 py-1 rounded-md text-sm transition-colors',
+							isActive
+								? 'bg-accent text-accent-foreground'
+								: 'hover:bg-accent/50 text-muted-foreground'
 						)}
+					>
+						{/* コンテンツエリア */}
+						<div className="flex-1 min-w-0">
+							{isEditing ? (
+								// 編集モード
+								<div className="flex items-center gap-1.5 w-full">
+									{pageIcon}
+									<div className="flex-1 min-w-0 flex flex-col gap-0.5">
+										<input
+											ref={inputRef}
+											type="text"
+											value={editingTitle}
+											aria-label="ページ名の編集"
+											onChange={(e) => onTitleChange(e.target.value)}
+											onBlur={onFinishEditing}
+											onKeyDown={onKeyDown}
+											className="flex-1 min-w-0 bg-transparent border-b border-primary rounded-none px-1 text-foreground text-sm outline-none"
+										/>
+										<span className="text-[10px] text-muted-foreground truncate">
+											{dateDisplay}
+										</span>
+									</div>
+								</div>
+							) : (
+								// 表示モード
+								<button
+									type="button"
+									className="w-full text-left flex items-center gap-1.5 bg-transparent border-none outline-none cursor-pointer rounded p-0.5 -m-0.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+									onClick={() => !isTrash && onSelect?.(page.id)}
+									onDoubleClick={() => !isTrash && onStartEditing(page)}
+								>
+									{pageIcon}
+									<div className="flex-1 min-w-0 flex flex-col gap-0.5">
+										<span className="truncate font-medium text-foreground">{displayTitle}</span>
+										<span className="text-[10px] text-muted-foreground truncate">
+											{dateDisplay}
+										</span>
+									</div>
+								</button>
+							)}
+						</div>
+
+						{/* ドロップダウンメニュー（...ボタン） */}
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant="ghost"
+									size="icon"
+									aria-label="ページメニューを開く"
+									className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+								>
+									<MoreHorizontal className="h-3.5 w-3.5" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent side="bottom" align="end" collisionPadding={8}>
+								<PageDropdownMenuItems actions={menuActions} />
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</div>
+				</ContextMenuTrigger>
 
-					{/* ドロップダウンメニュー（...ボタン） */}
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-							>
-								<MoreHorizontal className="h-3.5 w-3.5" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent side="bottom" align="end" collisionPadding={8}>
-							<PageDropdownMenuItems actions={menuActions} />
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-			</ContextMenuTrigger>
+				{/* 右クリックメニュー */}
+				<ContextMenuContent>
+					<PageContextMenuItems actions={menuActions} />
+				</ContextMenuContent>
+			</ContextMenu>
+		)
+	}
+)
 
-			{/* 右クリックメニュー */}
-			<ContextMenuContent>
-				<PageContextMenuItems actions={menuActions} />
-			</ContextMenuContent>
-		</ContextMenu>
-	)
-}
+PageListItem.displayName = 'PageListItem'

@@ -13,7 +13,6 @@ export type {
 	ElectronAPI,
 	NotePage,
 	SectionType,
-	Stroke,
 } from '../../src/types/note'
 
 // IPCチャンネル名を定数として定義
@@ -24,9 +23,6 @@ export const IPC_CHANNELS = {
 	SAVE_CONFIG: 'save-config',
 	NEW_PAGE: 'new-page',
 	TOGGLE_DARK: 'toggle-dark',
-	GENERATE_ABSTRACTION: 'generate-abstraction',
-	GENERATE_DIVERSION: 'generate-diversion',
-	GENERATE_SUMMARY: 'generate-summary',
 } as const
 
 // チャンネル名の型

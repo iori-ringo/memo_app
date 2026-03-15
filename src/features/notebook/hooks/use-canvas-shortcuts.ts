@@ -4,14 +4,11 @@ import { useEffect, useRef } from 'react'
 type UseCanvasShortcutsProps = {
 	selectedObjectId: string | null
 	selectedConnectionId: string | null
-	isPenMode: boolean
 	isConnectMode: boolean
 	activeEditor: Editor | null
 	handleDeleteObject: (id: string) => void
 	handleDeleteConnection: (id: string) => void
-	setIsPenMode: (isPenMode: boolean) => void
-	setIsConnectMode: (isConnectMode: boolean) => void
-	setIsObjectEraserMode: (isObjectEraserMode: boolean) => void
+	toggleConnectMode: () => void
 	setSelectedObjectId: (id: string | null) => void
 	setSelectedConnectionId: (id: string | null) => void
 	handleAddBlock: (x: number, y: number) => void
@@ -21,14 +18,11 @@ type UseCanvasShortcutsProps = {
 export const useCanvasShortcuts = ({
 	selectedObjectId,
 	selectedConnectionId,
-	isPenMode,
 	isConnectMode,
 	activeEditor,
 	handleDeleteObject,
 	handleDeleteConnection,
-	setIsPenMode,
-	setIsConnectMode,
-	setIsObjectEraserMode,
+	toggleConnectMode,
 	setSelectedObjectId,
 	setSelectedConnectionId,
 	handleAddBlock,
@@ -38,14 +32,11 @@ export const useCanvasShortcuts = ({
 	const stateRef = useRef({
 		selectedObjectId,
 		selectedConnectionId,
-		isPenMode,
 		isConnectMode,
 		activeEditor,
 		handleDeleteObject,
 		handleDeleteConnection,
-		setIsPenMode,
-		setIsConnectMode,
-		setIsObjectEraserMode,
+		toggleConnectMode,
 		setSelectedObjectId,
 		setSelectedConnectionId,
 		handleAddBlock,
@@ -56,14 +47,11 @@ export const useCanvasShortcuts = ({
 		stateRef.current = {
 			selectedObjectId,
 			selectedConnectionId,
-			isPenMode,
 			isConnectMode,
 			activeEditor,
 			handleDeleteObject,
 			handleDeleteConnection,
-			setIsPenMode,
-			setIsConnectMode,
-			setIsObjectEraserMode,
+			toggleConnectMode,
 			setSelectedObjectId,
 			setSelectedConnectionId,
 			handleAddBlock,
@@ -71,14 +59,11 @@ export const useCanvasShortcuts = ({
 	}, [
 		selectedObjectId,
 		selectedConnectionId,
-		isPenMode,
 		isConnectMode,
 		activeEditor,
 		handleDeleteObject,
 		handleDeleteConnection,
-		setIsPenMode,
-		setIsConnectMode,
-		setIsObjectEraserMode,
+		toggleConnectMode,
 		setSelectedObjectId,
 		setSelectedConnectionId,
 		handleAddBlock,
@@ -122,24 +107,6 @@ export const useCanvasShortcuts = ({
 				e.preventDefault()
 				const { x, y } = mousePositionRef.current
 				current.handleAddBlock(x, y)
-				return
-			}
-
-			// Cmd+P: ペンモード
-			if (isCmdOrCtrl && e.key === 'p') {
-				e.preventDefault()
-				current.setIsPenMode(true)
-				current.setIsConnectMode(false)
-				current.setIsObjectEraserMode(false)
-				return
-			}
-
-			// Cmd+E: 消しゴムモード
-			if (isCmdOrCtrl && e.key === 'e') {
-				e.preventDefault()
-				current.setIsObjectEraserMode(true)
-				current.setIsPenMode(false)
-				current.setIsConnectMode(false)
 				return
 			}
 
@@ -240,9 +207,10 @@ export const useCanvasShortcuts = ({
 			if (e.key === 'Escape') {
 				current.setSelectedObjectId(null)
 				current.setSelectedConnectionId(null)
-				current.setIsPenMode(false)
-				current.setIsConnectMode(false)
-				current.setIsObjectEraserMode(false)
+				// 接続モードON時のみトグルでOFF（connectSourceIdもクリアされる）
+				if (current.isConnectMode) {
+					current.toggleConnectMode()
+				}
 				if (editor) {
 					editor.commands.blur()
 				}
@@ -250,15 +218,8 @@ export const useCanvasShortcuts = ({
 
 			// モード切り替え (単一キー、入力中でない場合のみ)
 			if (!isTyping && !isCmdOrCtrl) {
-				if (e.key === 'p') {
-					current.setIsPenMode(!current.isPenMode)
-					current.setIsConnectMode(false)
-					current.setIsObjectEraserMode(false)
-				}
 				if (e.key === 'c') {
-					current.setIsConnectMode(!current.isConnectMode)
-					current.setIsPenMode(false)
-					current.setIsObjectEraserMode(false)
+					current.toggleConnectMode()
 				}
 			}
 		}
