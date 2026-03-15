@@ -313,10 +313,70 @@ ReactScan による自動プロファイリングで、深刻なレンダリン�
 
 | 課題 | 現状 | 対策案 | 優先度 |
 |------|------|--------|:------:|
-| LCP 4.0s（バジェット2.5s未達） | キャッシュTTL=0、TipTapチャンク512KB | 本番デプロイでCache-Control設定、TipTap dynamic import | 高 |
+| LCP 2.9s（バジェット2.5s未達） | Lighthouseスロットリング(CPU 4x + RTT 150ms)下でのJS実行遅延が支配的 | 下記 5.1 参照 | 中 |
 | ReactScanスコア46/100 | Next.js内部コンポーネント（ErrorBoundary等）の不要レンダーが支配的 | アプリ側では制御不可、React Compiler検討 | 低 |
 | 総コミット数324回 | ドラッグ中のローカルstate更新がフレーム単位で発火 | requestAnimationFrameスロットル | 低 |
 | Electron固有最適化 | 未実施 | Cold Start計測、メモリリーク確認、IPCペイロード最適化 | 中 |
+
+### 5.1 LCP改善の追加施策（2026-03-15 実施）
+
+#### 実施内容
+
+前回 LCP 4.0s → 今回 **2.9s** まで改善。以下の施策を実施した。
+
+| # | 対策 | ファイル | 効果 |
+|---|------|---------|------|
+| 1 | **フォント `display: 'swap'` 追加** | `src/app/layout.tsx` | FOIT（Flash of Invisible Text）を防止し、フォント読み込み前でもテキスト描画を可能にした |
+| 2 | **RichTextEditor の dynamic import** | `src/features/notebook/components/blocks/text-block.tsx` | TipTap (~512KB) を初期バンドルから除外。テキストブロック選択時にオンデマンド読み込み |
+| 3 | **Hydration中のスケルトンUI表示** | `src/features/notes/components/home-content.tsx` | `return null` → スケルトンUIに変更し、Hydration完了前にも視覚的フィードバックを提供 |
+| 4 | **初回アニメーションスキップ** | `src/features/notes/components/motion-page-wrapper.tsx` | `isFirstRender` ref で初回の framer-motion アニメーション（opacity+rotateY）を無効化し、描画遅延を削減 |
+| 5 | **web-vitals 導入** | `src/shared/ui/web-vitals-reporter.tsx` | Attribution Build でLCP/CLS/INPの内訳をコンソール出力。ボトルネックの可視化ツールとして常駐 |
+
+#### LCP内訳の分析結果（web-vitals Attribution Build）
+
+| 項目 | 値 | 備考 |
+|------|-----|------|
+| TTFB | 19ms | ローカルサーバーのため高速 |
+| Resource Load Delay | 0ms | テキストベースアプリのため画像DLなし |
+| Resource Load Duration | 0ms | 同上 |
+| Element Render Delay | 259ms | JS実行→描画。実測の主要コスト |
+| **Lighthouse LCP** | **2,954ms** | CPU 4xスロットリング + RTT 150ms の影響 |
+| **実機 LCP (web-vitals)** | **176ms** | スロットリングなしの実測値 |
+
+#### LCPのボトルネック構造
+
+```
+LCP 2.9s の構成:
+├── Lighthouseスロットリング加算分: ~2,700ms
+│   ├── CPU 4x 遅延（JS Parse + Execute）
+│   └── ネットワーク制限（RTT 150ms, 1.6Mbps）
+└── 実コスト: ~260ms
+    ├── TTFB: 19ms
+    └── Element Render Delay: 259ms
+        ├── React Hydration
+        ├── Store hydrate (localStorage)
+        └── NotebookCanvas 描画
+```
+
+**結論**: 実機では LCP 176ms (Good) を達成済み。Lighthouse上の2.9sはスロットリングシミュレーション由来であり、`output: 'export'`（全クライアントレンダリング）のアーキテクチャ上の制約が主因。
+
+#### 試行して効果がなかった施策
+
+| 施策 | 結果 | 理由 |
+|------|------|------|
+| MotionPageWrapper の `dynamic()` import | LCP悪化（3.3s） | LCP要素（INPUT）がMotionPageWrapper内にあるため、動的importが描画チェーンに追加ステップを挿入 |
+| TextBlock の `dynamic()` import | 効果不明 | 初回バンドル -121KB だがLCPに影響するパスにない |
+| スケルトンUIにINPUT要素を含める | スコア改善のみ | UXの実質的改善にはつながらない（操作可能になる時間は変わらない） |
+| framer-motion の遅延読み込み（初回は素div） | 未計測（スケルトンINPUTと同時に戻した） | 仕組みとしては有効だが、LCPパスに動的import待ちが入らない設計が必要 |
+
+#### 今後のLCP改善に向けた考察
+
+| アプローチ | 効果見込み | 実装コスト | 備考 |
+|-----------|:---------:|:---------:|------|
+| SSR/Streaming 導入（`output: 'export'`廃止） | 大 | 高 | Electron対応との両立が複雑 |
+| React Compiler によるバンドル自動最適化 | 中 | 低 | React 19+ で利用可能 |
+| Service Worker によるプリキャッシュ | 中 | 中 | 2回目以降のアクセスで効果 |
+| Store初期データの`<script>`注入 | 小〜中 | 中 | localStorage → window.__INITIAL_DATA__ |
 
 ---
 
@@ -340,7 +400,7 @@ ReactScan による自動プロファイリングで、深刻なレンダリン�
   Performance        67 ██████▋                          87 ████████▋    (+20pt)
   Best Practices     78 ███████▊                         100 ██████████  (+22pt)
   FCP                2.5s ██████████                     1.4s █████▌     (-44%)
-  LCP                9.2s ██████████                     4.0s ████▎      (-57%)
+  LCP                9.2s ██████████                     2.9s ███▏       (-68%)
   TTI                9.3s ██████████                     4.1s ████▍      (-56%)
   TBT                188ms ██████████                    90ms █████      (-52%)
   転送サイズ          1,315 KiB ██████████               429 KiB ███▎    (-67%)
