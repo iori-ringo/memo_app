@@ -7,6 +7,7 @@
 
 import type { Editor } from '@tiptap/react'
 import { Bold, Italic, Strikethrough } from 'lucide-react'
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 import {
@@ -20,7 +21,7 @@ type TextFormattingToolsProps = {
 	editor: Editor | null
 }
 
-export const TextFormattingTools = ({ editor }: TextFormattingToolsProps) => {
+export const TextFormattingTools = memo(({ editor }: TextFormattingToolsProps) => {
 	return (
 		<div className="flex items-center gap-1">
 			<Button
@@ -95,4 +96,5 @@ export const TextFormattingTools = ({ editor }: TextFormattingToolsProps) => {
 			</DropdownMenu>
 		</div>
 	)
-}
+})
+TextFormattingTools.displayName = 'TextFormattingTools'

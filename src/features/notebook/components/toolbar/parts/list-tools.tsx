@@ -7,6 +7,7 @@
 
 import type { Editor } from '@tiptap/react'
 import { List, ListOrdered, Square } from 'lucide-react'
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/shared/shadcn/button'
 
@@ -14,7 +15,7 @@ type ListToolsProps = {
 	editor: Editor | null
 }
 
-export const ListTools = ({ editor }: ListToolsProps) => {
+export const ListTools = memo(({ editor }: ListToolsProps) => {
 	return (
 		<div className="flex items-center gap-1">
 			<Button
@@ -49,4 +50,5 @@ export const ListTools = ({ editor }: ListToolsProps) => {
 			</Button>
 		</div>
 	)
-}
+})
+ListTools.displayName = 'ListTools'

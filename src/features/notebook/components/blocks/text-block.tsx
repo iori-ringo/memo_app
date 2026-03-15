@@ -246,14 +246,22 @@ export const TextBlock = memo(
 								<GripVertical className="w-3 h-3 text-muted-foreground" />
 							</div>
 
-							{/* コンテンツ */}
+							{/* コンテンツ: 選択時のみ TipTap をマウントし、非選択時は静的 HTML で軽量表示 */}
 							<div className="w-full h-full overflow-hidden p-2">
-								<RichTextEditor
-									content={object.content}
-									onChange={(content) => onUpdate(object.id, { content })}
-									className="h-full w-full focus:outline-none"
-									onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
-								/>
+								{isSelected ? (
+									<RichTextEditor
+										content={object.content}
+										onChange={(content) => onUpdate(object.id, { content })}
+										className="h-full w-full focus:outline-none"
+										onEditorReady={(editor) => onEditorReady?.(object.id, editor)}
+									/>
+								) : (
+									<div
+										className="prose prose-sm dark:prose-invert max-w-none min-h-[100px] h-full w-full focus:outline-none"
+										// biome-ignore lint/security/noDangerouslySetInnerHtml: 非選択ブロックの静的HTML表示（ユーザー入力済みコンテンツの再描画）
+										dangerouslySetInnerHTML={{ __html: object.content || '<p></p>' }}
+									/>
+								)}
 							</div>
 						</section>
 					</Resizable>

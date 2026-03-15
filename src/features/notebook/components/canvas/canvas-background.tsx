@@ -17,7 +17,7 @@
 'use client'
 
 import type { MouseEvent as ReactMouseEvent, ReactNode } from 'react'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 type CanvasBackgroundProps = {
@@ -47,7 +47,7 @@ const BOUNDARY_CLASS =
 const HORIZONTAL_BOUNDARY_CLASS =
 	'absolute bg-stone-400 dark:bg-stone-600 hover:bg-primary dark:hover:bg-primary z-15 pointer-events-auto cursor-row-resize'
 
-export const CanvasBackground = ({
+export const CanvasBackground = memo(({
 	className,
 	children,
 	titleHeight = 10,
@@ -187,4 +187,5 @@ export const CanvasBackground = ({
 			<div className="relative z-10 w-full h-full">{children}</div>
 		</div>
 	)
-}
+})
+CanvasBackground.displayName = 'CanvasBackground'

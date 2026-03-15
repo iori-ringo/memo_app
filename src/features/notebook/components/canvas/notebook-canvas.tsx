@@ -21,7 +21,7 @@
 'use client'
 
 import { Star } from 'lucide-react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { TextBlock } from '@/features/notebook/components/blocks/text-block'
 import { CanvasBackground } from '@/features/notebook/components/canvas/canvas-background'
 import { ConnectionLayer } from '@/features/notebook/components/canvas/connection-layer'
@@ -43,6 +43,16 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 	const [connectSourceId, setConnectSourceId] = useState<string | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const mousePositionRef = useRef<{ x: number; y: number }>({ x: 100, y: 100 })
+
+	// useLatest パターン: onBlockClick の依存値を ref 経由で参照し、コールバック参照を安定化
+	const pageRef = useRef(page)
+	pageRef.current = page
+	const onUpdateRef = useRef(onUpdate)
+	onUpdateRef.current = onUpdate
+	const isConnectModeRef = useRef(isConnectMode)
+	isConnectModeRef.current = isConnectMode
+	const connectSourceIdRef = useRef(connectSourceId)
+	connectSourceIdRef.current = connectSourceId
 
 	const handleMouseMove = (e: React.MouseEvent) => {
 		if (containerRef.current) {
@@ -93,6 +103,12 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 		})
 	}, [setSelectedObjectId])
 
+	// hasSelection を useMemo で安定化（RibbonToolbar の memo を有効にするため）
+	const hasSelection = useMemo(
+		() => !!selectedObjectId || !!selectedConnectionId,
+		[selectedObjectId, selectedConnectionId]
+	)
+
 	useCanvasShortcuts({
 		selectedObjectId,
 		selectedConnectionId,
@@ -107,50 +123,51 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 		mousePositionRef,
 	})
 
+	// selectedObjectId / selectedConnectionId を ref 化して handleDeleteSelection を安定化
+	const selectedObjectIdRef = useRef(selectedObjectId)
+	selectedObjectIdRef.current = selectedObjectId
+	const selectedConnectionIdRef = useRef(selectedConnectionId)
+	selectedConnectionIdRef.current = selectedConnectionId
+
 	const handleDeleteSelection = useCallback(() => {
-		if (selectedObjectId) {
-			handleDeleteObject(selectedObjectId)
+		if (selectedObjectIdRef.current) {
+			handleDeleteObject(selectedObjectIdRef.current)
 			setSelectedObjectId(null)
 		}
-		if (selectedConnectionId) {
-			handleDeleteConnection(selectedConnectionId)
+		if (selectedConnectionIdRef.current) {
+			handleDeleteConnection(selectedConnectionIdRef.current)
 			setSelectedConnectionId(null)
 		}
-	}, [
-		selectedObjectId,
-		selectedConnectionId,
-		handleDeleteObject,
-		handleDeleteConnection,
-		setSelectedObjectId,
-		setSelectedConnectionId,
-	])
+	}, [handleDeleteObject, handleDeleteConnection, setSelectedObjectId, setSelectedConnectionId])
 
 	const onBlockClick = useCallback(
 		(id: string) => {
-			if (isConnectMode) {
-				if (!connectSourceId) {
+			if (isConnectModeRef.current) {
+				const sourceId = connectSourceIdRef.current
+				if (!sourceId) {
 					setConnectSourceId(id)
 					setSelectedObjectId(id) // Visual feedback
 				} else {
-					if (connectSourceId !== id) {
+					if (sourceId !== id) {
+						const currentPage = pageRef.current
 						// Check for existing connection
-						const existingConnection = page.connections.find(
+						const existingConnection = currentPage.connections.find(
 							(conn) =>
-								(conn.fromObjectId === connectSourceId && conn.toObjectId === id) ||
-								(conn.fromObjectId === id && conn.toObjectId === connectSourceId)
+								(conn.fromObjectId === sourceId && conn.toObjectId === id) ||
+								(conn.fromObjectId === id && conn.toObjectId === sourceId)
 						)
 
 						if (!existingConnection) {
 							// Create connection
 							const newConnection = {
 								id: crypto.randomUUID(),
-								fromObjectId: connectSourceId,
+								fromObjectId: sourceId,
 								toObjectId: id,
 								type: 'arrow' as const,
 								style: 'solid' as const,
 							}
-							onUpdate(page.id, {
-								connections: [...page.connections, newConnection],
+							onUpdateRef.current(currentPage.id, {
+								connections: [...currentPage.connections, newConnection],
 							})
 						}
 
@@ -166,15 +183,7 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 				handleBlockClick(id)
 			}
 		},
-		[
-			isConnectMode,
-			connectSourceId,
-			page.connections,
-			page.id,
-			onUpdate,
-			setSelectedObjectId,
-			handleBlockClick,
-		]
+		[setSelectedObjectId, handleBlockClick]
 	)
 
 	return (
@@ -187,6 +196,7 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 							variant="ghost"
 							size="icon"
 							onClick={toggleFavorite}
+							aria-label={page.isFavorite ? 'お気に入りを解除' : 'お気に入りに追加'}
 							className={page.isFavorite ? 'text-yellow-500' : 'text-muted-foreground'}
 						>
 							<Star className={`w-5 h-5 ${page.isFavorite ? 'fill-current' : ''}`} />
@@ -204,7 +214,7 @@ export const NotebookCanvas = ({ page, onUpdate }: NotebookCanvasProps) => {
 							editor={activeEditor}
 							isConnectMode={isConnectMode}
 							onToggleConnectMode={handleToggleConnectMode}
-							hasSelection={!!selectedObjectId || !!selectedConnectionId}
+							hasSelection={hasSelection}
 							onDelete={handleDeleteSelection}
 						/>
 					</div>

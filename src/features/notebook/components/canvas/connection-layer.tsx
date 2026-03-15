@@ -98,8 +98,23 @@ export const ConnectionLayer = memo(
 			onSelect?.(connectionId)
 		}
 
-		// objects配列をMapに変換（O(1)ルックアップ）
-		const objectMap = useMemo(() => new Map(objects.map((o) => [o.id, o])), [objects])
+		// テキスト編集時の不要再計算を防止: geometry のみを抽出して比較
+		const geometryKey = useMemo(
+			() =>
+				objects
+					.map(({ id, x, y, width, height }) => `${id}:${x},${y},${width},${height}`)
+					.join('|'),
+			[objects]
+		)
+
+		// biome-ignore lint/correctness/useExhaustiveDependencies: geometryKey で geometry 変更のみ追跡（objects の identity ではなく座標値で比較）
+		const objectMap = useMemo(
+			() =>
+				new Map(
+					objects.map((o) => [o.id, { id: o.id, x: o.x, y: o.y, width: o.width, height: o.height }])
+				),
+			[geometryKey]
+		)
 
 		// 交点計算を事前に行い、visual/interaction両レイヤーで共有
 		const connectionLines = useMemo(() => {

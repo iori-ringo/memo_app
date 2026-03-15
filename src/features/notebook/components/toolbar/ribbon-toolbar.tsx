@@ -13,6 +13,7 @@
 'use client'
 
 import type { Editor } from '@tiptap/react'
+import { memo } from 'react'
 import { CanvasModeTools } from '@/features/notebook/components/toolbar/parts/canvas-mode-tools'
 import { ColorTools } from '@/features/notebook/components/toolbar/parts/color-tools'
 import { DeleteButton } from '@/features/notebook/components/toolbar/parts/delete-button'
@@ -29,42 +30,49 @@ type RibbonToolbarProps = {
 	onDelete: () => void
 }
 
-export const RibbonToolbar = ({
-	editor,
-	isConnectMode,
-	hasSelection,
-	onToggleConnectMode,
-	onDelete,
-}: RibbonToolbarProps) => {
-	return (
-		<div className="w-full bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 py-2 flex items-center gap-2 shadow-sm">
-			{/* テキストフォーマット */}
-			<TextFormattingTools editor={editor} />
+export const RibbonToolbar = memo(
+	({
+		editor,
+		isConnectMode,
+		hasSelection,
+		onToggleConnectMode,
+		onDelete,
+	}: RibbonToolbarProps) => {
+		return (
+			<div className="w-full bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 py-2 flex items-center gap-2 shadow-sm">
+				{/* テキストフォーマット */}
+				<TextFormattingTools editor={editor} />
 
-			<Separator orientation="vertical" className="h-6" />
+				<Separator orientation="vertical" className="h-6" />
 
-			{/* 配置 */}
-			<TextAlignTools editor={editor} />
+				{/* 配置 */}
+				<TextAlignTools editor={editor} />
 
-			<Separator orientation="vertical" className="h-6" />
+				<Separator orientation="vertical" className="h-6" />
 
-			{/* カラー */}
-			<ColorTools editor={editor} />
+				{/* カラー */}
+				<ColorTools editor={editor} />
 
-			<Separator orientation="vertical" className="h-6" />
+				<Separator orientation="vertical" className="h-6" />
 
-			{/* リスト */}
-			<ListTools editor={editor} />
+				{/* リスト */}
+				<ListTools editor={editor} />
 
-			<Separator orientation="vertical" className="h-6" />
+				<Separator orientation="vertical" className="h-6" />
 
-			{/* キャンバスモード */}
-			<CanvasModeTools isConnectMode={isConnectMode} onToggleConnectMode={onToggleConnectMode} />
+				{/* キャンバスモード */}
+				<CanvasModeTools
+					isConnectMode={isConnectMode}
+					onToggleConnectMode={onToggleConnectMode}
+				/>
 
-			<Separator orientation="vertical" className="h-6" />
+				<Separator orientation="vertical" className="h-6" />
 
-			{/* 削除 */}
-			<DeleteButton hasSelection={hasSelection} onDelete={onDelete} />
-		</div>
-	)
-}
+				{/* 削除 */}
+				<DeleteButton hasSelection={hasSelection} onDelete={onDelete} />
+			</div>
+		)
+	}
+)
+
+RibbonToolbar.displayName = 'RibbonToolbar'

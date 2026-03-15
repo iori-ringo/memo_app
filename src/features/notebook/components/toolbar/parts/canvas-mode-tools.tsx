@@ -6,6 +6,7 @@
 'use client'
 
 import { Link2 } from 'lucide-react'
+import { memo } from 'react'
 import { Button } from '@/shared/shadcn/button'
 
 type CanvasModeToolsProps = {
@@ -13,7 +14,7 @@ type CanvasModeToolsProps = {
 	onToggleConnectMode: () => void
 }
 
-export const CanvasModeTools = ({ isConnectMode, onToggleConnectMode }: CanvasModeToolsProps) => {
+export const CanvasModeTools = memo(({ isConnectMode, onToggleConnectMode }: CanvasModeToolsProps) => {
 	return (
 		<div className="flex items-center gap-1">
 			<Button
@@ -28,4 +29,5 @@ export const CanvasModeTools = ({ isConnectMode, onToggleConnectMode }: CanvasMo
 			</Button>
 		</div>
 	)
-}
+})
+CanvasModeTools.displayName = 'CanvasModeTools'
