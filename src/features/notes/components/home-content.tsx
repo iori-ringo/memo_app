@@ -1,19 +1,12 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useTheme } from 'next-themes'
 import { useEffect, useRef } from 'react'
-
+import { MotionPageWrapper } from '@/features/notes/components/motion-page-wrapper'
 import { selectActivePage, useNoteStore } from '@/features/notes/stores/note-store'
 import { SidebarContainer } from '@/features/sidebar/components/sidebar-container'
 import { getToggledTheme } from '@/lib/theme'
 import type { NotePage } from '@/types/note'
-
-// framer-motion の動的インポート（bundle-dynamic-imports）
-const MotionPageWrapper = dynamic(
-	() => import('./motion-page-wrapper').then((mod) => ({ default: mod.MotionPageWrapper })),
-	{ ssr: false }
-)
 
 // 静的JSXの抽出（rendering-hoist-jsx）
 const emptyState = (
@@ -82,7 +75,19 @@ export const HomeContent = () => {
 		}
 	}, []) // 依存配列を空に: リスナーは初回のみ登録
 
-	if (!isHydrated) return null
+	// Hydration待ち中にスケルトンUIを表示（LCP要素を早期描画）
+	if (!isHydrated) {
+		return (
+			<div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
+				<div className="hidden md:block w-64 border-r bg-muted/30 animate-pulse" />
+				<main className="flex-1 flex flex-col h-full overflow-hidden relative">
+					<div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 flex justify-center">
+						<div className="w-full max-w-7xl h-96 bg-muted/20 rounded-lg animate-pulse" />
+					</div>
+				</main>
+			</div>
+		)
+	}
 
 	return (
 		<div className="flex h-screen w-full overflow-hidden bg-background text-foreground">

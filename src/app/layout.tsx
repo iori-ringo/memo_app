@@ -2,15 +2,18 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/shared/ui/theme-provider'
+import { WebVitalsReporter } from '@/shared/ui/web-vitals-reporter'
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
 	subsets: ['latin'],
+	display: 'swap',
 })
 
 const geistMono = Geist_Mono({
 	variable: '--font-geist-mono',
 	subsets: ['latin'],
+	display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -36,6 +39,7 @@ const RootLayout = ({
 					disableTransitionOnChange
 				>
 					{children}
+					<WebVitalsReporter />
 				</ThemeProvider>
 			</body>
 		</html>

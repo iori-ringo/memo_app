@@ -23,13 +23,20 @@
 import type { Editor } from '@tiptap/react'
 import { GripVertical } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import type { DraggableData, DraggableEvent } from 'react-draggable'
 import Draggable from 'react-draggable'
 import type { ResizeCallbackData } from 'react-resizable'
 import { Resizable } from 'react-resizable'
-import { RichTextEditor } from '@/features/notebook/components/blocks/rich-text-editor'
+
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
+
+// TipTap (~512KiB) を初期バンドルから除外し、選択時にオンデマンド読み込み
+const RichTextEditor = dynamic(
+	() => import('@/features/notebook/components/blocks/rich-text-editor').then((mod) => ({ default: mod.RichTextEditor })),
+	{ ssr: false }
+)
 
 import 'react-resizable/css/styles.css'
 
