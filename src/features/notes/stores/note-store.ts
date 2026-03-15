@@ -19,6 +19,9 @@ import { subscribeWithSelector } from 'zustand/middleware'
 import { loadNotes, saveConfig, saveNotes } from '@/features/notes/services/note-storage'
 import type { NotePage } from '@/types/note'
 
+// サイドバー用の軽量メタデータ型（objects/connections/layout を除外）
+export type PageMeta = Omit<NotePage, 'objects' | 'connections' | 'layout'>
+
 const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000
 
 const INITIAL_PAGE: NotePage = {
@@ -145,13 +148,65 @@ export const useNoteStore = create<NoteState & NoteActions>()(
 	}))
 )
 
-// 自動保存: pages が変更されたら保存
+// ---------------------------------------------------------------------------
+// セレクタ: キャンバス用 — アクティブページのみ取得
+// ---------------------------------------------------------------------------
+export const selectActivePage = (state: NoteState & NoteActions): NotePage | undefined => {
+	const id = state.activePageId
+	return id ? state.pages.find((p) => p.id === id && !p.deletedAt) : undefined
+}
+
+// ---------------------------------------------------------------------------
+// セレクタ: サイドバー用 — メタデータのみ取得（構造的共有で参照安定化）
+// ---------------------------------------------------------------------------
+export const selectPagesMeta = (() => {
+	let prevPages: NotePage[] = []
+	let prevMeta: PageMeta[] = []
+
+	return (state: NoteState & NoteActions): PageMeta[] => {
+		const pages = state.pages
+		if (pages === prevPages) return prevMeta
+
+		const next = pages.map((page, i) => {
+			// 同じページ参照ならメタデータも同じ — 前回の軽量オブジェクトを再利用
+			if (page === prevPages[i] && i < prevMeta.length) return prevMeta[i]
+			// objects/connections/layout を除外し、メタデータのみ抽出
+			const { objects: _, connections: __, layout: ___, ...meta } = page
+			return meta
+		})
+
+		prevPages = pages
+		prevMeta = next
+		return next
+	}
+})()
+
+// サイドバー用等価比較: updatedAt を無視し、表示に影響するフィールドのみ比較
+// ドラッグ/リサイズで updatedAt が変わっても、サイドバーの再レンダリングを防止する
+export const pagesMetaEqual = (a: PageMeta[], b: PageMeta[]): boolean => {
+	if (a.length !== b.length) return false
+	return a.every((item, i) => {
+		const other = b[i]
+		return (
+			item.id === other.id &&
+			item.title === other.title &&
+			item.isFavorite === other.isFavorite &&
+			item.deletedAt === other.deletedAt
+		)
+	})
+}
+
+// 自動保存: pages が変更されたら 300ms debounce して保存（タイピング中の過剰な IPC 発火を防止）
+let saveTimer: ReturnType<typeof setTimeout> | null = null
+
 useNoteStore.subscribe(
 	(state) => state.pages,
 	(pages) => {
-		if (useNoteStore.getState().isHydrated && pages.length > 0) {
-			saveNotes(pages)
-		}
+		if (!useNoteStore.getState().isHydrated || pages.length === 0) return
+		if (saveTimer) clearTimeout(saveTimer)
+		saveTimer = setTimeout(() => {
+			void saveNotes(pages)
+		}, 300)
 	}
 )
 
