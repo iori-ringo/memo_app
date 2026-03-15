@@ -22,21 +22,31 @@
 
 import type { Editor } from '@tiptap/react'
 import { GripVertical } from 'lucide-react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import type { DraggableData, DraggableEvent } from 'react-draggable'
 import Draggable from 'react-draggable'
 import type { ResizeCallbackData } from 'react-resizable'
 import { Resizable } from 'react-resizable'
 
+import { isElectron } from '@/lib/platform'
 import { cn } from '@/lib/utils'
 import type { CanvasObject } from '@/types/note'
 
-// TipTap (~512KiB) を初期バンドルから除外し、選択時にオンデマンド読み込み
+// Web: TipTap (~512KiB) を初期バンドルから除外し、選択時にオンデマンド読み込み
+// Electron: ローカルファイルなのでネットワーク転送コストなし → 即座にprefetchしてキャッシュ
 const RichTextEditor = dynamic(
-	() => import('@/features/notebook/components/blocks/rich-text-editor').then((mod) => ({ default: mod.RichTextEditor })),
+	() =>
+		import('@/features/notebook/components/blocks/rich-text-editor').then((mod) => ({
+			default: mod.RichTextEditor,
+		})),
 	{ ssr: false }
 )
+
+// Electron環境ではモジュールを即座にprefetch（ディスク読み込みは数msで完了）
+if (isElectron()) {
+	import('@/features/notebook/components/blocks/rich-text-editor')
+}
 
 import 'react-resizable/css/styles.css'
 
