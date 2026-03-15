@@ -7,6 +7,8 @@
  * - Webブラウザ: 何もしない関数を返す（将来的にキーボードショートカットの追加が可能）
  */
 
+import { getElectronAPI } from '@/lib/platform'
+
 type CleanupFn = () => void
 
 /**
@@ -20,8 +22,9 @@ export const platformEvents = {
 	 * Web: 何もしない（将来的にキーボードショートカットの追加が可能）
 	 */
 	onNewPage: (callback: () => void): CleanupFn => {
-		if (typeof window !== 'undefined' && window.electronAPI) {
-			return window.electronAPI.onNewPage(callback)
+		const api = getElectronAPI()
+		if (api) {
+			return api.onNewPage(callback)
 		}
 		// Web環境では何もしない
 		return () => {
@@ -35,8 +38,9 @@ export const platformEvents = {
 	 * Web: 何もしない（テーマ切り替えはUIボタンで処理）
 	 */
 	onToggleDark: (callback: () => void): CleanupFn => {
-		if (typeof window !== 'undefined' && window.electronAPI) {
-			return window.electronAPI.onToggleDark(callback)
+		const api = getElectronAPI()
+		if (api) {
+			return api.onToggleDark(callback)
 		}
 		// Web環境では何もしない
 		return () => {

@@ -7,6 +7,7 @@
  * - Electron環境: IPC経由で electron-store（ファイルシステム）に保存
  * - Web環境: localStorage に保存
  */
+import { getElectronAPI } from '@/lib/platform'
 import type { AppConfig, NotePage } from '@/types/note'
 
 const STORAGE_KEYS = {
@@ -18,12 +19,10 @@ const STORAGE_KEYS = {
  * ノートページをストレージから読み込む
  */
 export const loadNotes = async (): Promise<{ pages: NotePage[]; config: AppConfig | null }> => {
-	if (window.electronAPI) {
+	const api = getElectronAPI()
+	if (api) {
 		try {
-			const [savedPages, config] = await Promise.all([
-				window.electronAPI.loadPages(),
-				window.electronAPI.loadConfig(),
-			])
+			const [savedPages, config] = await Promise.all([api.loadPages(), api.loadConfig()])
 			return { pages: savedPages || [], config: config || null }
 		} catch (e) {
 			console.error('Failed to load pages from Electron', e)
@@ -50,9 +49,10 @@ export const loadNotes = async (): Promise<{ pages: NotePage[]; config: AppConfi
  * ノートページをストレージに保存する
  */
 export const saveNotes = async (pages: NotePage[]): Promise<boolean> => {
-	if (window.electronAPI) {
+	const api = getElectronAPI()
+	if (api) {
 		try {
-			await window.electronAPI.savePages(pages)
+			await api.savePages(pages)
 			return true
 		} catch (e) {
 			console.error('Failed to save pages to Electron', e)
@@ -74,9 +74,10 @@ export const saveNotes = async (pages: NotePage[]): Promise<boolean> => {
  * 設定を保存する
  */
 export const saveConfig = async (config: AppConfig): Promise<boolean> => {
-	if (window.electronAPI) {
+	const api = getElectronAPI()
+	if (api) {
 		try {
-			await window.electronAPI.saveConfig(config)
+			await api.saveConfig(config)
 			return true
 		} catch (e) {
 			console.error('Failed to save config to Electron', e)
