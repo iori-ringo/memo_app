@@ -23,6 +23,9 @@ npm install
 ```bash
 # Electron + Next.js 開発サーバー
 npm run electron:dev
+
+# ブラウザ上のNext.js 開発サーバー
+npm run build && npx serve out -l 3000
 ```
 
 ## コマンド一覧
